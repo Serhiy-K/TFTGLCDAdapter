@@ -15,3 +15,5 @@ Also it has 1 encoder and 1 button, but you may set up to
 Firmware created with CoIDE.
 
 Hardware directory include pcb-project for this adapter created in Altium Designer.
+
+Discussion about this TFT GLCD Adapter and my realisation Smoothieboard you may find on https://www.radiokot.ru/forum/viewtopic.php?f=25&t=162580
