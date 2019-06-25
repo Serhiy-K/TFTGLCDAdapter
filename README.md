@@ -5,7 +5,7 @@
 TFT GLCD Adapter developed to work wiht Smoothieware board to replace old monochrome LCDs with low resolution fonts.
 For use this adapter wiht Smoothieware board you need compile Smoothieware firmware from https://github.com/Serhiy-K/Smoothieware.git.
 Then you need set "panel.enable" parameter in config file to "true",
- * change "panel.lcd" parameter to "tft_glcd_adapter" and set
+ change "panel.lcd" parameter to "tft_glcd_adapter" and set
 proper parameters for SPI bus.
 
 TFT GLCD Adapter
