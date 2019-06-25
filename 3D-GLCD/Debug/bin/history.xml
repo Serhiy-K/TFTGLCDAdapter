@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="5.4.1 -mcpu=cortex-m3 -mthumb -g -Map=3D-GLCD.map -Os --gc-sections -LD:\Devel\ARM\CoIDE\configuration\ProgramData\3D-GLCD -TD:\Devel\ARM\CoIDE\configuration\ProgramData\3D-GLCD/arm-gcc-link.ld -g">
+      <target file="3D-GLCD.elf" lastModified="16b8df517db">
+         <source file="..\obj\stm32f10x_tim.o" lastModified="16b8d9837d3"/>
+         <source file="..\obj\protocol.o" lastModified="16b8df512eb"/>
+         <source file="..\obj\system_stm32f10x.o" lastModified="16b8d983a53"/>
+         <source file="..\obj\startup_stm32f10x_md.o" lastModified="16b8d983acf"/>
+         <source file="..\obj\stm32f10x_gpio.o" lastModified="16b8d983b9a"/>
+         <source file="..\obj\main.o" lastModified="16b8df51368"/>
+         <source file="..\obj\init.o" lastModified="16b8df513f5"/>
+         <source file="..\obj\stm32f10x_rcc.o" lastModified="16b8d983d8d"/>
+         <source file="..\obj\stm32f10x_exti.o" lastModified="16b8d983e1a"/>
+         <source file="..\obj\LCD.o" lastModified="16b8df514df"/>
+         <source file="..\obj\Courier_New_Bold_16x24.o" lastModified="16b8d983fbf"/>
+         <source file="..\obj\misc.o" lastModified="16b8d98404b"/>
+         <source file="..\obj\Pictures.o" lastModified="16b8df515a9"/>
+         <source file="..\obj\stm32f10x_spi.o" lastModified="16b8d984200"/>
+         <source file="..\obj\systick.o" lastModified="16b8d98428d"/>
+         <source file="..\obj\stm32f10x_systick.o" lastModified="16b8d984319"/>
+      </target>
+   </processor>
+</history>
