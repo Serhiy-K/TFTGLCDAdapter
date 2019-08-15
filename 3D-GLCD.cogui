@@ -11,10 +11,16 @@
 <editorArea activeWorkbook="DefaultEditorWorkbook">
 <info part="DefaultEditorWorkbook">
 <folder appearance="1" expanded="2">
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
 </folder>
 </info>
 </editorArea>
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/protocol.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="16466" selectionTopPixel="11555"/>
+</editor>
 </editors>
 <views>
 <view id="org.coocox.builder.ui.views.ProjectView" partName="Project">
@@ -42,14 +48,14 @@
 </view>
 <view id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" partName="Memory Browser">
 <viewState>
-<MemoryBroser ComboItemsValue="0x200004ad;" FocuseTabIndex="0" TabsValue="" TextValue="0x200004ad" horizontalPosition="0" verticalPosition="0"/>
+<MemoryBroser ComboItemsValue="0x200004a0;" FocuseTabIndex="0" TabsValue="0x200004c0;" TextValue="0x200004c0" horizontalPosition="0" verticalPosition="0"/>
 </viewState>
 </view>
 <view id="org.eclipse.debug.ui.BreakpointView" partName="Breakpoints">
 <viewState/>
 </view>
 </views>
-<perspectives activePart="org.eclipse.ui.console.ConsoleView" activePerspective="org.coocox.builder.perspective.CoBuilder">
+<perspectives activePart="org.eclipse.cdt.ui.editor.CEditor" activePerspective="org.coocox.builder.perspective.CoBuilder">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.coocox.builder.ui.PerspectiveCoBuilder" id="org.coocox.builder.perspective.CoBuilder" label="CooCox CoBuilder"/>
 <alwaysOnActionSet id="org.coocox.component.ui.actionSet"/>
@@ -97,7 +103,7 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.7603211" ratioLeft="663" ratioRight="209" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.80093676" ratioLeft="684" ratioRight="170" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
@@ -107,7 +113,7 @@
 </presentation>
 </folder>
 </info>
-<info part="org.coocox.builder.ui.exampleView" ratio="0.20136519" ratioLeft="236" ratioRight="936" relationship="2" relative="org.eclipse.ui.internal.ViewStack@7d3503"/>
+<info part="org.coocox.builder.ui.exampleView" ratio="0.1936791" ratioLeft="239" ratioRight="995" relationship="2" relative="org.eclipse.ui.internal.ViewStack@7d3503"/>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@1a9363d" ratio="0.7197171" ratioLeft="814" ratioRight="317" relationship="2" relative="org.coocox.builder.ui.exampleView">
 <folder appearance="2" expanded="2">
 <page content="org.coocox.component.ui.Help" label="LabelNotFound"/>
@@ -193,7 +199,7 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@1285de9" ratio="0.5641593" ratioLeft="510" ratioRight="394" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">&#x0A;<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@1285de9" ratio="0.7096019" ratioLeft="606" ratioRight="248" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">&#x0A;<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
 <page content="org.eclipse.debug.ui.BreakpointView" label="Breakpoints"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
@@ -205,7 +211,7 @@
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d8328" ratio="0.47686374" ratioLeft="742" ratioRight="814" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1285de9">&#x0A;<folder activePageID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" label="Memory Browser"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d8328" ratio="0.4375" ratioLeft="609" ratioRight="783" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1285de9">&#x0A;<folder activePageID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" label="Memory Browser"/>
 <page content="org.coocox.codebugger.trace.ui.traceview" label="LabelNotFound"/>
 <page content="org.eclipse.debug.ui.MemoryView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.navigator.ProjectExplorer" label="LabelNotFound"/>
@@ -228,57 +234,216 @@
 </perspective>
 </perspectives>
 <workingSets/>
-<navigationHistory/>
+<navigationHistory>
+<editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/protocol.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/main.c"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" uri="file:/D:/Devel/Projects/CoIDE/3D-GLCD/src/protocol.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/Courier_New_Bold_16x24.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/init.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/main.c"/>
+</editors>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="75" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="13137" y="16"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14144" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="11688" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="11394" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="11627" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="11688" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="11653" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="11688" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="12374" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="12443" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="12514" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="12585" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="12711" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="12934" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14393" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14333" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14355" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14375" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14393" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14099" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14868" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14963" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="16145" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="154" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="16145" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="2">
+<position info="not_deleted" x="9077" y="57"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="16145" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="11688" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14333" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14355" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14375" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14364" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6726" y="9"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14333" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14355" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6742" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6841" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6742" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6841" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6742" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6920" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6971" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="14294" y="0"/>
+</item>
+<item historyLabel="Courier_New_Bold_16x24.c" index="3">
+<position info="not_deleted" x="154033" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6891" y="0"/>
+</item>
+<item historyLabel="init.c" index="4">
+<position info="not_deleted" x="2576" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6891" y="0"/>
+</item>
+<item historyLabel="main.c" index="5">
+<position info="not_deleted" x="75" y="0"/>
+</item>
+<item active="true" historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6891" y="0"/>
+</item>
+</navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
 <workbenchWindowAdvisor/>
 <actionBarAdvisor/>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="init.c" tooltip="3D-GLCD/src/init.c">
+<persistable path="/3D-GLCD/src/init.c"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Courier_New_Bold_16x24.c" tooltip="3D-GLCD/src/Courier_New_Bold_16x24.c">
 <persistable path="/3D-GLCD/src/Courier_New_Bold_16x24.c"/>
 </file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="TFTGLCDAdapter.h" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\panels\TFTGLCDAdapter.h">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/panels/TFTGLCDAdapter.h"/>
-</file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="config" tooltip="D:\Devel\Projects\Smoothieware\src\config">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/config"/>
-</file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Panel.cpp" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\Panel.cpp">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/Panel.cpp"/>
-</file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="TFTGLCDAdapter.cpp" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\panels\TFTGLCDAdapter.cpp">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/panels/TFTGLCDAdapter.cpp"/>
-</file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.h" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD-COIDE\src\LCD.h">
-<persistable path="D:\Devel\Projects\CoIDE\3D-GLCD-COIDE\src\LCD.h" project="3D-GLCD"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
+<persistable path="/3D-GLCD/main.c"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="3D-GLCD/src/LCD.c">
 <persistable path="/3D-GLCD/src/LCD.c"/>
 </file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD\src\protocol.c">
+<persistable uri="file:/D:/Devel/Projects/CoIDE/3D-GLCD/src/protocol.c"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h">
+<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h">
+<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LiberationMono-Regular_16x24.c" tooltip="3D-GLCD/src/LiberationMono-Regular_16x24.c">
+<persistable path="/3D-GLCD/src/LiberationMono-Regular_16x24.c"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h">
+<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Pictures.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\Pictures.h">
+<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\Pictures.h" project="3D-GLCD"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Pictures.c" tooltip="3D-GLCD/src/Pictures.c">
 <persistable path="/3D-GLCD/src/Pictures.c"/>
 </file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD-COIDE\defines.h">
-<persistable path="D:\Devel\Projects\CoIDE\3D-GLCD-COIDE\defines.h" project="3D-GLCD"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_tim.h" tooltip="3D-GLCD/stm_lib/inc/stm32f10x_tim.h">
+<persistable path="/3D-GLCD/stm_lib/inc/stm32f10x_tim.h"/>
 </file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.h" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD-COIDE\src\protocol.h">
-<persistable path="D:\Devel\Projects\CoIDE\3D-GLCD-COIDE\src\protocol.h" project="3D-GLCD"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="core_cm3.h" tooltip="3D-GLCD/cmsis/core_cm3.h">
+<persistable path="/3D-GLCD/cmsis/core_cm3.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" tooltip="3D-GLCD/src/protocol.c">
-<persistable path="/3D-GLCD/src/protocol.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x.h" tooltip="3D-GLCD/cmsis_boot/stm32f10x.h">
+<persistable path="/3D-GLCD/cmsis_boot/stm32f10x.h"/>
 </file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="WatchScreen.cpp" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\screens\3dprinter\WatchScreen.cpp">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/screens/3dprinter/WatchScreen.cpp"/>
-</file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="WatchScreen.h" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\screens\3dprinter\WatchScreen.h">
-<persistable path="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\screens\3dprinter\WatchScreen.h" project="3D-GLCD"/>
-</file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="WatchScreen.h" tooltip="D:\Devel\Projects\CoIDE\Smoothieware-edge\src\modules\utils\panel\screens\3dprinter\WatchScreen.h">
-<persistable path="D:\Devel\Projects\CoIDE\Smoothieware-edge\src\modules\utils\panel\screens\3dprinter\WatchScreen.h" project="3D-GLCD"/>
-</file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="WatchScreen.cpp" tooltip="D:\Devel\Projects\CoIDE\Smoothieware-edge\src\modules\utils\panel\screens\3dprinter\WatchScreen.cpp">
-<persistable uri="file:/D:/Devel/Projects/CoIDE/Smoothieware-edge/src/modules/utils/panel/screens/3dprinter/WatchScreen.cpp"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_tim.c" tooltip="3D-GLCD/stm_lib/src/stm32f10x_tim.c">
+<persistable path="/3D-GLCD/stm_lib/src/stm32f10x_tim.c"/>
 </file>
 </mruList>
 </workbench>

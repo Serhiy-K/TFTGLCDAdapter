@@ -7,6 +7,7 @@
 volatile uint16_t TCH, TCL;
 volatile uint16_t BCH, BCL;
 uint16_t Xcour;
+extern uint8_t	protocol;
 
 /******************************************************************************
  Description    : Write data to LCD reg
@@ -35,7 +36,7 @@ void LCD_FillScreen(uint16_t Color)
     	LCD_DATA(CH);	LCD_DATA(CL);
     }
     while (++cntT < (LCDXMAX * LCDYMAX));
-    CS_LCD_clr;
+    CS_LCD_set;
 }
 /******************************************************************************
  Description    : Fill screen area with one color
@@ -56,7 +57,7 @@ void LCD_ClearArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1po
 	   LCD_DATA(CH);	LCD_DATA(CL);
    }
    while (pntNum--);
-   CS_LCD_clr;
+   CS_LCD_set;
 }
 /******************************************************************************
  Description    : Set output area
@@ -64,7 +65,7 @@ void LCD_ClearArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1po
 ******************************************************************************/
 void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 {
-	CS_LCD_set;
+	CS_LCD_clr;
 #ifdef	PORTRET
 	Set_LCD_REG(0x50, X0);
 	Set_LCD_REG(0x51, X1);
@@ -100,7 +101,7 @@ void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const uint16_t *pic)
 		LCD_DATA(*pic >> 8);	LCD_DATA(*pic & 0x00ff);
 		pic++;
 	}
-	CS_LCD_clr;
+	CS_LCD_set;
 }
 /******************************************************************************
  Description    : Erase picture 48õ48
@@ -118,7 +119,7 @@ void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos)
 	{
 		LCD_DATA(CH);	LCD_DATA(CL);
 	}
-	CS_LCD_clr;
+	CS_LCD_set;
 }
 /******************************************************************************
  Set color for text and back
@@ -145,6 +146,26 @@ void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos)
 	Xcour = Xpos;
 }
 /******************************************************************************
+ Description    : Convert Russian char from HD44780 encoding to ASCII
+ Input          : char c
+******************************************************************************/
+uint8_t HD44780_to_ASCII(char c)
+{
+	const uint8_t transcode[] =
+	{	//symbols for cyrillic
+		129, 131, 240, 134, 135, 136, 137, 139, 143, 147, 148, 151, 152, 154, 155, 157,
+		158, 159, 161, 162, 163, 241, 166, 167, 168, 169, 170, 171, 172, 173, 175, 226,
+		231, 232, 234, 235, 236, 237, 238, 239,
+		132, 150, 153, 164, 228, 230, 233
+	};
+	if ((c >= 0xa0) && (c <= 0xc7))
+		return transcode[c - 0xa0];
+	else if ((c >= 0xe0) && (c <= 0xe6))
+		return transcode[c - 0xb8];
+	else
+		return c;
+}
+/******************************************************************************
  Description    : Draw char to current position
  Input          : char c
 ******************************************************************************/
@@ -154,7 +175,31 @@ void LCD_DrawChar(char c)
 	const char *ptr; // pointer to char data
 	uint8_t mask = 0x80;  // 0b10000000
 
-	ptr = &Courier_New_Bold_16x24[(uint8_t)c][0];
+	if (protocol == Marlin)
+		c = HD44780_to_ASCII(c);
+	ptr = &FONT[(uint8_t)c][0];
+	for(i = 0; i < CHAR_BYTES; i++)
+	{
+		for(j = 0; j < 8; j++)
+		{
+			if(*ptr & mask) {LCD_DATA(TCH);	LCD_DATA(TCL);}
+			else 			{LCD_DATA(BCH);	LCD_DATA(BCL);}
+			mask = mask >> 1;
+		}
+		mask = 0x80;
+		ptr++;
+	}
+	Xcour++;	//increment cursor position
+}
+/******************************************************************************
+ Description    : Draw symbol to current char position
+ Input          : pointer to 16x24 symbol table
+******************************************************************************/
+void LCD_DrawSymbol(const uint8_t *ptr)
+{
+	uint8_t i, j;
+	uint8_t mask = 0x80;  // 0b10000000
+
 	for(i = 0; i < CHAR_BYTES; i++)
 	{
 		for(j = 0; j < 8; j++)
@@ -205,7 +250,7 @@ void LCD_PutStrig_XY(uint16_t XPos, uint16_t YPos, char *str)
 
 	LCD_SetCursor(XPos, YPos);
 	LCD_PutStrig(str);
-	CS_LCD_clr;
+	CS_LCD_set;
 }
 /******************************************************************************
 * Function Name  : LCD_Init
@@ -213,7 +258,7 @@ void LCD_PutStrig_XY(uint16_t XPos, uint16_t YPos, char *str)
 ******************************************************************************/
 void LCD_Init(void)
 {
-	CS_LCD_clr;
+	CS_LCD_set;
 	WR_LCD_set;
 	RS_LCD_set;
 
@@ -222,7 +267,7 @@ void LCD_Init(void)
    	delay_ms(10);
    	RES_LCD_set;
    	delay_ms(50);
-   	CS_LCD_set;
+   	CS_LCD_clr;
    	delay_ms(100);			/* Wait Stability */
 
    	//for 8-bit interface
@@ -289,11 +334,6 @@ void LCD_Init(void)
    	Set_LCD_REG(0x3C, 0x0504);
    	Set_LCD_REG(0x3D, 0x0808);
    	//------------------ Set GRAM area ---------------//
-//   Set_LCD_REG(0x50, 0x0000); // Horizontal GRAM Start Address
-//   Set_LCD_REG(0x51, 0x00EF); // Horizontal GRAM End Address
-//   Set_LCD_REG(0x52, 0x0000); // Vertical GRAM Start Address
-//   Set_LCD_REG(0x53, 0x013F); // Vertical GRAM End Address
-//   Set_LCD_REG(0x60, 0xA700); // Gate Scan Line
    	Set_LCD_REG(0x61, 0x0001); // NDL,VLE, REV
    	Set_LCD_REG(0x6A, 0x0000); // set scrolling line
 	//-------------- Partial Display Control ---------//
@@ -308,7 +348,7 @@ void LCD_Init(void)
 	Set_LCD_REG(0x92, 0x0000);
 	Set_LCD_REG(0x07, 0x0133); // 262K color and display ON
 
-	CS_LCD_clr;
+	CS_LCD_set;
 
 	LCD_FillScreen(BackColor);
 	LCD_Set_TextColor(Yellow, Blue);
@@ -316,6 +356,6 @@ void LCD_Init(void)
 	LCD_PutStrig_XY(0, 1, "  TFT GLCD Adapter  ");
 	LCD_PutStrig_XY(0, 2, "                    ");
 	LCD_Set_TextColor(White, BackColor);
-	LCD_PutStrig_XY(0, 4, "Waiting for Smoothie");
-	LCD_PutStrig_XY(3, 5,    "connection...");
+	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
+	LCD_PutStrig_XY(4, 5,     "connection..");
 }

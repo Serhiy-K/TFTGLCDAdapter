@@ -13,7 +13,6 @@
 #include "Pictures.h"
 #include "LCD.h"
 
-#ifdef ONE_HOTEND
 // single extruler icon
 const uint16_t extrude_48x48[2304] =
 {
@@ -66,7 +65,6 @@ const uint16_t extrude_48x48[2304] =
      White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,
      White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White
 };
-#else
 // first extruder icon for multi-extruder configuration
 const uint16_t extrude1_48x48[2304] =
 {
@@ -223,7 +221,6 @@ const uint16_t extrude3_48x48[2304] =
      White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,
      White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White,  White
 };
-#endif
 // bed icon
 const uint16_t bed_48x48[2304] =
 {

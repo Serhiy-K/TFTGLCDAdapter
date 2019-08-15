@@ -1,5 +1,6 @@
 #include "stm32f10x.h"
 #include "stm32f10x_exti.h"
+#include "stm32f10x_i2c.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_spi.h"
 #include "stm32f10x_tim.h"
@@ -31,8 +32,10 @@ static void Init_GPIO(void)
 	GPIO_Init(ENC_PORT, &GPIO_InitStructure);
 
 	// Init Button
-	GPIO_InitStructure.GPIO_Pin    = BUTTON_PIN;
-	GPIO_Init(BUTTON_PORT, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin    = BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1;
+	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin    = BUTTON_PIN5 | BUTTON_PIN4;
+	GPIO_Init(BTN_PORTB, &GPIO_InitStructure);
 
   	// PWM signals init
     GPIO_InitStructure.GPIO_Pin    = CONTRAST_PIN | BUZZER_PIN;
@@ -42,6 +45,16 @@ static void Init_GPIO(void)
     // Configure pins for SPI2
     GPIO_InitStructure.GPIO_Pin = SPI_MOSI | SPI_MISO | SPI_SCK | SPI_CS;
     GPIO_Init(SPI_PORT, &GPIO_InitStructure);
+
+    // Configure pins for I2C2
+    GPIO_InitStructure.GPIO_Pin		= I2C_SCL | I2C_SDA;
+    GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_AF_OD;
+    GPIO_Init(I2C_PORT, &GPIO_InitStructure);
+
+    //for test output
+	GPIO_InitStructure.GPIO_Pin		= TEST_PIN;
+	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_Out_PP;
+	GPIO_Init(TEST_PORT, &GPIO_InitStructure);
 }
 /***********************************************************
  Timer1 for encoder
@@ -55,7 +68,21 @@ static void Timer1_init(void)
 	TIM1->SMCR = TIM_SMCR_SMS_0;
 	TIM1->ARR = 0xffff;
 	TIM1->CNT = 0;
-	TIM1->CR1 |=  TIM_CR1_CEN;
+	TIM1->CR1 |= TIM_CR1_CEN;	//one puls mode
+}
+/***********************************************************
+ Timer2 for buzzer duration
+***********************************************************/
+static void Timer2_init(void)
+{
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	TIM2->CR1 = TIM_CR1_URS; // up counter, only overflow interrupt
+	TIM2->PSC = 72;	// FclkT2 = 1MHz
+	TIM2->CNT = 0;
+	TIM2->ARR = 1000;	// 1ms period
+	TIM2->DIER = TIM_DIER_UIE;
+	TIM2->EGR = TIM_EGR_UG;
+	NVIC_EnableIRQ(TIM2_IRQn);
 }
 /***********************************************************
  Timer3 for PWM (BUZZER, CONTRAST)
@@ -74,10 +101,10 @@ static void Timer3_init(void)
   		AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_1;
 
 	// Compute the prescaler value
-	PrescalerValue = (uint16_t) (SystemCoreClock / 250000);
+	PrescalerValue = (uint16_t) (SystemCoreClock / 256000);
 
 	// Time base configuration
-	TIM_TimeBaseStructure.TIM_Period = 255;
+	TIM_TimeBaseStructure.TIM_Period = 255;	//frequency = 1kHz
 	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
@@ -96,14 +123,6 @@ static void Timer3_init(void)
 	TIM_OC4Init(TIM3, &TIM_OCInitStructure);
 	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
 #endif
-#ifdef	BUZZER_PIN4
-	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
-#ifdef	BUZZER_PIN5
-	TIM_OC2Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
 
     // PWM1 Mode configuration for Contrast
 	TIM_OCInitStructure.TIM_Pulse = INIT_CONTRAST;
@@ -114,14 +133,6 @@ static void Timer3_init(void)
 #ifdef	CONTRAST_PIN1	//Channel4
 	TIM_OC4Init(TIM3, &TIM_OCInitStructure);
 	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
-#ifdef	CONTRAST_PIN4	//Channel1
-	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
-#ifdef	CONTRAST_PIN5	//Channel2
-	TIM_OC2Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
 #endif
 
 	TIM_ARRPreloadConfig(TIM3, ENABLE);
@@ -156,12 +167,42 @@ void spi_init()
 }
 /***********************************************************
 ***********************************************************/
+void i2c_init()
+{
+    I2C_InitTypeDef		I2C_InitStructure;
+
+    // Configure the clocks
+    RCC_APB1PeriphClockCmd(I2C_RCC, ENABLE);
+
+    I2C_Cmd(I2C, DISABLE);
+    I2C_InitStructure.I2C_ClockSpeed = 100000;
+    I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+    I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+    I2C_InitStructure.I2C_OwnAddress1 = I2C_Addr;
+    I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+    I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    I2C_Init(I2C, &I2C_InitStructure);
+    I2C_Cmd(I2C, ENABLE);
+
+    I2C_ITConfig(I2C, I2C_IT_EVT, ENABLE);
+    I2C_ITConfig(I2C, I2C_IT_BUF, ENABLE);
+    I2C_ITConfig(I2C, I2C_IT_ERR, ENABLE);
+
+    NVIC_SetPriority (I2C_IRQ, 0);
+    NVIC_EnableIRQ   (I2C_IRQ);
+    NVIC_SetPriority (I2C_ERR_IRQ, 0);
+    NVIC_EnableIRQ   (I2C_ERR_IRQ);
+}
+/***********************************************************
+***********************************************************/
 void Global_Init(void)
 {
 	SystemInit();
 	delay_init();
 	Init_GPIO();
 	Timer1_init();
+	Timer2_init();
 	Timer3_init();
 	spi_init();
+	i2c_init();
 }

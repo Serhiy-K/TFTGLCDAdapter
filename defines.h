@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "stm32f10x_gpio.h"
 
-#define ONE_HOTEND
+enum protocols {Marlin = 0, Smoothie = 1};
 
 //display orientations
 #ifdef	PORTRET
@@ -26,6 +26,10 @@
 #define	CHARS_PER_LINE	LCDXMAX/CHAR_WIDTH
 #define	TEXT_LINES		LCDYMAX/CHAR_HEIGTH
 
+//prefered font
+//#define FONT	Courier_New_Bold_16x24
+#define FONT	LiberationMono_16x24
+
 //LCD interface
 #define LCD_DATA_PORT	GPIOA
 #define	LCD_DATA_MASK	0x00ff
@@ -44,18 +48,33 @@
 #define SPI_RCC			RCC_APB1Periph_SPI2
 #define SPI_GPIO_RCC	RCC_APB2Periph_GPIOB
 #define	SPI_IRQ			SPI2_IRQn
+//I2C
+#define I2C				I2C2
+#define I2C_PORT		GPIOB
+#define	I2C_SCL			GPIO_Pin_10
+#define	I2C_SDA			GPIO_Pin_11
+#define I2C_RCC			RCC_APB1Periph_I2C2
+#define	I2C_IRQ			I2C2_EV_IRQn
+#define	I2C_ERR_IRQ		I2C2_ER_IRQn
+#define I2C_Addr		0x20 << 1		//as PCA8574 and PCF8575
 //encoder
-#define	ENC_PORT	GPIOA
-#define	ENC_A		GPIO_Pin_9
-#define	ENC_B		GPIO_Pin_8
-#define	ENC_BUT		GPIO_Pin_10
-//single button. You may define pins up to 8 buttons
-#define	BUTTON_PORT	GPIOB
-#define	BUTTON_PIN	GPIO_Pin_11
+#define	ENC_PORT        GPIOA
+#define	ENC_A           GPIO_Pin_9
+#define	ENC_B           GPIO_Pin_8
+#define	ENC_BUT         GPIO_Pin_10
+//buttons
+#define	BTN_PORTA	    GPIOA
+#define	BUTTON_PIN1	    GPIO_Pin_11
+#define	BUTTON_PIN2	    GPIO_Pin_12
+#define	BUTTON_PIN3	    GPIO_Pin_15
+#define	BTN_PORTB	    GPIOB
+#define	BUTTON_PIN4	    GPIO_Pin_3
+#define	BUTTON_PIN5	    GPIO_Pin_4
 
 #define	CONTRAST_PORT	GPIOB
-#define	BUZZER_PIN1		//BUZZER_PIN0 or BUZZER_PIN1 or BUZZER_PIN4 or BUZZER_PIN5
-#define	CONTRAST_PIN0	//CONTRAST_PIN0 or CONTRAST_PIN1 or CONTRAST_PIN4 or CONTRAST_PIN5
+#define	BUZZER_PIN1		//BUZZER_PIN0 or BUZZER_PIN1
+#define	CONTRAST_PIN0	//CONTRAST_PIN1 or CONTRAST_PIN0
+#define	INIT_CONTRAST	200
 
 #ifdef	BUZZER_PIN0
  #define	BUZZER_PIN		GPIO_Pin_0
@@ -64,14 +83,6 @@
 #ifdef	BUZZER_PIN1
  #define	BUZZER_PIN		GPIO_Pin_1
  #define	BUZZER_CCR		CCR4
-#endif
-#ifdef	BUZZER_PIN4
- #define	BUZZER_PIN		GPIO_Pin_4
- #define	BUZZER_CCR		CCR1
-#endif
-#ifdef	BUZZER_PIN5
- #define	BUZZER_PIN		GPIO_Pin_5
- #define	BUZZER_CCR		CCR2
 #endif
 
 #ifdef	CONTRAST_PIN0
@@ -82,17 +93,8 @@
  #define	CONTRAST_PIN	GPIO_Pin_1
  #define	CONTRAST_CCR	CCR4
 #endif
-#ifdef	CONTRAST_PIN4
- #define	CONTRAST_PIN	GPIO_Pin_4
- #define	CONTRAST_CCR	CCR1
-#endif
-#ifdef	CONTRAST_PIN5
- #define	CONTRAST_PIN	GPIO_Pin_5
- #define	CONTRAST_CCR	CCR2
-#endif
-#define	INIT_CONTRAST	200
 
-//buttons bits
+//buttons bits for Smoothie
 #define BUTTON_SELECT 0x01
 #define BUTTON_RIGHT  0x02
 #define BUTTON_DOWN   0x04
@@ -101,6 +103,12 @@
 #define BUTTON_PAUSE  0x20
 #define BUTTON_AUX1   0x40
 #define BUTTON_AUX2   0x80
+//buttons bits for Marlin as NEWPANEL
+#define EN_A  0x01	// enc_a - reserved
+#define EN_B  0x02	// enc_b - reserved
+#define EN_C  0x04	// enc_but
+#define EN_D  0x08	// back ??
+#define KILL  0x10
 
 //led bits
 #define LED_HOTEND	0x01
@@ -111,11 +119,14 @@
 
 //icon bits
 #define	PIC_LOGO	0x01
-#define	PIC_HOT1	0x02
-#define	PIC_HOT2	0x04
-#define	PIC_HOT3	0x08
+#define	PIC_HE1		0x02
+#define	PIC_HE2		0x04
+#define	PIC_HE3		0x08
 #define	PIC_BED		0x10
 #define	PIC_FAN		0x20
-#define PIC_MASK	PIC_FAN | PIC_BED | PIC_HOT3 | PIC_HOT2 | PIC_HOT1 | PIC_LOGO
+#define PIC_HOT     0x40
+#define PIC_MASK	PIC_HOT | PIC_FAN | PIC_BED | PIC_HE3 | PIC_HE2 | PIC_HE1 | PIC_LOGO
 
+#define	TEST_PORT	GPIOB
+#define	TEST_PIN	GPIO_Pin_5
 #endif
