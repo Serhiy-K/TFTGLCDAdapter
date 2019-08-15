@@ -553,7 +553,6 @@ void handle_command()
 						else				Print_Line(i, cour_row);
 					}
 				}
-				toread = 0;
 			}
 			break;
 
@@ -574,6 +573,7 @@ void handle_command()
 			break;
 	}
 	new_command = 0;
+	toread = 0;
 }
 //#################################################################################
 //For Marlin

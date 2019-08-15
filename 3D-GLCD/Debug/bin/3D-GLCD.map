@@ -927,13 +927,13 @@ LOAD d:/devel/arm/gcc-5_4_2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../
 .igot.plt       0x20000498        0x0 load address 0x0800d3a0
  .igot.plt      0x20000498        0x0 d:/devel/arm/gcc-5_4_2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/crtbegin.o
 
-.bss            0x20000498      0x108 load address 0x0800d3a0
+.bss            0x20000498      0x10c load address 0x0800d3a0
                 0x20000498                . = ALIGN (0x4)
                 0x20000498                __bss_start__ = .
                 0x20000498                _sbss = __bss_start__
  *(.bss*)
  .bss           0x20000498       0x1c d:/devel/arm/gcc-5_4_2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/crtbegin.o
- .bss           0x200004b4       0x12 ..\obj\protocol.o
+ .bss           0x200004b4       0x13 ..\obj\protocol.o
                 0x200004b4                new_command
                 0x200004b5                protocol
                 0x200004b6                cour_leds
@@ -945,38 +945,41 @@ LOAD d:/devel/arm/gcc-5_4_2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../
                 0x200004be                buzzer_on
                 0x200004c0                row_offset
                 0x200004c2                cour_row
-                0x200004c3                toread
                 0x200004c4                freq
- .bss           0x200004c6        0x4 ..\obj\systick.o
+                0x200004c6                toread
+ *fill*         0x200004c7        0x1 
+ .bss           0x200004c8        0x4 ..\obj\systick.o
  *(COMMON)
- COMMON         0x200004ca       0xcb ..\obj\protocol.o
-                0x200004ca                data
-                0x20000594                encdiff
- *fill*         0x20000595        0x1 
- COMMON         0x20000596        0xa ..\obj\LCD.o
-                0x20000596                TCH
-                0x20000598                TCL
-                0x2000059a                BCH
-                0x2000059c                Xcour
-                0x2000059e                BCL
-                0x200005a0                . = ALIGN (0x4)
-                0x200005a0                __bss_end__ = .
-                0x200005a0                _ebss = __bss_end__
+ COMMON         0x200004cc       0xcb ..\obj\protocol.o
+                0x200004cc                data
+                0x20000596                encdiff
+ *fill*         0x20000597        0x1 
+ COMMON         0x20000598        0xa ..\obj\LCD.o
+                0x20000598                TCH
+                0x2000059a                TCL
+                0x2000059c                BCH
+                0x2000059e                Xcour
+                0x200005a0                BCL
+                0x200005a4                . = ALIGN (0x4)
+ *fill*         0x200005a2        0x2 
+                0x200005a4                __bss_end__ = .
+                0x200005a4                _ebss = __bss_end__
 
-.heap           0x200005a0        0x0
-                0x200005a0                __end__ = .
-                0x200005a0                _end = __end__
-                0x200005a0                end = __end__
+.heap           0x200005a4        0x0
+                0x200005a4                __end__ = .
+                0x200005a4                _end = __end__
+                0x200005a4                end = __end__
  *(.heap*)
-                0x200005a0                __HeapLimit = .
+                0x200005a4                __HeapLimit = .
 
-.co_stack       0x200005a0      0x400 load address 0x0800d4a8
-                0x200005a0                . = ALIGN (0x8)
+.co_stack       0x200005a4      0x404 load address 0x0800d4ac
+                0x200005a8                . = ALIGN (0x8)
+ *fill*         0x200005a4        0x4 
  *(.co_stack .co_stack.*)
- .co_stack      0x200005a0      0x400 ..\obj\startup_stm32f10x_md.o
-                0x200005a0                pulStack
+ .co_stack      0x200005a8      0x400 ..\obj\startup_stm32f10x_md.o
+                0x200005a8                pulStack
                 0x20005000                __StackTop = (ORIGIN (ram) + LENGTH (ram))
-                0x20004c00                __StackLimit = (__StackTop - SIZEOF (.co_stack))
+                0x20004bfc                __StackLimit = (__StackTop - SIZEOF (.co_stack))
                 0x20005000                PROVIDE (__stack, __StackTop)
                 0x00000001                ASSERT ((__StackLimit >= __HeapLimit), region ram  overflowed with stack)
 LOAD ..\obj\stm32f10x_tim.o

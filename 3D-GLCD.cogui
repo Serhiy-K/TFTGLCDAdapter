@@ -19,7 +19,7 @@
 </editorArea>
 <editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/protocol.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="16466" selectionTopPixel="11555"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="16007" selectionTopPixel="10905"/>
 </editor>
 </editors>
 <views>
