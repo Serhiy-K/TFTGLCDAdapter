@@ -1,5 +1,5 @@
 /******************************************************************************
- ILI9325 Graphics Library, 8-bit parallel data bus
+ Graphics Library, 8-bit parallel data bus
 ******************************************************************************/
 #include "LCD.h"
 #include "systick.h"
@@ -9,6 +9,7 @@ volatile uint16_t BCH, BCL;
 uint16_t Xcour;
 extern uint8_t	protocol;
 
+#ifdef ILI9325
 /******************************************************************************
  Description    : Write data to LCD reg
  Input          : RegisterIndex, data
@@ -21,6 +22,27 @@ static __inline void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 
 	LCD_DATA(Data >> 8);	LCD_DATA(Data & 0x00ff);
 }
+#endif
+#ifdef ILI9327
+/******************************************************************************
+ Description    : Write data to LCD reg
+ Input          : RegisterIndex, data
+******************************************************************************/
+static __inline void Lcd_Write_Com(uint8_t RegisterIndex)
+{
+	RS_LCD_clr;
+	LCD_DATA(0x00);	LCD_DATA(RegisterIndex);
+	RS_LCD_set;
+}
+/******************************************************************************
+ Description    : Write data to LCD
+ Input          : data
+******************************************************************************/
+static __inline void Lcd_Write_Data(uint8_t Data)
+{
+	LCD_DATA(0x00);	LCD_DATA(Data);
+}
+#endif
 /******************************************************************************
  Description    : Fill screen with one color
  Input          : Color
@@ -66,12 +88,13 @@ void LCD_ClearArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1po
 void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 {
 	CS_LCD_clr;
+#ifdef ILI9325
 #ifdef	PORTRET
 	Set_LCD_REG(0x50, X0);
 	Set_LCD_REG(0x51, X1);
 	Set_LCD_REG(0x52, Y0);
 	Set_LCD_REG(0x53, Y1);
-
+	//set cursor
 	Set_LCD_REG(0x20, X0);
 	Set_LCD_REG(0x21, Y1);
 #else
@@ -83,8 +106,41 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	Set_LCD_REG(0x21, X0);
 	Set_LCD_REG(0x20, Y1);
 #endif
+#endif	//ILI9325
+
+#ifdef ILI9327
+#ifdef	PORTRET
+	Lcd_Write_Com(0x2A);
+	Lcd_Write_Data(X0 >> 8);
+	Lcd_Write_Data(X0);
+	Lcd_Write_Data(X1 >> 8);
+	Lcd_Write_Data(X1);
+	Lcd_Write_Com(0x2B);
+	Lcd_Write_Data(Y0 >> 8);
+	Lcd_Write_Data(Y0);
+	Lcd_Write_Data(Y1 >> 8);
+	Lcd_Write_Data(Y1);
+#else
+	Lcd_Write_Com(0x2A);
+	Lcd_Write_Data(Y0 >> 8);
+	Lcd_Write_Data(Y0);
+	Lcd_Write_Data(Y1 >> 8);
+	Lcd_Write_Data(Y1);
+	Lcd_Write_Com(0x2B);
+	Lcd_Write_Data(X0 >> 8);
+	Lcd_Write_Data(X0);
+	Lcd_Write_Data(X1 >> 8);
+	Lcd_Write_Data(X1);
+#endif
+#endif	//ILI9327
+
 	RS_LCD_clr;
+#ifdef ILI9325
 	LCD_DATA(0x00);	LCD_DATA(0x22);	//lcd_Draw_Start
+#endif
+#ifdef ILI9327
+	LCD_DATA(0x00);	LCD_DATA(0x2C);	//lcd_Draw_Start
+#endif
 	RS_LCD_set;
 }
 /******************************************************************************
@@ -147,7 +203,8 @@ void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos)
 }
 /******************************************************************************
  Description    : Convert Russian char from HD44780 encoding to ASCII
- Input          : char c
+ Input          : HD44780 char c
+ Output         : ASCII char c
 ******************************************************************************/
 uint8_t HD44780_to_ASCII(char c)
 {
@@ -175,7 +232,7 @@ void LCD_DrawChar(char c)
 	const char *ptr; // pointer to char data
 	uint8_t mask = 0x80;  // 0b10000000
 
-	if (protocol == Marlin)
+	if (protocol == Marlin1)
 		c = HD44780_to_ASCII(c);
 	ptr = &FONT[(uint8_t)c][0];
 	for(i = 0; i < CHAR_BYTES; i++)
@@ -252,6 +309,7 @@ void LCD_PutStrig_XY(uint16_t XPos, uint16_t YPos, char *str)
 	LCD_PutStrig(str);
 	CS_LCD_set;
 }
+#ifdef ILI9325
 /******************************************************************************
 * Function Name  : LCD_Init
 * Description    : Init ILI9325 chip
@@ -359,3 +417,91 @@ void LCD_Init(void)
 	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
 	LCD_PutStrig_XY(4, 5,     "connection..");
 }
+#endif
+#ifdef ILI9327
+/******************************************************************************
+* Function Name  : LCD_Init
+* Description    : Init ILI9327 chip
+******************************************************************************/
+void LCD_Init(void)
+{
+	CS_LCD_set;
+	WR_LCD_set;
+	RS_LCD_set;
+
+	/* Reset chip */
+   	RES_LCD_clr;
+   	delay_ms(10);
+   	RES_LCD_set;
+   	delay_ms(50);
+   	CS_LCD_clr;
+   	delay_ms(100);			/* Wait Stability */
+
+   	//for 8-bit interface
+   	RS_LCD_clr;
+   	LCD_DATA(0x00);	LCD_DATA(0x00);	LCD_DATA(0x00);	LCD_DATA(0x00);
+   	RS_LCD_set
+
+   	Lcd_Write_Com(0xE9);
+	Lcd_Write_Data(0x20);
+	Lcd_Write_Com(0x11);	//Exit Sleep
+	delay_ms(100);
+	Lcd_Write_Com(0xD1);	//VCOM Control
+	Lcd_Write_Data(0x00);	Lcd_Write_Data(0x71);	Lcd_Write_Data(0x19);
+	Lcd_Write_Com(0xD0);	//Power_Setting
+	Lcd_Write_Data(0x07);	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x08);
+
+	Lcd_Write_Com(0x36);	//output orientation
+/*
+	Bit B7 – Page Address Order :	0 = Top to Bottom	1 = Bottom to Top
+	Bit B6 – Column Address Order:	0 = Left to Right	1 = Right to Left
+	Bit B5 – Page/Column Order:		0 = Normal Mode		1 = Reverse Mode
+	Bit B4 –Line Address Order:		0 = LCD Refresh Top to Bottom	1 = LCD Refresh Bottom to Top
+	Bit B3 – RGB/BGR Order:			0 = RGB order		1 = BGR order
+	Bit B2 –Display Data Latch Data Order:	This bit is set to ‘0’. (Not supported)
+	Bit B1 – Horizontal Flip:		0 = Normal display	1 = Flipped display
+	Bit B0 – Vertical Flip:			0 = Normal display	1 = Flipped display
+*/
+#ifdef	PORTRET_T
+	Lcd_Write_Data(0b10101000);
+#endif
+#ifdef	PORTRET_B
+	Lcd_Write_Data(0b01101000);
+#endif
+#ifdef	LANDSCAPE_L
+	Lcd_Write_Data(0b00001000);
+#endif
+#ifdef	LANDSCAPE_R
+	Lcd_Write_Data(0b11001000);
+#endif
+
+	Lcd_Write_Com(0x3A);	//set_pixel_format
+	Lcd_Write_Data(0x05);	//16bit/pixel
+	Lcd_Write_Com(0xC1);	//Display_Timing_Setting for Normal/Partial Mode
+	Lcd_Write_Data(0x10);	Lcd_Write_Data(0x10);	Lcd_Write_Data(0x02);	Lcd_Write_Data(0x02);
+	Lcd_Write_Com(0xC0);	//Panel Driving Setting
+	Lcd_Write_Data(0x00);	Lcd_Write_Data(0x35);	Lcd_Write_Data(0x00);
+	Lcd_Write_Data(0x00);	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x02);
+	Lcd_Write_Com(0xC5);	//Set frame rate
+	Lcd_Write_Data(0x04);
+	Lcd_Write_Com(0xD2);	//power setting
+	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x44);
+	Lcd_Write_Com(0xC8);	//Set Gamma
+	Lcd_Write_Data(0x04);	Lcd_Write_Data(0x67);	Lcd_Write_Data(0x35);	Lcd_Write_Data(0x04);	Lcd_Write_Data(0x08);
+	Lcd_Write_Data(0x06);	Lcd_Write_Data(0x24);	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x37);	Lcd_Write_Data(0x40);
+	Lcd_Write_Data(0x03);	Lcd_Write_Data(0x10);	Lcd_Write_Data(0x08);	Lcd_Write_Data(0x80);	Lcd_Write_Data(0x00);
+	Lcd_Write_Com(0x29);	//display on
+	Lcd_Write_Com(0x2C);	//display on
+
+	CS_LCD_set;
+
+	LCD_FillScreen(BackColor);
+	LCD_Set_TextColor(Yellow, Blue);
+	LCD_PutStrig_XY(0, 0, "                         ");
+	LCD_PutStrig_XY(0, 1, "    TFT GLCD Adapter     ");
+	LCD_PutStrig_XY(0, 2, "                         ");
+	LCD_Set_TextColor(White, BackColor);
+	LCD_PutStrig_XY(0, 4, "   Waiting for printer   ");
+	LCD_PutStrig_XY(6, 5,       "connection...");
+}
+#endif

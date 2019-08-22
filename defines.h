@@ -4,17 +4,30 @@
 #include <stdint.h>
 #include "stm32f10x_gpio.h"
 
-enum protocols {Marlin = 0, Smoothie = 1};
+enum protocols {Smoothie = 0, Marlin1 = 1, Marlin2 = 2};
+
+//select one LCD
+#define ILI9325
+//#define ILI9327
+
+#ifdef ILI9325
+#define	LCDMIN	240
+#define	LCDMAX	320
+#endif
+#ifdef ILI9327
+#define	LCDMIN	240
+#define	LCDMAX	400
+#endif
 
 //display orientations
 #ifdef	PORTRET
-#define	LCDXMAX	240
-#define	LCDYMAX	320
-#define	PORTRET_B
-//#define	PORTRET_T
+#define	LCDXMAX	LCDMIN
+#define	LCDYMAX	LCDMAX
+#define	PORTRET_T
+//#define	PORTRET_B
 #else
-#define	LCDXMAX	320
-#define	LCDYMAX	240
+#define	LCDXMAX	LCDMAX
+#define	LCDYMAX	LCDMIN
 #define	LANDSCAPE_L
 //#define	LANDSCAPE_R
 #endif
@@ -103,7 +116,7 @@ enum protocols {Marlin = 0, Smoothie = 1};
 #define BUTTON_PAUSE  0x20
 #define BUTTON_AUX1   0x40
 #define BUTTON_AUX2   0x80
-//buttons bits for Marlin as NEWPANEL
+//buttons bits for Marlin as for NEWPANEL
 #define EN_A  0x01	// enc_a - reserved
 #define EN_B  0x02	// enc_b - reserved
 #define EN_C  0x04	// enc_but

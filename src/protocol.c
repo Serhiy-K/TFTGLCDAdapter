@@ -7,33 +7,25 @@
 #include "systick.h"
 
 #define pic_Ymin	LCDYMAX - 48
-#define pic_Ymax	pic_Ymin + 47
 //for one extruder config
 #define	pic1_Xmin1	16
-#define	pic1_Xmax1	pic1_Xmin + 47
 #define	pic2_Xmin1	96
-#define	pic2_Xmax1	pic2_Xmin + 47
 #define	pic3_Xmin1	176
-#define	pic3_Xmax1	pic3_Xmin + 47
-#define led_Xmin1	256
-#define	led_Xmax1	led_Xmin + 47
-#define led_Ymin1	pic_Ymin
-#define led_Ymax1	pic_Ymax
+#define pic4_Xmin1	256
 //for multy-extruders config
 #define	pic1_Xmin	0
-#define	pic1_Xmax	pic1_Xmin + 47
 #define	pic2_Xmin	64
-#define	pic2_Xmax	pic2_Xmin + 47
 #define	pic3_Xmin	128
-#define	pic3_Xmax	pic3_Xmin + 47
 #define	pic4_Xmin	208
-#define	pic4_Xmax	pic4_Xmin + 47
-#define	pic5_Xmin	LCDXMAX - 48
-#define	pic5_Xmax	pic5_Xmin + 47
-#define led_Xmin	pic5_Xmin
-#define	led_Xmax	pic5_Xmin + 47
-#define led_Ymin	LCDYMAX - 48 - 60
-#define led_Ymax	pic_Ymin + 47
+#define	pic5_Xmin	272
+#ifdef ILI9325
+#define pic6_Xmin	pic5_Xmin
+#define pic6_Ymin	pic_Ymin - 60
+#endif
+#ifdef ILI9327
+#define pic6_Xmin	336
+#define pic6_Ymin	pic_Ymin
+#endif
 
 #define PROGRESS_COLOR	Yellow
 
@@ -46,6 +38,9 @@ enum Commands {
 	LCD_WRITE,
 	BUZZER,
 	CONTRAST,
+	// Other commands... 0xE0 thru 0xFF
+	GET_LCD_ROW = 0xE0,
+	GET_LCD_COL,
 	CLEAR_BUFFER,
 	REDRAW,
 	INIT = 0xFE,  // Initialize
@@ -60,14 +55,13 @@ uint8_t	cmd = 0;
 int16_t pos = -1;
 uint8_t toread = 0;
 uint8_t	new_command = 0;
-uint8_t	buzzer_on = 0;
 uint8_t	cour_pics = 0;
 uint8_t	cour_leds = 0;
 uint8_t	temps = 1;
 uint8_t	cour_row = 0;
 uint16_t row_offset = 0;
 uint8_t progress_cleared = 0;
-uint8_t	protocol = Marlin;
+uint8_t	protocol = Smoothie;
 uint16_t freq = 0, duration = 0;
 uint16_t dot_pos_x = CHAR_WIDTH;
 uint16_t dot_pos_y = 7 * CHAR_HEIGTH;
@@ -180,7 +174,7 @@ void Print_Temps()
 			}
 		}
 	}
-	else
+	else if (protocol == Marlin1)
 	{
 		LCD_SetCursor(0, 5);	for (x = 0; x < 16; x++)	LCD_DrawChar(data[100 + x]);
 		LCD_SetCursor(0, 6);	for (x = 0; x < 16; x++)	LCD_DrawChar(data[120 + x]);
@@ -204,36 +198,13 @@ uint8_t Get_Buttons()
 		if ((BTN_PORTB->IDR & BUTTON_PIN4) == 0)	b |= BUTTON_AUX1;
 		if ((BTN_PORTB->IDR & BUTTON_PIN5) == 0)	b |= BUTTON_AUX2;
 	}
-	else
+	else if (protocol == Marlin1)
 	{
 		if ((ENC_PORT->IDR & ENC_BUT) == 0)			b |= EN_C;
 		if ((BTN_PORTA->IDR & BUTTON_PIN1) == 0)	b |= EN_D;
 		if ((BTN_PORTA->IDR & BUTTON_PIN2) == 0)	b |= KILL;
 	}
 	return b;
-}
-//----------------------------------------------------------------------------
-void SetLeds()
-{
-	uint8_t leds;
-
-	leds = data[FB_SIZE - 1];
-	leds &= LED_MASK;
-
-	if ((cour_leds & LED_HOT) != (leds & LED_HOT))
-	{
-		if (leds & LED_HOT)
-		{
-			if (temps == 1)	LCD_Draw_Picture (led_Xmin1, led_Ymin1, &heat_48x48[0]);
-			else			LCD_Draw_Picture (led_Xmin, led_Ymin, &heat_48x48[0]);
-		}
-		else
-		{
-			if (temps == 1)	LCD_Clear_Picture(led_Xmin1, led_Ymin1);
-			else			LCD_Clear_Picture(led_Xmin, led_Ymin);
-		}
-	}
-	cour_leds = leds;
 }
 //----------------------------------------------------------------------------
 void buzzer()
@@ -243,6 +214,29 @@ void buzzer()
 		TIM3->BUZZER_CCR = 127;
 		TIM2->CR1 |= TIM_CR1_CEN;
 	}
+}
+//----------------------------------------------------------------------------
+void SetLeds()
+{
+	uint8_t leds;
+
+	leds = data[FB_SIZE - 1];
+	leds &= LED_MASK;
+
+	if (((cour_leds & LED_HOT) != (leds & LED_HOT)) && !(cour_pics & PIC_LOGO))
+	{
+		if (leds & LED_HOT)
+		{
+			if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+			else			LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+		}
+		else
+		{
+			if (temps == 1)	LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
+			else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+		}
+	}
+	cour_leds = leds;
 }
 //----------------------------------------------------------------------------
 void DrawIcons()
@@ -258,7 +252,7 @@ void DrawIcons()
 	{	//Text Logo
 		LCD_Set_TextColor(Yellow, Blue);
 		if (protocol == Smoothie)
-		{
+		{	//only on SPI bus
 		    NVIC_DisableIRQ(I2C_IRQ);
 		    NVIC_DisableIRQ(I2C_ERR_IRQ);
 		    I2C_Cmd(I2C, DISABLE);
@@ -268,7 +262,7 @@ void DrawIcons()
 			LCD_DrawChar_XY(4, 6, 179);	LCD_PutStrig(" Hardware ");	LCD_DrawChar(179);	CS_LCD_set;
 			LCD_DrawChar_XY(4, 7, 192);	LCD_PutStrig(&border[0]);	LCD_DrawChar(217);	CS_LCD_set;
 		}
-		else
+		else if (protocol == Marlin1)
 		{	//Text Logo from Marlin
 			NVIC_DisableIRQ(SPI_IRQ);
 			SPI_Cmd(SPI, DISABLE);
@@ -286,12 +280,13 @@ void DrawIcons()
 						LCD_DrawChar(data[i++]);
 				}
 			}
+			CS_LCD_set;
 		}
-		CS_LCD_set;
 		LCD_Set_TextColor(White, BackColor);
 		duration = 500;
 		buzzer();
 	}
+
 	if (temps == 1)
 	{
 		if ((cour_pics & PIC_HE1) != (pics & PIC_HE1))
@@ -311,8 +306,8 @@ void DrawIcons()
 		}
 		if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
 		{
-			if (pics & PIC_HOT)	LCD_Draw_Picture (led_Xmin1, led_Ymin1, &heat_48x48[0]);
-			else				LCD_Clear_Picture(led_Xmin1, led_Ymin1);
+			if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+			else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
 		}
 	}
 	else
@@ -344,8 +339,8 @@ void DrawIcons()
 		}
 		if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
 		{
-			if (pics & PIC_HOT)	LCD_Draw_Picture (led_Xmin, led_Ymin, &heat_48x48[0]);
-			else				LCD_Clear_Picture(led_Xmin, led_Ymin);
+			if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+			else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
 		}
 	}
 	cour_pics = pics;
@@ -387,7 +382,7 @@ void UBL_Draw_Dot()
 uint8_t  Get_Progress()
 {
 	uint8_t percent;
-	percent = data[58] - '0';
+	percent = data[58] - '0';	//fixed position
 	if (data[57] != ' ')	percent += (data[57] - '0') * 10;
 	if (data[56] == '1')	percent = 100;
 	return percent;
@@ -399,11 +394,11 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 
 	const uint16_t pb_colors[] = {0xfc00, 0xfcc0, 0xfd80, 0xfe40, 0xff20, 0xffe0, 0xcfe0, 0x97e0, 0x67e0, 0x37e0, 0x07e0};
 
-#define XMIN	(LCDXMAX - 302) / 2	//center to text line
+#define XMIN	(LCDXMAX - 302) / 2	//center progress bar to text line
 #define XMAX	XMIN + 302			//100% * 3 + 2 for frame
 
-	ymin = y * CHAR_HEIGTH;
-	ymax = ymin + CHAR_HEIGTH - 1;
+	ymin = y * CHAR_HEIGTH + 1;
+	ymax = ymin + CHAR_HEIGTH - 2;
 
 	if (progress_cleared == 0)
 	{ // after return from long menu
@@ -464,6 +459,8 @@ void handle_command()
 	switch(cmd)
 	{
 		case INIT:
+			protocol = data[0];
+			progress_cleared = 0;
 			LCD_FillScreen(BackColor);
 
 		case CLEAR_BUFFER:
@@ -511,16 +508,10 @@ void handle_command()
 						CS_LCD_set;
 					}
 				}
-				if (buzzer_on)
-				{
-					TIM3->BUZZER_CCR = 127;
-					buzzer_on = 0;
-				}
-				else
-					TIM3->BUZZER_CCR = 0;
 			}
-			else // Marlin
-			{ //print all screen or one line
+			else
+			{
+			//print all screen or one line
 				if (data[FB_SIZE - 2] & PIC_LOGO)
 					DrawIcons();
 				else
@@ -554,17 +545,14 @@ void handle_command()
 					}
 				}
 			}
-			break;
+			break;	//LCD_WRITE
 
 		case BUZZER:
-			if (protocol == Marlin)
-			{
-				duration = data[0] << 8;
-				duration += data[1];
-				freq = data[2] << 8;
-				freq += data[3];
-				buzzer();
-			}
+			duration = data[0] << 8;
+			duration += data[1];
+			freq = data[2] << 8;
+			freq += data[3];
+			buzzer();
 			break;
 
 		case CONTRAST:
@@ -576,7 +564,6 @@ void handle_command()
 	toread = 0;
 }
 //#################################################################################
-//For Marlin
 void TIM2_IRQHandler(void)
 {
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
@@ -597,7 +584,7 @@ void I2C2_EV_IRQHandler(void)
 	event = I2C_GetLastEvent(I2C);
 
 	switch (event)	{
-	// Slave RECEIVER mode
+		// Slave RECEIVER mode
 	    case I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED:	//EV1
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_RECEIVED:	//EV2
@@ -605,7 +592,7 @@ void I2C2_EV_IRQHandler(void)
 	    	if (toread == 0)
 	    	{// command
 	    		cmd = b;	pos = -1;
-		    	if ((b == LCD_WRITE) || (b == BUZZER) || (b == CONTRAST)) toread = 1; //read data for command
+		    	if ((b == INIT) || (b == CONTRAST) || (b == BUZZER) || (b == LCD_WRITE)) toread = 1; //read data for command
 	    	}
 	    	else
 	    	{
@@ -635,14 +622,19 @@ void I2C2_EV_IRQHandler(void)
 	    	while ((I2C->SR1 & I2C_SR1_ADDR) == I2C_SR1_ADDR) { I2C->SR1; I2C->SR2; }	// ADDR-Flag clear
 	    	while ((I2C->SR1 & I2C_SR1_STOPF) == I2C_SR1_STOPF) { I2C->SR1; I2C->CR1 |= 0x1; }	// STOPF Flag clear
 	    	break;
-	// Slave TRANSMITTER mode
+	    // Slave TRANSMITTER mode
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
-	    	encdiff = (int8_t)TIM1->CNT;	TIM1->CNT = 0;	I2C->DR = encdiff;	//EV3_1
+	    	switch (cmd)
+	    	{
+	    		case READ_BUTTONS:	I2C->DR = Get_Buttons();	break;
+	    		case READ_ENCODER:	encdiff = (int8_t)TIM1->CNT;	TIM1->CNT = 0;	I2C->DR = encdiff;	break;
+	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	break;
+	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	break;
+	    	}
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTING:	//EV3
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:	//EV3 - next data
-	    	I2C->DR = Get_Buttons();
 	    	break;
 	}
 }
@@ -652,13 +644,10 @@ void I2C2_ER_IRQHandler(void)
 	I2C->SR1 &= 0x00FF;
 }
 //----------------------------------------------------------------------------
-// for Smoothie
 void SPI2_IRQHandler(void)
 {
 	uint8_t b = SPI->DR;  // grab byte from SPI Data Register, reset Interrupt flag
 	int16_t c;
-
-	protocol = Smoothie;
 
 	if (toread == 0)
 	{// command
@@ -667,10 +656,14 @@ void SPI2_IRQHandler(void)
 			case GET_SPI_DATA:	return;	//for reading data
 			case READ_BUTTONS:	SPI->DR = Get_Buttons();	return;
 			case READ_ENCODER:	c = TIM1->CNT;	TIM1->CNT = 0;	SPI->DR = (int8_t)c; return;
-			case INIT:			cmd = b;	new_command = 1;	return;
 			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
-			case BUZZER:		buzzer_on = 1;	return;
-			case CONTRAST:		cmd = b;	toread = 1;		pos = 0;	return;
+			case BUZZER:		cmd = b;	toread = 4;	pos = 0;	return;
+			case CONTRAST:		cmd = b;	toread = 1;	pos = 0;	return;
+			case GET_LCD_ROW:	SPI->DR = TEXT_LINES;	return;
+			case GET_LCD_COL:	SPI->DR = CHARS_PER_LINE;	return;
+			case CLEAR_BUFFER:	cmd = b;	new_command = 1;	return;
+			case REDRAW: 		cmd = LCD_WRITE;	toread = 0; new_command = 1;	return;
+			case INIT:			cmd = b;	toread = 1;	pos = 0;	return;
 		}
 	}
 	else
