@@ -2,6 +2,7 @@
  Graphics Library, 8-bit parallel data bus
 ******************************************************************************/
 #include "LCD.h"
+#include "Pictures.h"
 #include "systick.h"
 
 volatile uint16_t TCH, TCL;
@@ -31,16 +32,8 @@ static __inline void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 static __inline void Lcd_Write_Com(uint8_t RegisterIndex)
 {
 	RS_LCD_clr;
-	LCD_DATA(0x00);	LCD_DATA(RegisterIndex);
+	LCD_DATA(RegisterIndex);
 	RS_LCD_set;
-}
-/******************************************************************************
- Description    : Write data to LCD
- Input          : data
-******************************************************************************/
-static __inline void Lcd_Write_Data(uint8_t Data)
-{
-	LCD_DATA(0x00);	LCD_DATA(Data);
 }
 #endif
 /******************************************************************************
@@ -89,15 +82,6 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 {
 	CS_LCD_clr;
 #ifdef ILI9325
-#ifdef	PORTRET
-	Set_LCD_REG(0x50, X0);
-	Set_LCD_REG(0x51, X1);
-	Set_LCD_REG(0x52, Y0);
-	Set_LCD_REG(0x53, Y1);
-	//set cursor
-	Set_LCD_REG(0x20, X0);
-	Set_LCD_REG(0x21, Y1);
-#else
 	Set_LCD_REG(0x52, X0);
 	Set_LCD_REG(0x53, X1);
 	Set_LCD_REG(0x50, Y0);
@@ -105,32 +89,24 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 
 	Set_LCD_REG(0x21, X0);
 	Set_LCD_REG(0x20, Y1);
-#endif
 #endif	//ILI9325
-
 #ifdef ILI9327
-#ifdef	PORTRET
 	Lcd_Write_Com(0x2A);
-	Lcd_Write_Data(X0 >> 8);
-	Lcd_Write_Data(X0);
-	Lcd_Write_Data(X1 >> 8);
-	Lcd_Write_Data(X1);
+	LCD_DATA(Y0 >> 8);
+	LCD_DATA(Y0);
+	LCD_DATA(Y1 >> 8);
+	LCD_DATA(Y1);
 	Lcd_Write_Com(0x2B);
-	Lcd_Write_Data(Y0 >> 8);
-	Lcd_Write_Data(Y0);
-	Lcd_Write_Data(Y1 >> 8);
-	Lcd_Write_Data(Y1);
+#ifdef LANDSCAPE_L
+	LCD_DATA(X0 >> 8);
+	LCD_DATA(X0);
+	LCD_DATA(X1 >> 8);
+	LCD_DATA(X1);
 #else
-	Lcd_Write_Com(0x2A);
-	Lcd_Write_Data(Y0 >> 8);
-	Lcd_Write_Data(Y0);
-	Lcd_Write_Data(Y1 >> 8);
-	Lcd_Write_Data(Y1);
-	Lcd_Write_Com(0x2B);
-	Lcd_Write_Data(X0 >> 8);
-	Lcd_Write_Data(X0);
-	Lcd_Write_Data(X1 >> 8);
-	Lcd_Write_Data(X1);
+	LCD_DATA(X0 >> 8);
+	LCD_DATA(X0);
+	LCD_DATA(X1 >> 8);
+	LCD_DATA(X1);
 #endif
 #endif	//ILI9327
 
@@ -139,7 +115,7 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA(0x00);	LCD_DATA(0x22);	//lcd_Draw_Start
 #endif
 #ifdef ILI9327
-	LCD_DATA(0x00);	LCD_DATA(0x2C);	//lcd_Draw_Start
+	LCD_DATA(0x2C);	//lcd_Draw_Start
 #endif
 	RS_LCD_set;
 }
@@ -147,14 +123,14 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
  Description    : Draw picture 48õ48
  Input          : X0pos, Y0pos, *pic
 ******************************************************************************/
-void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const uint16_t *pic)
+void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const char *pic)
 {
 	uint16_t i;
 
 	LCD_SetArea(X0pos, Y0pos, X0pos + 47, Y0pos + 47 );
 	for (i = 0; i < 2304; i++)
 	{
-		LCD_DATA(*pic >> 8);	LCD_DATA(*pic & 0x00ff);
+		LCD_DATA(colors[*pic - 'A'] >> 8);	LCD_DATA(colors[*pic - 'A'] & 0x00ff);
 		pic++;
 	}
 	CS_LCD_set;
@@ -334,26 +310,15 @@ void LCD_Init(void)
    	RS_LCD_set
 
    	Set_LCD_REG(0x02, 0x0200); // set 1 line inversion
-#ifdef	PORTRET_T
-   	Set_LCD_REG(0x01, 0x0000); // set SS and SM bit
-   	Set_LCD_REG(0x03, 0x1018); // set GRAM write direction and BGR=1.
-   	Set_LCD_REG(0x60, 0x2700); // Gate Scan Line
-#endif
-#ifdef	PORTRET_B
-   	Set_LCD_REG(0x01, 0x0100); // set SS and SM bit
-   	Set_LCD_REG(0x03, 0x1018); // set GRAM write direction and BGR=1.
-   	Set_LCD_REG(0x60, 0xA700); // Gate Scan Line
-#endif
 #ifdef	LANDSCAPE_L
-   	Set_LCD_REG(0x01, 0x0100); // set SS and SM bit
-   	Set_LCD_REG(0x03, 0x1020); // set GRAM write direction and BGR=1.
-   	Set_LCD_REG(0x60, 0x2700); // Gate Scan Line
+   	Set_LCD_REG(0x01, 0x0100); // set SS=1 and SM=0 bit
+   	Set_LCD_REG(0x60, 0x2700); // set GS=0 bit
+#else
+   	Set_LCD_REG(0x01, 0x0000); // set SS=0 and SM=0 bit
+   	Set_LCD_REG(0x60, 0xA700); // set GS bit
 #endif
-#ifdef	LANDSCAPE_R
-   	Set_LCD_REG(0x01, 0x0000); // set SS and SM bit
-   	Set_LCD_REG(0x03, 0x1020); // set GRAM write direction and BGR=1.
-   	Set_LCD_REG(0x60, 0xA700); // Gate Scan Line
-#endif
+   	//xx0 BGR 0000 ORG 0 ID1 ID0 AM 000
+   	Set_LCD_REG(0x03, 0x1020); // set BGR=1, GRAM write direction ID=2.
    	Set_LCD_REG(0x04, 0x0000); // Resize register
    	Set_LCD_REG(0x08, 0x0207); // set the back porch and front porch
    	Set_LCD_REG(0x09, 0x0000); // set non-display area refresh cycle ISC[3:0]
@@ -443,14 +408,18 @@ void LCD_Init(void)
    	RS_LCD_set
 
    	Lcd_Write_Com(0xE9);
-	Lcd_Write_Data(0x20);
+	LCD_DATA(0x20);
 	Lcd_Write_Com(0x11);	//Exit Sleep
 	delay_ms(100);
 	Lcd_Write_Com(0xD1);	//VCOM Control
-	Lcd_Write_Data(0x00);	Lcd_Write_Data(0x71);	Lcd_Write_Data(0x19);
+	LCD_DATA(0x00);	LCD_DATA(0x71);	LCD_DATA(0x19);
 	Lcd_Write_Com(0xD0);	//Power_Setting
-	Lcd_Write_Data(0x07);	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x08);
+	LCD_DATA(0x07);	LCD_DATA(0x01);	LCD_DATA(0x08);
 
+	Lcd_Write_Com(0x3A);	//set_pixel_format
+	LCD_DATA(0x05);			//16bit/pixel
+	Lcd_Write_Com(0xC1);	//Display_Timing_Setting for Normal/Partial Mode
+	LCD_DATA(0x10);	LCD_DATA(0x10);	LCD_DATA(0x02);	LCD_DATA(0x02);
 	Lcd_Write_Com(0x36);	//output orientation
 /*
 	Bit B7 – Page Address Order :	0 = Top to Bottom	1 = Bottom to Top
@@ -462,34 +431,23 @@ void LCD_Init(void)
 	Bit B1 – Horizontal Flip:		0 = Normal display	1 = Flipped display
 	Bit B0 – Vertical Flip:			0 = Normal display	1 = Flipped display
 */
-#ifdef	PORTRET_T
-	Lcd_Write_Data(0b10101000);
-#endif
-#ifdef	PORTRET_B
-	Lcd_Write_Data(0b01101000);
-#endif
-#ifdef	LANDSCAPE_L
-	Lcd_Write_Data(0b00001000);
-#endif
-#ifdef	LANDSCAPE_R
-	Lcd_Write_Data(0b11001000);
-#endif
-
-	Lcd_Write_Com(0x3A);	//set_pixel_format
-	Lcd_Write_Data(0x05);	//16bit/pixel
-	Lcd_Write_Com(0xC1);	//Display_Timing_Setting for Normal/Partial Mode
-	Lcd_Write_Data(0x10);	Lcd_Write_Data(0x10);	Lcd_Write_Data(0x02);	Lcd_Write_Data(0x02);
+	LCD_DATA(0b01001000);	//B6=1, BGR=1
 	Lcd_Write_Com(0xC0);	//Panel Driving Setting
-	Lcd_Write_Data(0x00);	Lcd_Write_Data(0x35);	Lcd_Write_Data(0x00);
-	Lcd_Write_Data(0x00);	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x02);
+#ifdef	LANDSCAPE_L
+	LCD_DATA(0b00000000);	//0,0,0, REV, SM, GS = 0, BGR, SS=0
+#else
+	LCD_DATA(0b00000101);	//0,0,0, REV, SM, GS=1, BGR, SS = 1
+#endif
+	LCD_DATA(0x35);	LCD_DATA(0x00);
+	LCD_DATA(0x00);	LCD_DATA(0x01);	LCD_DATA(0x02);
 	Lcd_Write_Com(0xC5);	//Set frame rate
-	Lcd_Write_Data(0x04);
+	LCD_DATA(0x04);
 	Lcd_Write_Com(0xD2);	//power setting
-	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x44);
+	LCD_DATA(0x01);	LCD_DATA(0x44);
 	Lcd_Write_Com(0xC8);	//Set Gamma
-	Lcd_Write_Data(0x04);	Lcd_Write_Data(0x67);	Lcd_Write_Data(0x35);	Lcd_Write_Data(0x04);	Lcd_Write_Data(0x08);
-	Lcd_Write_Data(0x06);	Lcd_Write_Data(0x24);	Lcd_Write_Data(0x01);	Lcd_Write_Data(0x37);	Lcd_Write_Data(0x40);
-	Lcd_Write_Data(0x03);	Lcd_Write_Data(0x10);	Lcd_Write_Data(0x08);	Lcd_Write_Data(0x80);	Lcd_Write_Data(0x00);
+	LCD_DATA(0x04);	LCD_DATA(0x67);	LCD_DATA(0x35);	LCD_DATA(0x04);	LCD_DATA(0x08);
+	LCD_DATA(0x06);	LCD_DATA(0x24);	LCD_DATA(0x01);	LCD_DATA(0x37);	LCD_DATA(0x40);
+	LCD_DATA(0x03);	LCD_DATA(0x10);	LCD_DATA(0x08);	LCD_DATA(0x80);	LCD_DATA(0x00);
 	Lcd_Write_Com(0x29);	//display on
 	Lcd_Write_Com(0x2C);	//display on
 

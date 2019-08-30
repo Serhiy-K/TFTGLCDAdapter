@@ -13,13 +13,18 @@
 <folder appearance="1" expanded="2">
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
+<part id="1"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/protocol.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="15394" selectionTopPixel="9243"/>
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" partName="LCD.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/LCD.c" title="LCD.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/LCD.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/LCD.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="3257" selectionTopPixel="1739"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" partName="defines.h" title="defines.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
+<editorState selectionHorizontalPixel="0" selectionLength="11" selectionOffset="430" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -103,7 +108,7 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.80093676" ratioLeft="684" ratioRight="170" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.7171271" ratioLeft="649" ratioRight="256" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
@@ -113,7 +118,7 @@
 </presentation>
 </folder>
 </info>
-<info part="org.coocox.builder.ui.exampleView" ratio="0.1936791" ratioLeft="239" ratioRight="995" relationship="2" relative="org.eclipse.ui.internal.ViewStack@7d3503"/>
+<info part="org.coocox.builder.ui.exampleView" ratio="0.21422523" ratioLeft="253" ratioRight="928" relationship="2" relative="org.eclipse.ui.internal.ViewStack@7d3503"/>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@1a9363d" ratio="0.7197171" ratioLeft="814" ratioRight="317" relationship="2" relative="org.coocox.builder.ui.exampleView">
 <folder appearance="2" expanded="2">
 <page content="org.coocox.component.ui.Help" label="LabelNotFound"/>
@@ -186,57 +191,40 @@
 <view id="org.eclipse.debug.ui.BreakpointView"/>
 <view id="org.eclipse.search.ui.views.SearchView"/>
 <view id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"/>
-<fastViewBars>
-<fastViewBar fastViewLocation="16384" id="org.eclipse.ui.internal.ViewStack@1fe39a1" orientation="512" selectedTabId="org.coocox.builder.ui.views.ProjectView" style="0">
-<fastViews>
-<view id="org.coocox.builder.ui.views.ProjectView" ratio="0.29890954"/>
+<fastViewBars>&#x0A;<fastViewBar fastViewLocation="16384" id="org.eclipse.ui.internal.ViewStack@1fe39a1" orientation="512" selectedTabId="org.coocox.builder.ui.views.ProjectView" style="0">&#x0A;<fastViews>&#x0A;<view id="org.coocox.builder.ui.views.ProjectView" ratio="0.29890954"/>
 </fastViews>
 </fastViewBar>
 </fastViewBars>
 <viewLayoutRec closeable="false" id="org.eclipse.debug.ui.DebugView"/>
-<layout>
-<mainWindow>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@1fe39a1">
-<folder appearance="2" expanded="0">
-<page content="org.coocox.builder.ui.views.ProjectView" label="LabelNotFound"/>
+<layout>&#x0A;<mainWindow>&#x0A;<info folder="true" part="org.eclipse.ui.internal.ViewStack@1fe39a1">&#x0A;<folder appearance="2" expanded="0">&#x0A;<page content="org.coocox.builder.ui.views.ProjectView" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="954" ratioRight="318" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">
-<folder appearance="2" expanded="2">
-<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="954" ratioRight="318" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@1285de9" ratio="0.54116225" ratioLeft="447" ratioRight="379" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">
-<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
-<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@1285de9" ratio="0.54116225" ratioLeft="447" ratioRight="379" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">&#x0A;<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
 <page content="org.eclipse.debug.ui.BreakpointView" label="Breakpoints"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
 <page content="org.eclipse.cdt.ui.callHierarchy" label="LabelNotFound"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 <part id="1"/>
 <part id="2"/>
 <part id="3"/>
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d8328" ratio="0.39617082" ratioLeft="538" ratioRight="820" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1285de9">
-<folder activePageID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" appearance="2" expanded="2">
-<page content="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" label="Memory Browser"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d8328" ratio="0.39617082" ratioLeft="538" ratioRight="820" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1285de9">&#x0A;<folder activePageID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" label="Memory Browser"/>
 <page content="org.coocox.codebugger.trace.ui.traceview" label="LabelNotFound"/>
 <page content="org.eclipse.debug.ui.MemoryView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.navigator.ProjectExplorer" label="LabelNotFound"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@fdd25e" ratio="0.66611844" ratioLeft="810" ratioRight="406" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">
-<folder appearance="2" expanded="2">
-<page content="org.eclipse.debug.ui.VariableView" label="LabelNotFound"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@fdd25e" ratio="0.66611844" ratioLeft="810" ratioRight="406" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.debug.ui.VariableView" label="LabelNotFound"/>
 <page content="org.eclipse.debug.ui.ExpressionView" label="LabelNotFound"/>
 <page content="org.eclipse.cdt.dsf.debug.ui.disassembly.view" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
@@ -253,163 +241,167 @@
 <workingSets/>
 <navigationHistory>
 <editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/Pictures.c"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" uri="file:/D:/Devel/Projects/CoIDE/3D-GLCD-U/src/bmp_fan.c"/>
+<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\Pictures.h" project="3D-GLCD"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/LCD.c"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/protocol.c"/>
+<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h" project="3D-GLCD"/>
+<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\ARM\gcc-5_4_2016q3\arm-none-eabi\include\sys\_intsup.h" project="3D-GLCD"/>
 <editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
-<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h" project="3D-GLCD"/>
-<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h" project="3D-GLCD"/>
-<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/main.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/main.c"/>
+<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h" project="3D-GLCD"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/Pictures.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/LCD.c"/>
 </editors>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="142" y="0"/>
-</item>
-<item historyLabel="protocol.h" index="2">
-<position info="not_deleted" x="61" y="0"/>
-</item>
-<item historyLabel="defines.h" index="1">
-<position info="not_deleted" x="207" y="0"/>
-</item>
-<item historyLabel="protocol.h" index="2">
-<position info="not_deleted" x="61" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="142" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="139" y="0"/>
-</item>
-<item historyLabel="protocol.h" index="3">
+<item historyLabel="Pictures.h" index="2">
 <position/>
 </item>
-<item historyLabel="defines.h" index="4">
+<item historyLabel="bmp_fan.c" index="1">
+<position info="not_deleted" x="5604" y="0"/>
+</item>
+<item historyLabel="Pictures.h" index="2">
 <position/>
 </item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="139" y="0"/>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="92" y="1"/>
 </item>
-<item historyLabel="defines.h" index="4">
+<item historyLabel="Pictures.h" index="2">
 <position/>
 </item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="139" y="0"/>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="820" y="0"/>
 </item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="16512" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="852" y="9"/>
-</item>
-<item historyLabel="protocol.c" index="0">
+<item historyLabel="Pictures.h" index="2">
 <position/>
 </item>
-<item historyLabel="defines.h" index="4">
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="820" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="3584" y="16"/>
+</item>
+<item historyLabel="protocol.c" index="4">
+<position info="not_deleted" x="6116" y="16"/>
+</item>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="3584" y="16"/>
+</item>
+<item historyLabel="LCD.h" index="5">
+<position info="not_deleted" x="1940" y="0"/>
+</item>
+<item historyLabel="_intsup.h" index="6">
+<position info="not_deleted" x="1804" y="4"/>
+</item>
+<item historyLabel="LCD.h" index="5">
+<position info="not_deleted" x="1940" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="3">
 <position/>
 </item>
-<item historyLabel="protocol.c" index="0">
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="496" y="8"/>
+</item>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="3647" y="0"/>
+</item>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="496" y="8"/>
+</item>
+<item historyLabel="LCD.h" index="5">
+<position info="not_deleted" x="1940" y="0"/>
+</item>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="496" y="8"/>
+</item>
+<item historyLabel="protocol.c" index="4">
+<position info="not_deleted" x="6116" y="16"/>
+</item>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="496" y="8"/>
+</item>
+<item historyLabel="Pictures.h" index="2">
 <position/>
 </item>
-<item historyLabel="defines.h" index="4">
-<position/>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="496" y="8"/>
 </item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18809" y="0"/>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="3670" y="0"/>
 </item>
-<item historyLabel="defines.h" index="4">
-<position/>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="3784" y="0"/>
 </item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18809" y="0"/>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="3757" y="77"/>
 </item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18421" y="0"/>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="453" y="0"/>
 </item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4972" y="11"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18495" y="0"/>
-</item>
-<item historyLabel="defines.h" index="4">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18316" y="0"/>
-</item>
-<item historyLabel="protocol.h" index="3">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18316" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="6280" y="6"/>
-</item>
-<item historyLabel="main.c" index="5">
-<position info="not_deleted" x="75" y="0"/>
-</item>
-<item historyLabel="main.c" index="5">
-<position info="not_deleted" x="154" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="1665" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18185" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18285" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18188" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18285" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18188" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18285" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18318" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18386" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18567" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18283" y="0"/>
-</item>
-<item historyLabel="main.c" index="6">
-<position info="not_deleted" x="75" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="18283" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="138" y="0"/>
-</item>
-<item historyLabel="protocol.h" index="3">
-<position info="not_deleted" x="59" y="0"/>
-</item>
-<item historyLabel="defines.h" index="4">
+<item historyLabel="Pictures.h" index="2">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="main.c" index="6">
-<position info="not_deleted" x="75" y="0"/>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="3757" y="77"/>
 </item>
-<item historyLabel="defines.h" index="4">
+<item historyLabel="Pictures.h" index="2">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item active="true" historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="138" y="0"/>
+<item historyLabel="Pictures.c" index="0">
+<position info="not_deleted" x="438" y="21"/>
+</item>
+<item historyLabel="LCD.c" index="3">
+<position info="not_deleted" x="220" y="0"/>
+</item>
+<item historyLabel="LCD.h" index="5">
+<position info="not_deleted" x="75" y="0"/>
+</item>
+<item historyLabel="defines.h" index="7">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="LCD.h" index="8">
+<position info="not_deleted" x="75" y="0"/>
+</item>
+<item historyLabel="defines.h" index="7">
+<position info="not_deleted" x="199" y="0"/>
+</item>
+<item historyLabel="Pictures.c" index="9">
+<position/>
+</item>
+<item historyLabel="defines.h" index="7">
+<position info="not_deleted" x="199" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="10">
+<position info="not_deleted" x="9616" y="0"/>
+</item>
+<item historyLabel="defines.h" index="7">
+<position info="not_deleted" x="199" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="10">
+<position info="not_deleted" x="9616" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="10">
+<position/>
+</item>
+<item historyLabel="LCD.c" index="10">
+<position info="not_deleted" x="9740" y="0"/>
+</item>
+<item historyLabel="defines.h" index="7">
+<position info="not_deleted" x="232" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="10">
+<position info="not_deleted" x="3100" y="0"/>
+</item>
+<item historyLabel="defines.h" index="7">
+<position info="not_deleted" x="430" y="11"/>
+</item>
+<item historyLabel="LCD.c" index="10">
+<position info="not_deleted" x="3257" y="0"/>
+</item>
+<item historyLabel="Pictures.c" index="9">
+<position info="not_deleted" x="812" y="0"/>
+</item>
+<item active="true" historyLabel="LCD.c" index="10">
+<position info="not_deleted" x="3257" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -418,8 +410,38 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Pictures.c" tooltip="3D-GLCD/src/Pictures.c">
+<persistable path="/3D-GLCD/src/Pictures.c"/>
+</file>
 <file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h">
 <persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h">
+<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Pictures.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\Pictures.h">
+<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\Pictures.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="_intsup.h" tooltip="D:\Devel\ARM\gcc-5_4_2016q3\arm-none-eabi\include\sys\_intsup.h">
+<persistable path="D:\Devel\ARM\gcc-5_4_2016q3\arm-none-eabi\include\sys\_intsup.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" tooltip="3D-GLCD/src/protocol.c">
+<persistable path="/3D-GLCD/src/protocol.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="3D-GLCD/src/LCD.c">
+<persistable path="/3D-GLCD/src/LCD.c"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="bmp_fan.c" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD-U\src\bmp_fan.c">
+<persistable uri="file:/D:/Devel/Projects/CoIDE/3D-GLCD-U/src/bmp_fan.c"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD-U\defines.h">
+<persistable path="D:\Devel\Projects\CoIDE\3D-GLCD-U\defines.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.h" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD-U\src\LCD.h">
+<persistable path="D:\Devel\Projects\CoIDE\3D-GLCD-U\src\LCD.h" project="3D-GLCD"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="init.c" tooltip="3D-GLCD/src/init.c">
+<persistable path="/3D-GLCD/src/init.c"/>
 </file>
 <file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h">
 <persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h" project="3D-GLCD"/>
@@ -427,38 +449,11 @@
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
 <persistable path="/3D-GLCD/main.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Pictures.c" tooltip="3D-GLCD/src/Pictures.c">
-<persistable path="/3D-GLCD/src/Pictures.c"/>
-</file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h">
-<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\LCD.h" project="3D-GLCD"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="3D-GLCD/src/LCD.c">
-<persistable path="/3D-GLCD/src/LCD.c"/>
-</file>
 <file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="D:\Devel\Projects\CoIDE\neil-scope3-NXP\drivers\lcd\LCD.c">
 <persistable uri="file:/D:/Devel/Projects/CoIDE/neil-scope3-NXP/drivers/lcd/LCD.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="init.c" tooltip="3D-GLCD/src/init.c">
-<persistable path="/3D-GLCD/src/init.c"/>
-</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Courier_New_Bold_16x24.c" tooltip="3D-GLCD/src/Courier_New_Bold_16x24.c">
 <persistable path="/3D-GLCD/src/Courier_New_Bold_16x24.c"/>
-</file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" tooltip="D:\Devel\Projects\CoIDE\3D-GLCD\src\protocol.c">
-<persistable uri="file:/D:/Devel/Projects/CoIDE/3D-GLCD/src/protocol.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LiberationMono-Regular_16x24.c" tooltip="3D-GLCD/src/LiberationMono-Regular_16x24.c">
-<persistable path="/3D-GLCD/src/LiberationMono-Regular_16x24.c"/>
-</file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Pictures.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\Pictures.h">
-<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\Pictures.h" project="3D-GLCD"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_tim.h" tooltip="3D-GLCD/stm_lib/inc/stm32f10x_tim.h">
-<persistable path="/3D-GLCD/stm_lib/inc/stm32f10x_tim.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="core_cm3.h" tooltip="3D-GLCD/cmsis/core_cm3.h">
-<persistable path="/3D-GLCD/cmsis/core_cm3.h"/>
 </file>
 </mruList>
 </workbench>

@@ -1,3 +1,7 @@
+08/30/2019
+
+1. Change data format for icons
+
 08/27/2019
 
 1. Add I2C bus to schematic and PCB for support Marlin.

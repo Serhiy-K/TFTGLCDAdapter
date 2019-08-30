@@ -20,7 +20,6 @@
 #define LCD_DATA(data)	LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_LCD_clr; WR_LCD_set;
 
 // colors
-#define White       		0xffff
 #define Black       		0x0000
 #define LightBlack  		0x0841
 #define LightBlack2  		0x3186
@@ -29,17 +28,18 @@
 #define LightGray2			0xbdf7
 #define LightGray3          0x94b2
 #define LightGray4          0x8410
-#define LightSky    		0x7e7f
-#define Red         		0xf800
+#define White       		0xffff
 #define DarkRed     		0x5000
+#define Red         		0xf800
 #define LightRed    		0xfcb2
 #define LightRed2           0xf904
+#define Green      			0x0160
 #define LightGreen  		0x0679
+#define LightGreen2   		0x87f0
 #define Blue        		0x001f
-#define LightBlue1  		0x03bd
-#define LBlue2  			0x36bf
-#define LighGreen   		0x87f0
-#define Green1      		0x0160
+#define LightBlue  			0x03bd
+#define LightBlue2 			0x36bf
+#define LightSky    		0x7e7f
 #define Orange      		0xeba0
 #define Orange1     		0xfb23
 #define DarkOrange  		0xa9a0
@@ -58,7 +58,7 @@ extern const char LiberationMono_16x24[256][48];
 void LCD_SetArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1pos);
 void LCD_ClearArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1, uint16_t Color);
 void LCD_FillScreen(uint16_t Color);
-void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const uint16_t *pic);
+void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const char *pic);
 void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos);
 
 void LCD_Set_TextColor(uint16_t front, uint16_t back);

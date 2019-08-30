@@ -3,12 +3,13 @@
 
 #include "defines.h"
 
-extern const uint16_t heat_48x48[2304];
-extern const uint16_t fan_48x48[2304];
-extern const uint16_t bed_48x48[2304];
-extern const uint16_t extrude_48x48[2304];
-extern const uint16_t extrude1_48x48[2304];
-extern const uint16_t extrude2_48x48[2304];
-extern const uint16_t extrude3_48x48[2304];
+extern const uint16_t colors[26];
+extern const char heat_48x48[2304];
+extern const char fan_48x48[2304];
+extern const char bed_48x48[2304];
+extern const char extrude_48x48[2304];
+extern const char extrude1_48x48[2304];
+extern const char extrude2_48x48[2304];
+extern const char extrude3_48x48[2304];
 
 #endif

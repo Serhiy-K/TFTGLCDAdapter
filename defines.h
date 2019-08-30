@@ -6,7 +6,7 @@
 
 enum protocols {Smoothie = 0, Marlin1 = 1, Marlin2 = 2};
 
-//select one LCD
+//select only used LCD
 #define ILI9325
 //#define ILI9327
 
@@ -19,18 +19,12 @@ enum protocols {Smoothie = 0, Marlin1 = 1, Marlin2 = 2};
 #define	LCDMAX	400
 #endif
 
-//display orientations
-#ifdef	PORTRET
-#define	LCDXMAX	LCDMIN
-#define	LCDYMAX	LCDMAX
-#define	PORTRET_T
-//#define	PORTRET_B
-#else
 #define	LCDXMAX	LCDMAX
 #define	LCDYMAX	LCDMIN
-#define	LANDSCAPE_L
-//#define	LANDSCAPE_R
-#endif
+//display orientations
+//#define	LANDSCAPE_L
+#define	LANDSCAPE_R
+
 //monospace font 16õ24
 #define	CHAR_WIDTH	16
 #define	CHAR_HEIGTH	24
