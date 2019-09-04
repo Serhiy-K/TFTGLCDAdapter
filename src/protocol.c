@@ -18,7 +18,7 @@
 #define	pic3_Xmin	128
 #define	pic4_Xmin	208
 #define	pic5_Xmin	272
-#ifdef ILI9325
+#if defined(ILI9325) || defined(ILI9341)
 #define pic6_Xmin	pic5_Xmin
 #define pic6_Ymin	pic_Ymin - 60
 #endif

@@ -13,5 +13,8 @@ int main(void)
 	{
 		if (New_cmd())
 			handle_command();
+		LCD_FillScreen(Red);
+		LCD_FillScreen(Green);
+		LCD_FillScreen(Blue);
 	}
 }

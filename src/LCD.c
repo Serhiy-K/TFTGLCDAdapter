@@ -27,7 +27,7 @@ static __inline void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 #ifdef ILI9327
 /******************************************************************************
  Description    : Write data to LCD reg
- Input          : RegisterIndex, data
+ Input          : RegisterIndex
 ******************************************************************************/
 static __inline void Lcd_Write_Com(uint8_t RegisterIndex)
 {
@@ -36,6 +36,52 @@ static __inline void Lcd_Write_Com(uint8_t RegisterIndex)
 	RS_LCD_set;
 }
 #endif
+/******************************************************************************
+ Description    : Set output area
+ Input          : X0pos, Y0pos, X1pos, Y1pos
+******************************************************************************/
+void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
+{
+	CS_LCD_clr;
+#ifdef ILI9325
+	Set_LCD_REG(0x52, X0);
+	Set_LCD_REG(0x53, X1);
+	Set_LCD_REG(0x50, Y0);
+	Set_LCD_REG(0x51, Y1);
+
+	Set_LCD_REG(0x21, X0);
+	Set_LCD_REG(0x20, Y1);
+#endif	//ILI9325
+#ifdef ILI9327
+	Lcd_Write_Com(0x2A);
+	LCD_DATA((LCDYMAX - 1) - Y1 >> 8);
+	LCD_DATA((LCDYMAX - 1) - Y1);
+	LCD_DATA((LCDYMAX - 1) - Y0 >> 8);
+	LCD_DATA((LCDYMAX - 1) - Y0);
+	Lcd_Write_Com(0x2B);
+#ifdef LANDSCAPE_L
+	LCD_DATA((X0 + 32) >> 8);
+	LCD_DATA(X0 + 32);
+	LCD_DATA((X1 + 32) >> 8);
+	LCD_DATA(X1 + 32);
+#else
+	LCD_DATA(X0 >> 8);
+	LCD_DATA(X0);
+	LCD_DATA(X1 >> 8);
+	LCD_DATA(X1);
+#endif
+#endif	//ILI9327
+
+	RS_LCD_clr;
+	//lcd_Draw_Start
+#ifdef ILI9325
+	LCD_DATA(0x00);	LCD_DATA(0x22);
+#endif
+#ifdef ILI9327
+	LCD_DATA(0x2C);
+#endif
+	RS_LCD_set;
+}
 /******************************************************************************
  Description    : Fill screen with one color
  Input          : Color
@@ -73,51 +119,6 @@ void LCD_ClearArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1po
    }
    while (pntNum--);
    CS_LCD_set;
-}
-/******************************************************************************
- Description    : Set output area
- Input          : X0pos, Y0pos, X1pos, Y1pos
-******************************************************************************/
-void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
-{
-	CS_LCD_clr;
-#ifdef ILI9325
-	Set_LCD_REG(0x52, X0);
-	Set_LCD_REG(0x53, X1);
-	Set_LCD_REG(0x50, Y0);
-	Set_LCD_REG(0x51, Y1);
-
-	Set_LCD_REG(0x21, X0);
-	Set_LCD_REG(0x20, Y1);
-#endif	//ILI9325
-#ifdef ILI9327
-	Lcd_Write_Com(0x2A);
-	LCD_DATA(Y0 >> 8);
-	LCD_DATA(Y0);
-	LCD_DATA(Y1 >> 8);
-	LCD_DATA(Y1);
-	Lcd_Write_Com(0x2B);
-#ifdef LANDSCAPE_L
-	LCD_DATA(X0 >> 8);
-	LCD_DATA(X0);
-	LCD_DATA(X1 >> 8);
-	LCD_DATA(X1);
-#else
-	LCD_DATA(X0 >> 8);
-	LCD_DATA(X0);
-	LCD_DATA(X1 >> 8);
-	LCD_DATA(X1);
-#endif
-#endif	//ILI9327
-
-	RS_LCD_clr;
-#ifdef ILI9325
-	LCD_DATA(0x00);	LCD_DATA(0x22);	//lcd_Draw_Start
-#endif
-#ifdef ILI9327
-	LCD_DATA(0x2C);	//lcd_Draw_Start
-#endif
-	RS_LCD_set;
 }
 /******************************************************************************
  Description    : Draw picture 48õ48
@@ -231,7 +232,7 @@ void LCD_DrawChar(char c)
 void LCD_DrawSymbol(const uint8_t *ptr)
 {
 	uint8_t i, j;
-	uint8_t mask = 0x80;  // 0b10000000
+	uint8_t mask = 0x80;
 
 	for(i = 0; i < CHAR_BYTES; i++)
 	{
@@ -383,6 +384,7 @@ void LCD_Init(void)
 	LCD_PutStrig_XY(4, 5,     "connection..");
 }
 #endif
+
 #ifdef ILI9327
 /******************************************************************************
 * Function Name  : LCD_Init
@@ -434,9 +436,9 @@ void LCD_Init(void)
 	LCD_DATA(0b01001000);	//B6=1, BGR=1
 	Lcd_Write_Com(0xC0);	//Panel Driving Setting
 #ifdef	LANDSCAPE_L
-	LCD_DATA(0b00000000);	//0,0,0, REV, SM, GS = 0, BGR, SS=0
-#else
 	LCD_DATA(0b00000101);	//0,0,0, REV, SM, GS=1, BGR, SS = 1
+#else
+	LCD_DATA(0b00000000);	//0,0,0, REV, SM, GS = 0, BGR, SS=0
 #endif
 	LCD_DATA(0x35);	LCD_DATA(0x00);
 	LCD_DATA(0x00);	LCD_DATA(0x01);	LCD_DATA(0x02);
