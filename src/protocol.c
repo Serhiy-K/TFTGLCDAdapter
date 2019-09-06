@@ -18,11 +18,12 @@
 #define	pic3_Xmin	128
 #define	pic4_Xmin	208
 #define	pic5_Xmin	272
-#if defined(ILI9325) || defined(ILI9341)
+
+#ifdef	LCD320x240
 #define pic6_Xmin	pic5_Xmin
 #define pic6_Ymin	pic_Ymin - 60
 #endif
-#ifdef ILI9327
+#ifdef LCD400x240
 #define pic6_Xmin	336
 #define pic6_Ymin	pic_Ymin
 #endif

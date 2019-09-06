@@ -17,7 +17,9 @@
 #define CS_LCD_set	LCD_CTRL_PORT->BSRR = LCD_CS;
 #define CS_LCD_clr	LCD_CTRL_PORT->BSRR = LCD_CS << 16;
 
-#define LCD_DATA(data)	LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_LCD_clr; WR_LCD_set;
+#define WR_Puls		WR_LCD_clr; WR_LCD_set;
+
+#define LCD_DATA(data)	LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
 
 // colors
 #define Black       		0x0000

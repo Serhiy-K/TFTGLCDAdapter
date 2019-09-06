@@ -24,12 +24,13 @@ static __inline void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 	LCD_DATA(Data >> 8);	LCD_DATA(Data & 0x00ff);
 }
 #endif
-#ifdef ILI9327
+
+#if defined(ILI9327) || defined(ILI9341)
 /******************************************************************************
  Description    : Write data to LCD reg
  Input          : RegisterIndex
 ******************************************************************************/
-static __inline void Lcd_Write_Com(uint8_t RegisterIndex)
+static __inline void LCD_Write_Com(uint8_t RegisterIndex)
 {
 	RS_LCD_clr;
 	LCD_DATA(RegisterIndex);
@@ -54,9 +55,9 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 #endif	//ILI9325
 #ifdef ILI9327
 	Lcd_Write_Com(0x2A);
-	LCD_DATA((LCDYMAX - 1) - Y1 >> 8);
+	LCD_DATA(((LCDYMAX - 1) - Y1) >> 8);
 	LCD_DATA((LCDYMAX - 1) - Y1);
-	LCD_DATA((LCDYMAX - 1) - Y0 >> 8);
+	LCD_DATA(((LCDYMAX - 1) - Y0) >> 8);
 	LCD_DATA((LCDYMAX - 1) - Y0);
 	Lcd_Write_Com(0x2B);
 #ifdef LANDSCAPE_L
@@ -72,12 +73,26 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 #endif
 #endif	//ILI9327
 
+#ifdef ILI9341
+	LCD_Write_Com(0x2A);
+	LCD_DATA(((LCDYMAX - 1) - Y1) >> 8);
+	LCD_DATA((LCDYMAX - 1) - Y1);
+	LCD_DATA(((LCDYMAX - 1) - Y0) >> 8);
+	LCD_DATA((LCDYMAX - 1) - Y0);
+	LCD_Write_Com(0x2B);
+	LCD_DATA(X0 >> 8);
+	LCD_DATA(X0);
+	LCD_DATA(X1 >> 8);
+	LCD_DATA(X1);
+#endif
+
 	RS_LCD_clr;
 	//lcd_Draw_Start
 #ifdef ILI9325
 	LCD_DATA(0x00);	LCD_DATA(0x22);
 #endif
-#ifdef ILI9327
+
+#if defined(ILI9327) || defined(ILI9341)
 	LCD_DATA(0x2C);
 #endif
 	RS_LCD_set;
@@ -297,6 +312,8 @@ void LCD_Init(void)
 	WR_LCD_set;
 	RS_LCD_set;
 
+	TEST_PORT->BSRR = TEST_PIN;
+
 	/* Reset chip */
    	RES_LCD_clr;
    	delay_ms(10);
@@ -307,7 +324,7 @@ void LCD_Init(void)
 
    	//for 8-bit interface
    	RS_LCD_clr;
-   	LCD_DATA(0x00);	LCD_DATA(0x00);	LCD_DATA(0x00);	LCD_DATA(0x00);
+   	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
 
    	Set_LCD_REG(0x02, 0x0200); // set 1 line inversion
@@ -406,7 +423,7 @@ void LCD_Init(void)
 
    	//for 8-bit interface
    	RS_LCD_clr;
-   	LCD_DATA(0x00);	LCD_DATA(0x00);	LCD_DATA(0x00);	LCD_DATA(0x00);
+   	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
 
    	Lcd_Write_Com(0xE9);
@@ -463,5 +480,96 @@ void LCD_Init(void)
 	LCD_Set_TextColor(White, BackColor);
 	LCD_PutStrig_XY(0, 4, "   Waiting for printer   ");
 	LCD_PutStrig_XY(6, 5,       "connection...");
+}
+#endif
+
+#ifdef ILI9341
+/******************************************************************************
+* Function Name  : LCD_Init
+* Description    : Init ILI9341 chip
+******************************************************************************/
+void LCD_Init(void)
+{
+	CS_LCD_set;
+	WR_LCD_set;
+	RS_LCD_set;
+
+	/* Reset chip */
+   	RES_LCD_clr;
+   	delay_ms(10);
+   	RES_LCD_set;
+   	delay_ms(50);
+   	CS_LCD_clr;
+   	delay_ms(100);			/* Wait Stability */
+
+   	//for 8-bit interface
+   	RS_LCD_clr;
+   	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
+   	RS_LCD_set
+
+  	LCD_Write_Com(0xCB);   	//POWER CONTROL A
+   	LCD_DATA(0x39);   	LCD_DATA(0x2C);   	LCD_DATA(0x00);   	LCD_DATA(0x34);   	LCD_DATA(0x02);
+   	LCD_Write_Com(0xCF);   	//POWER CONTROL B
+   	LCD_DATA(0x00);   	LCD_DATA(0xC1);   	LCD_DATA(0x30);
+   	LCD_Write_Com(0xE8);   	//DRIVER TIMING CONTROL A
+   	LCD_DATA(0x85);   	LCD_DATA(0x00);   	LCD_DATA(0x78);
+   	LCD_Write_Com(0xEA);   	//DRIVER TIMING CONTROL B
+   	LCD_DATA(0x00);   	LCD_DATA(0x00);
+   	LCD_Write_Com(0xED);   	//POWER ON SEQUENCE CONTROL
+   	LCD_DATA(0x64);   	LCD_DATA(0x03);   	LCD_DATA(0x12);   	LCD_DATA(0x81);
+   	LCD_Write_Com(0xF7);   	//PUMP RATIO CONTROL
+   	LCD_DATA(0x20);
+   	LCD_Write_Com(0xC0);   	//POWER CONTROL,VRH[5:0]
+   	LCD_DATA(0x23);
+   	LCD_Write_Com(0xC1);   	//POWER CONTROL,SAP[2:0];BT[3:0]
+   	LCD_DATA(0x10);
+   	LCD_Write_Com(0xC5);   	//VCM CONTROL
+   	LCD_DATA(0x3E);   	LCD_DATA(0x28);
+   	LCD_Write_Com(0xC7);   	//VCM CONTROL 2
+   	LCD_DATA(0x86);
+   	LCD_Write_Com(0x3A);   	//PIXEL FORMAT
+   	LCD_DATA(0x55);	//16 bit color
+   	LCD_Write_Com(0xB1);   	//FRAME RATIO CONTROL, STANDARD RGB COLOR
+   	LCD_DATA(0x00);   	LCD_DATA(0x18);
+
+   	LCD_Write_Com(0x36);	//MEMORY ACCESS CONTROL
+   	//MY, MX, MV, ML, BGR, MH, x, x
+   	LCD_DATA(0b00001000);	//MY = 0, MX = 0, MV = 0, BRG = 1
+
+   	LCD_Write_Com(0xB6);	//DISPLAY FUNCTION CONTROL
+   	LCD_DATA(0x08);
+#ifdef	LANDSCAPE_L
+   	LCD_DATA(0b11000010);	//REV=1!, GS=1, SS=0, SM = 0, ISC=2
+#else
+   	LCD_DATA(0b10100010);	//REV=1, GS=0, SS=1, SM = 0, ISC=2
+#endif
+   	LCD_DATA(0x27);
+
+   	LCD_Write_Com(0xF2);   	//3GAMMA FUNCTION DISABLE
+   	LCD_DATA(0x00);
+   	LCD_Write_Com(0x26);   	//GAMMA CURVE SELECTED
+   	LCD_DATA(0x01);
+   	LCD_Write_Com(0xE0);   	//POSITIVE GAMMA CORRECTION
+   	LCD_DATA(0x0F);   	LCD_DATA(0x31);   	LCD_DATA(0x2B);   	LCD_DATA(0x0C);   	LCD_DATA(0x0E);
+   	LCD_DATA(0x08);   	LCD_DATA(0x4E);   	LCD_DATA(0xF1);   	LCD_DATA(0x37);   	LCD_DATA(0x07);
+   	LCD_DATA(0x10);   	LCD_DATA(0x03);   	LCD_DATA(0x0E);   	LCD_DATA(0x09);   	LCD_DATA(0x00);
+   	LCD_Write_Com(0xE1);   	//NEGATIVE GAMMA CORRECTION
+   	LCD_DATA(0x00);   	LCD_DATA(0x0E);   	LCD_DATA(0x14);   	LCD_DATA(0x03);   	LCD_DATA(0x11);
+   	LCD_DATA(0x07);   	LCD_DATA(0x31);   	LCD_DATA(0xC1);   	LCD_DATA(0x48);   	LCD_DATA(0x08);
+   	LCD_DATA(0x0F);   	LCD_DATA(0x0C);   	LCD_DATA(0x31);   	LCD_DATA(0x36);   	LCD_DATA(0x0F);
+   	LCD_Write_Com(0x11);   	//EXIT SLEEP
+   	delay_ms(100);
+   	LCD_Write_Com(0x29);   	//TURN ON DISPLAY
+
+	CS_LCD_set;
+
+	LCD_FillScreen(BackColor);
+	LCD_Set_TextColor(Yellow, Blue);
+	LCD_PutStrig_XY(0, 0, "                    ");
+	LCD_PutStrig_XY(0, 1, "  TFT GLCD Adapter  ");
+	LCD_PutStrig_XY(0, 2, "                    ");
+	LCD_Set_TextColor(White, BackColor);
+	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
+	LCD_PutStrig_XY(4, 5,     "connection..");
 }
 #endif

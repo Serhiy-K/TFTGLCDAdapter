@@ -1,3 +1,8 @@
+09/06/2019
+
+1. Add support for LCD based on ILI9341 chip
+2. Set more light blue color for FAN icons 
+
 09/04/2019
 
 1. Correction for LCD based on ILI9327 chip.
