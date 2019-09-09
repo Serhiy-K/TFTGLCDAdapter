@@ -1,3 +1,9 @@
+09/09/2019
+
+1. Fix error with icons clearing for Marlin.
+2. Small change in progress bar drawing.
+3. Moving some lines up in defines.h.
+
 09/06/2019
 
 1. Add support for LCD based on ILI9341 chip

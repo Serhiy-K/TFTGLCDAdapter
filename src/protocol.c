@@ -76,7 +76,7 @@ uint8_t New_cmd()
 }
 //----------------------------------------------------------------------------
 void Rem_Lead_Zero(uint8_t i)
-{
+{	//for Smoothieware
 	if (data[i+1] == '0')
 	{
 		data[i+1] = ' ';
@@ -90,7 +90,7 @@ void Rem_Lead_Zero(uint8_t i)
 }
 //----------------------------------------------------------------------------
 void Get_Temps()
-{
+{	//for Smoothieware
 	for (uint8_t i = 0; i < 20; i++)
 	{
 		//scan first line for temperatures
@@ -169,10 +169,7 @@ void Print_Temps()
 		for (y = 5; y < 8; y++)
 		{
 			LCD_SetCursor(0, y);
-			for (x = 0; x < 16; x++)
-			{
-				LCD_DrawChar(datat[i++]);
-			}
+			for (x = 0; x < 16; x++)	LCD_DrawChar(datat[i++]);
 		}
 	}
 	else if (protocol == Marlin1)
@@ -286,69 +283,75 @@ void DrawIcons()
 		LCD_Set_TextColor(White, BackColor);
 		duration = 500;
 		buzzer();
+		cour_pics = pics & PIC_LOGO;
+		return;
 	}
 
-	if (temps == 1)
+	if (cour_pics != pics)
 	{
-		if ((cour_pics & PIC_HE1) != (pics & PIC_HE1))
+		if (temps == 1)
 		{
-			if (pics & PIC_HE1) LCD_Draw_Picture (pic1_Xmin1, pic_Ymin, &extrude_48x48[0]);
-			else				LCD_Clear_Picture(pic1_Xmin1, pic_Ymin);
+			if ((cour_pics & PIC_HE1) != (pics & PIC_HE1))
+			{
+				if (pics & PIC_HE1) LCD_Draw_Picture (pic1_Xmin1, pic_Ymin, &extrude_48x48[0]);
+				else				LCD_Clear_Picture(pic1_Xmin1, pic_Ymin);
+			}
+			if ((cour_pics & PIC_BED) != (pics & PIC_BED))
+			{
+				if (pics & PIC_BED)	LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_48x48[0]);
+				else				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
+			}
+			if ((cour_pics & PIC_FAN) != (pics & PIC_FAN))
+			{
+				if (pics & PIC_FAN)	LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_48x48[0]);
+				else				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
+			}
+			if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
+			{
+				if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+				else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
+			}
 		}
-		if ((cour_pics & PIC_BED) != (pics & PIC_BED))
+		else
 		{
-			if (pics & PIC_BED)	LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_48x48[0]);
-			else				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
+			if ((cour_pics & PIC_HE1) != (pics & PIC_HE1))
+			{
+				if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude1_48x48[0]);
+				else				LCD_Clear_Picture(pic1_Xmin, pic_Ymin);
+			}
+			if ((cour_pics & PIC_HE2) != (pics & PIC_HE2))
+			{
+				if (pics & PIC_HE2)	LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude2_48x48[0]);
+				else				LCD_Clear_Picture(pic2_Xmin, pic_Ymin);
+			}
+			if ((cour_pics & PIC_HE3) != (pics & PIC_HE3))
+			{
+				if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude3_48x48[0]);
+				else				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
+			}
+			if ((cour_pics & PIC_BED) != (pics & PIC_BED))
+			{
+				if (pics & PIC_BED)	LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_48x48[0]);
+				else				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
+			}
+			if ((cour_pics & PIC_FAN) != (pics & PIC_FAN))
+			{
+				if (pics & PIC_FAN)	LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_48x48[0]);
+				else				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
+			}
+			if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
+			{
+				if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+				else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+			}
+
 		}
-		if ((cour_pics & PIC_FAN) != (pics & PIC_FAN))
-		{
-			if (pics & PIC_FAN)	LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_48x48[0]);
-			else				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
-		}
-		if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
-		{
-			if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
-			else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
-		}
+		cour_pics = pics;
 	}
-	else
-	{
-		if ((cour_pics & PIC_HE1) != (pics & PIC_HE1))
-		{
-			if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude1_48x48[0]);
-			else				LCD_Clear_Picture(pic1_Xmin, pic_Ymin);
-		}
-		if ((cour_pics & PIC_HE2) != (pics & PIC_HE2))
-		{
-			if (pics & PIC_HE2)	LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude2_48x48[0]);
-			else				LCD_Clear_Picture(pic2_Xmin, pic_Ymin);
-		}
-		if ((cour_pics & PIC_HE3) != (pics & PIC_HE3))
-		{
-			if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude3_48x48[0]);
-			else				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
-		}
-		if ((cour_pics & PIC_BED) != (pics & PIC_BED))
-		{
-		if (pics & PIC_BED)		LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_48x48[0]);
-			else				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
-		}
-		if ((cour_pics & PIC_FAN) != (pics & PIC_FAN))
-		{
-			if (pics & PIC_FAN)	LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_48x48[0]);
-			else				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
-		}
-		if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
-		{
-			if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
-			else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
-		}
-	}
-	cour_pics = pics;
 }
 //----------------------------------------------------------------------------
 void UBL_Draw_Dot()
-{
+{	//for Marlin
 	uint8_t i, grid_points_x, grid_points_y;
 	uint8_t point_x, point_y;	//point_y - inverted
 	uint8_t step_x, step_y;
@@ -381,7 +384,7 @@ void UBL_Draw_Dot()
 }
 //----------------------------------------------------------------------------
 uint8_t  Get_Progress()
-{
+{	//for Smoothieware
 	uint8_t percent;
 	percent = data[58] - '0';	//fixed position
 	if (data[57] != ' ')	percent += (data[57] - '0') * 10;
@@ -395,8 +398,8 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 
 	const uint16_t pb_colors[] = {0xfc00, 0xfcc0, 0xfd80, 0xfe40, 0xff20, 0xffe0, 0xcfe0, 0x97e0, 0x67e0, 0x37e0, 0x07e0};
 
-#define XMIN	(LCDXMAX - 302) / 2	//center progress bar to text line
-#define XMAX	XMIN + 302			//100% * 3 + 2 for frame
+#define XMIN	(LCDXMAX - 306) / 2	//center progress bar to text line
+#define XMAX	XMIN + 306			//100% * 3 + 6 for frame
 
 	ymin = y * CHAR_HEIGTH + 1;
 	ymax = ymin + CHAR_HEIGTH - 2;
@@ -414,7 +417,6 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 		progress_cleared = 1;
 	}
 
-	i = percent / 10;
 	//draw progress bar frame
 	LCD_ClearArea(XMIN, ymin, XMIN, ymax, PROGRESS_COLOR);			// left |
 	LCD_ClearArea(XMIN + 1, ymin, XMAX, ymin, PROGRESS_COLOR);		// top -
@@ -422,11 +424,14 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 	LCD_ClearArea(XMAX, ymin + 1, XMAX, ymax - 1, PROGRESS_COLOR);	// right |
 
 	if (c_p != percent)
-	{//change progressbar
+	{//change progress bar
 		if (percent > c_p) //draw progress bar
-			LCD_ClearArea(XMIN + 1, ymin + 1, XMIN + 1 + percent * 3, ymax - 1, pb_colors[i]);
+		{
+			i = percent / 10;
+			LCD_ClearArea(XMIN + 3, ymin + 2, XMIN + 3 + percent * 3, ymax - 2, pb_colors[i]);
+		}
 		else
-			LCD_ClearArea(XMIN + 1, ymin + 1, XMAX - 1, ymax - 1, Black);
+			LCD_ClearArea(XMIN + 3, ymin + 2, XMAX - 3, ymax - 2, Black);
 		c_p = percent;
 	}
 }
@@ -464,11 +469,9 @@ void handle_command()
 			progress_cleared = 0;
 			LCD_FillScreen(BackColor);
 
-		case CLEAR_BUFFER:
+		case CLEAR_BUFFER:	//only text, not icons and leds
 			for (i = 0; i < 48; i++)	datat[i] = ' ';
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[i] = ' ';
-			data[FB_SIZE - 2] = cour_pics = 0;
-			data[FB_SIZE - 1] = cour_leds = 0;
 			break;
 
 		case LCD_WRITE:

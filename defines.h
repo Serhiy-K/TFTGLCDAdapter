@@ -11,6 +11,14 @@ enum protocols {Smoothie = 0, Marlin1 = 1, Marlin2 = 2};
 //#define ILI9327
 //#define ILI9341
 
+//display orientations
+#define	LANDSCAPE_L	//LCD chip placed left
+
+//prefered font
+//#define FONT	Courier_New_Bold_16x24
+#define FONT	LiberationMono_16x24
+
+
 #if defined(ILI9325) || defined(ILI9341)
 #define	LCDMIN	240
 #define	LCDMAX	320
@@ -25,9 +33,6 @@ enum protocols {Smoothie = 0, Marlin1 = 1, Marlin2 = 2};
 #define	LCDXMAX	LCDMAX
 #define	LCDYMAX	LCDMIN
 
-//display orientations
-#define	LANDSCAPE_L	//LCD chip placed left
-
 //monospace font 16õ24
 #define	CHAR_WIDTH	16
 #define	CHAR_HEIGTH	24
@@ -35,10 +40,6 @@ enum protocols {Smoothie = 0, Marlin1 = 1, Marlin2 = 2};
 
 #define	CHARS_PER_LINE	LCDXMAX/CHAR_WIDTH
 #define	TEXT_LINES		LCDYMAX/CHAR_HEIGTH
-
-//prefered font
-//#define FONT	Courier_New_Bold_16x24
-#define FONT	LiberationMono_16x24
 
 //LCD interface
 #define LCD_DATA_PORT	GPIOA

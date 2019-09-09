@@ -54,12 +54,12 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	Set_LCD_REG(0x20, Y1);
 #endif	//ILI9325
 #ifdef ILI9327
-	Lcd_Write_Com(0x2A);
+	LCD_Write_Com(0x2A);
 	LCD_DATA(((LCDYMAX - 1) - Y1) >> 8);
 	LCD_DATA((LCDYMAX - 1) - Y1);
 	LCD_DATA(((LCDYMAX - 1) - Y0) >> 8);
 	LCD_DATA((LCDYMAX - 1) - Y0);
-	Lcd_Write_Com(0x2B);
+	LCD_Write_Com(0x2B);
 #ifdef LANDSCAPE_L
 	LCD_DATA((X0 + 32) >> 8);
 	LCD_DATA(X0 + 32);
@@ -426,20 +426,20 @@ void LCD_Init(void)
    	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
 
-   	Lcd_Write_Com(0xE9);
+   	LCD_Write_Com(0xE9);
 	LCD_DATA(0x20);
-	Lcd_Write_Com(0x11);	//Exit Sleep
+	LCD_Write_Com(0x11);	//Exit Sleep
 	delay_ms(100);
-	Lcd_Write_Com(0xD1);	//VCOM Control
+	LCD_Write_Com(0xD1);	//VCOM Control
 	LCD_DATA(0x00);	LCD_DATA(0x71);	LCD_DATA(0x19);
-	Lcd_Write_Com(0xD0);	//Power_Setting
+	LCD_Write_Com(0xD0);	//Power_Setting
 	LCD_DATA(0x07);	LCD_DATA(0x01);	LCD_DATA(0x08);
 
-	Lcd_Write_Com(0x3A);	//set_pixel_format
+	LCD_Write_Com(0x3A);	//set_pixel_format
 	LCD_DATA(0x05);			//16bit/pixel
-	Lcd_Write_Com(0xC1);	//Display_Timing_Setting for Normal/Partial Mode
+	LCD_Write_Com(0xC1);	//Display_Timing_Setting for Normal/Partial Mode
 	LCD_DATA(0x10);	LCD_DATA(0x10);	LCD_DATA(0x02);	LCD_DATA(0x02);
-	Lcd_Write_Com(0x36);	//output orientation
+	LCD_Write_Com(0x36);	//output orientation
 /*
 	Bit B7 – Page Address Order :	0 = Top to Bottom	1 = Bottom to Top
 	Bit B6 – Column Address Order:	0 = Left to Right	1 = Right to Left
@@ -451,7 +451,7 @@ void LCD_Init(void)
 	Bit B0 – Vertical Flip:			0 = Normal display	1 = Flipped display
 */
 	LCD_DATA(0b01001000);	//B6=1, BGR=1
-	Lcd_Write_Com(0xC0);	//Panel Driving Setting
+	LCD_Write_Com(0xC0);	//Panel Driving Setting
 #ifdef	LANDSCAPE_L
 	LCD_DATA(0b00000101);	//0,0,0, REV, SM, GS=1, BGR, SS = 1
 #else
@@ -459,16 +459,16 @@ void LCD_Init(void)
 #endif
 	LCD_DATA(0x35);	LCD_DATA(0x00);
 	LCD_DATA(0x00);	LCD_DATA(0x01);	LCD_DATA(0x02);
-	Lcd_Write_Com(0xC5);	//Set frame rate
+	LCD_Write_Com(0xC5);	//Set frame rate
 	LCD_DATA(0x04);
-	Lcd_Write_Com(0xD2);	//power setting
+	LCD_Write_Com(0xD2);	//power setting
 	LCD_DATA(0x01);	LCD_DATA(0x44);
-	Lcd_Write_Com(0xC8);	//Set Gamma
+	LCD_Write_Com(0xC8);	//Set Gamma
 	LCD_DATA(0x04);	LCD_DATA(0x67);	LCD_DATA(0x35);	LCD_DATA(0x04);	LCD_DATA(0x08);
 	LCD_DATA(0x06);	LCD_DATA(0x24);	LCD_DATA(0x01);	LCD_DATA(0x37);	LCD_DATA(0x40);
 	LCD_DATA(0x03);	LCD_DATA(0x10);	LCD_DATA(0x08);	LCD_DATA(0x80);	LCD_DATA(0x00);
-	Lcd_Write_Com(0x29);	//display on
-	Lcd_Write_Com(0x2C);	//display on
+	LCD_Write_Com(0x29);	//display on
+	LCD_Write_Com(0x2C);	//display on
 
 	CS_LCD_set;
 
