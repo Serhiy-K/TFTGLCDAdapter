@@ -4,7 +4,10 @@
 #include <stdint.h>
 #include "stm32f10x_gpio.h"
 
-enum protocols {Smoothie = 0, Marlin1 = 1, Marlin2 = 2};
+enum protocols {Smoothie = 0, Marlin = 1};
+
+//#define	INVERT_ENCODER_DIR
+#define	WITHOUT_HEAT_ICO	//if you want see "FAN %" text insted of heat icon on 320x240 screen
 
 //select only used LCD
 #define ILI9325

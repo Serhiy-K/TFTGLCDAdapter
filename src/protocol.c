@@ -8,20 +8,20 @@
 
 #define pic_Ymin	LCDYMAX - 48
 //for one extruder config
-#define	pic1_Xmin1	16
-#define	pic2_Xmin1	96
-#define	pic3_Xmin1	176
-#define pic4_Xmin1	256
+#define	pic1_Xmin1	16	//HE
+#define	pic2_Xmin1	96	//BED
+#define	pic3_Xmin1	176	//FAN
+#define pic4_Xmin1	256	//HEAT
 //for multy-extruders config
-#define	pic1_Xmin	0
-#define	pic2_Xmin	64
-#define	pic3_Xmin	128
-#define	pic4_Xmin	208
-#define	pic5_Xmin	272
+#define	pic1_Xmin	0	//HE1
+#define	pic2_Xmin	64	//HE2
+#define	pic3_Xmin	128	//HE3
+#define	pic4_Xmin	208	//BED
+#define	pic5_Xmin	272	//FAN
 
 #ifdef	LCD320x240
-#define pic6_Xmin	pic5_Xmin
-#define pic6_Ymin	pic_Ymin - 60
+#define pic6_Xmin	pic5_Xmin	//HEAT
+#define pic6_Ymin	pic_Ymin - (CHAR_HEIGTH * 3)
 #endif
 #ifdef LCD400x240
 #define pic6_Xmin	336
@@ -161,6 +161,12 @@ void Get_Temps()
 //----------------------------------------------------------------------------
 void Print_Temps()
 {
+	#if defined(LCD320x240) && !defined(WITHOUT_HEAT_ICO)
+		#define MX	16
+	#else
+		#define MX	20
+	#endif
+
 	uint8_t i, x, y;
 	i = 0;
 	//main screen
@@ -172,11 +178,11 @@ void Print_Temps()
 			for (x = 0; x < 16; x++)	LCD_DrawChar(datat[i++]);
 		}
 	}
-	else if (protocol == Marlin1)
+	else if (protocol == Marlin)
 	{
-		LCD_SetCursor(0, 5);	for (x = 0; x < 16; x++)	LCD_DrawChar(data[100 + x]);
-		LCD_SetCursor(0, 6);	for (x = 0; x < 16; x++)	LCD_DrawChar(data[120 + x]);
-		LCD_SetCursor(0, 7);	for (x = 0; x < 16; x++)	LCD_DrawChar(data[140 + x]);
+		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[100 + x]);
+		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[120 + x]);
+		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[140 + x]);
 		if (data[102] == '1') temps = 3;
 	}
 	CS_LCD_set;
@@ -196,7 +202,7 @@ uint8_t Get_Buttons()
 		if ((BTN_PORTB->IDR & BUTTON_PIN4) == 0)	b |= BUTTON_AUX1;
 		if ((BTN_PORTB->IDR & BUTTON_PIN5) == 0)	b |= BUTTON_AUX2;
 	}
-	else if (protocol == Marlin1)
+	else if (protocol == Marlin)
 	{
 		if ((ENC_PORT->IDR & ENC_BUT) == 0)			b |= EN_C;
 		if ((BTN_PORTA->IDR & BUTTON_PIN1) == 0)	b |= EN_D;
@@ -226,12 +232,16 @@ void SetLeds()
 		if (leds & LED_HOT)
 		{
 			if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
 			else			LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+#endif
 		}
 		else
 		{
 			if (temps == 1)	LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
+#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
 			else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+#endif
 		}
 	}
 	cour_leds = leds;
@@ -260,7 +270,7 @@ void DrawIcons()
 			LCD_DrawChar_XY(4, 6, 179);	LCD_PutStrig(" Hardware ");	LCD_DrawChar(179);	CS_LCD_set;
 			LCD_DrawChar_XY(4, 7, 192);	LCD_PutStrig(&border[0]);	LCD_DrawChar(217);	CS_LCD_set;
 		}
-		else if (protocol == Marlin1)
+		else if (protocol == Marlin)
 		{	//Text Logo from Marlin
 			NVIC_DisableIRQ(SPI_IRQ);
 			SPI_Cmd(SPI, DISABLE);
@@ -339,11 +349,13 @@ void DrawIcons()
 				if (pics & PIC_FAN)	LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_48x48[0]);
 				else				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
 			}
+#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
 			if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
 			{
 				if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
 				else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
 			}
+#endif
 
 		}
 		cour_pics = pics;
@@ -430,7 +442,7 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 			i = percent / 10;
 			LCD_ClearArea(XMIN + 3, ymin + 2, XMIN + 3 + percent * 3, ymax - 2, pb_colors[i]);
 		}
-		else
+		else	//clear progress bar
 			LCD_ClearArea(XMIN + 3, ymin + 2, XMAX - 3, ymax - 2, Black);
 		c_p = percent;
 	}
@@ -467,6 +479,7 @@ void handle_command()
 		case INIT:
 			protocol = data[0];
 			progress_cleared = 0;
+			temps = 1;
 			LCD_FillScreen(BackColor);
 
 		case CLEAR_BUFFER:	//only text, not icons and leds
@@ -631,7 +644,13 @@ void I2C2_EV_IRQHandler(void)
 	    	switch (cmd)
 	    	{
 	    		case READ_BUTTONS:	I2C->DR = Get_Buttons();	break;
-	    		case READ_ENCODER:	encdiff = (int8_t)TIM1->CNT;	TIM1->CNT = 0;	I2C->DR = encdiff;	break;
+	    		case READ_ENCODER:	encdiff = (int8_t)TIM1->CNT;	TIM1->CNT = 0;
+					#ifndef	INVERT_ENCODER_DIR
+	    				I2C->DR = encdiff;
+					#else
+	    				I2C->DR = -encdiff;
+					#endif
+	    			break;
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	break;
 	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	break;
 	    	}
@@ -659,7 +678,13 @@ void SPI2_IRQHandler(void)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
 			case READ_BUTTONS:	SPI->DR = Get_Buttons();	return;
-			case READ_ENCODER:	c = TIM1->CNT;	TIM1->CNT = 0;	SPI->DR = (int8_t)c; return;
+			case READ_ENCODER:	c = TIM1->CNT;	TIM1->CNT = 0;
+				#ifndef	INVERT_ENCODER_DIR
+					SPI->DR = (int8_t)c;
+				#else
+					SPI->DR = -(int8_t)c;
+				#endif
+				return;
 			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
 			case BUZZER:		cmd = b;	toread = 4;	pos = 0;	return;
 			case CONTRAST:		cmd = b;	toread = 1;	pos = 0;	return;

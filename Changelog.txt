@@ -1,3 +1,9 @@
+09/29/2019
+
+1. Add INVERT_ENCODER_DIR option for encodres with swaped A and B signals.
+2. Add WITHOUT_HEAT_ICO option for printing "FAN %" text insteed of heat icon.
+3. Fix printing temterature/fan lines and heat icon position.
+
 09/09/2019
 
 1. Fix error with icons clearing for Marlin.
