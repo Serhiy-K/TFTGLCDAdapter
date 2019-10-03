@@ -539,7 +539,7 @@ void handle_command()
 			LCD_FillScreen(BackColor);
 
 		case CLEAR_BUFFER:	//only text, not icons and leds
-			for (i = 0; i < 48; i++)	datat[i] = ' ';
+			for (i = 0; i < 60; i++)	datat[i] = ' ';
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[i] = ' ';
 			break;
 
@@ -547,11 +547,11 @@ void handle_command()
 			i = 0;
 			if (protocol == Smoothie)
 			{
-				if (data[20] == 'X')	Get_Temps();	//main screen
+				if (data[CHARS_PER_LINE] == 'X')	Get_Temps();	//main screen
 
 				for (y = 0; y < TEXT_LINES; y++)
 				{
-					if ((y == 4) && ((data[20] != ' ') && (data[20] != '>')))
+					if ((y == 4) && ((data[CHARS_PER_LINE] != ' ') && (data[CHARS_PER_LINE] != '>')))
 					{//main or start screen
 						Print_Fan();
 						if ((data[FB_SIZE - 2] && PIC_LOGO) == 0)

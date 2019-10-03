@@ -1,3 +1,7 @@
+10/03/2019
+
+1. Fix bug with 400x240 resolution LCD with Smoothieware. 
+
 10/01/2019
 
 1. Fix bug with "FAN %" output for Smoothieware.
