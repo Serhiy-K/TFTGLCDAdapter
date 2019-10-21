@@ -15,21 +15,26 @@
 <part id="0"/>
 <part id="1"/>
 <part id="2"/>
+<part id="3"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" partName="defines.h" title="defines.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
-<editorState selectionHorizontalPixel="0" selectionLength="14" selectionOffset="850" selectionTopPixel="328"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="755" selectionTopPixel="0"/>
 </editor>
 <editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/protocol.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="15281" selectionTopPixel="9416"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="846" selectionTopPixel="364"/>
 </editor>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/main.c" title="main.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/main.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/main.c"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="75" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" partName="LCD.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/LCD.c" title="LCD.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/LCD.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/LCD.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="6895" selectionTopPixel="4340"/>
 </editor>
 </editors>
 <views>
@@ -40,7 +45,7 @@
 <element path="/3D-GLCD/src"/>
 </expanded>
 <selection>
-<element path="/3D-GLCD/src/Pictures.c"/>
+<element path="/3D-GLCD/src/LCD.c"/>
 </selection>
 </viewState>
 </view>
@@ -248,55 +253,11 @@
 <editors>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/protocol.c"/>
 <editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/main.c"/>
 <editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Changelog.txt"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/LCD.c"/>
+<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
 </editors>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="695" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="5264" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="5243" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4836" y="0"/>
-</item>
-<item historyLabel="defines.h" index="1">
-<position info="not_deleted" x="754" y="10"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="15381" y="93"/>
-</item>
-<item historyLabel="main.c" index="2">
-<position info="not_deleted" x="75" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="15381" y="93"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="15267" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="15362" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4584" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4614" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4668" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4614" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4668" y="0"/>
-</item>
 <item historyLabel="protocol.c" index="0">
 <position info="not_deleted" x="4687" y="0"/>
 </item>
@@ -378,7 +339,7 @@
 <item historyLabel="protocol.c" index="0">
 <position info="not_deleted" x="5210" y="0"/>
 </item>
-<item historyLabel="defines.h" index="3">
+<item historyLabel="defines.h" index="2">
 <position info="not_deleted" x="850" y="14"/>
 </item>
 <item historyLabel="protocol.c" index="0">
@@ -396,11 +357,56 @@
 <item historyLabel="protocol.c" index="0">
 <position info="not_deleted" x="15281" y="0"/>
 </item>
-<item historyLabel="Changelog.txt" index="4">
+<item historyLabel="Changelog.txt" index="3">
 <position info="not_deleted" x="71" y="0"/>
 </item>
-<item active="true" historyLabel="protocol.c" index="0">
+<item historyLabel="protocol.c" index="0">
 <position info="not_deleted" x="15281" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="4">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="9403" y="0"/>
+</item>
+<item historyLabel="defines.h" index="5">
+<position info="not_deleted" x="755" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="defines.h" index="5">
+<position info="not_deleted" x="755" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6211" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="4">
+<position info="not_deleted" x="6895" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="7045" y="0"/>
+</item>
+<item historyLabel="defines.h" index="5">
+<position info="not_deleted" x="755" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="7045" y="0"/>
+</item>
+<item historyLabel="LCD.c" index="4">
+<position info="not_deleted" x="6895" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5779" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="4939" y="0"/>
+</item>
+<item historyLabel="defines.h" index="5">
+<position info="not_deleted" x="755" y="0"/>
+</item>
+<item active="true" historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="4939" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -409,14 +415,14 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="3D-GLCD/src/LCD.c">
+<persistable path="/3D-GLCD/src/LCD.c"/>
+</file>
 <file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="Changelog.txt" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\Changelog.txt">
 <persistable uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Changelog.txt"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
 <persistable path="/3D-GLCD/main.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="3D-GLCD/src/LCD.c">
-<persistable path="/3D-GLCD/src/LCD.c"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Pictures.c" tooltip="3D-GLCD/src/Pictures.c">
 <persistable path="/3D-GLCD/src/Pictures.c"/>

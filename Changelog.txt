@@ -1,15 +1,18 @@
-10/03/2019
+10/20/2019
 
-1. Fix bug with 400x240 resolution LCD with Smoothieware. 
-
-10/01/2019
-
-1. Fix bug with "FAN %" output for Smoothieware.
+1. Change init and text resolution for ILI9327 LCD. Now screen equal to 24x10 text screen
+2. Change for icons output.
+3. Remove unneeded commands for Marlin.
+4. Add colors selection for menu cursor for Marlin and Smoothieware and error message and edit parameter line for Marlin.
+5. Add drawing frame for UBL in Marlin.
+6. Add minimum duration for buzzer.
+7. Add CHAR_WIDTH-depended posisions for icons.
+8. Update and add new fotos.
 
 09/29/2019
 
 1. Add INVERT_ENCODER_DIR option for encodres with swaped A and B signals.
-2. Add WITHOUT_HEAT_ICO option for printing "FAN %" text insteed of heat icon.
+2. Add WITHOUT_HEAT_ICO option for printing "FAN %" text insteed heat icon.
 3. Fix printing temterature/fan lines and heat icon position.
 
 09/09/2019

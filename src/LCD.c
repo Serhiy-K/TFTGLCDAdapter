@@ -61,15 +61,15 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA((LCDYMAX - 1) - Y0);
 	LCD_Write_Com(0x2B);
 #ifdef LANDSCAPE_L
-	LCD_DATA((X0 + 32) >> 8);
-	LCD_DATA(X0 + 32);
-	LCD_DATA((X1 + 32) >> 8);
-	LCD_DATA(X1 + 32);
+	LCD_DATA((X0 + 32 + CHAR_WIDTH / 2) >> 8);
+	LCD_DATA(X0 + 32 + CHAR_WIDTH / 2);
+	LCD_DATA((X1 + 32 + CHAR_WIDTH / 2) >> 8);
+	LCD_DATA(X1 + 32 + CHAR_WIDTH / 2);
 #else
-	LCD_DATA(X0 >> 8);
-	LCD_DATA(X0);
-	LCD_DATA(X1 >> 8);
-	LCD_DATA(X1);
+	LCD_DATA((X0 + CHAR_WIDTH / 2) >> 8);
+	LCD_DATA(X0 + CHAR_WIDTH / 2);
+	LCD_DATA((X1 + CHAR_WIDTH / 2) >> 8);
+	LCD_DATA(X1 + CHAR_WIDTH / 2);
 #endif
 #endif	//ILI9327
 
@@ -470,15 +470,26 @@ void LCD_Init(void)
 	LCD_Write_Com(0x29);	//display on
 	LCD_Write_Com(0x2C);	//display on
 
-	CS_LCD_set;
+	//clear all 432x240 dots
+	LCD_Write_Com(0x2A);
+	LCD_DATA(0);	LCD_DATA(0);
+	LCD_DATA((LCDYMAX - 1) >> 8);	LCD_DATA(LCDYMAX - 1);
+	LCD_Write_Com(0x2B);
+	LCD_DATA(0);	LCD_DATA(0);
+	LCD_DATA(431 >> 8);	LCD_DATA(431);
+    do
+    {
+    	LCD_DATA(0);	LCD_DATA(0);
+    }
+    while (uint32_t ++cntT < (432 * LCDYMAX));
+    CS_LCD_set;
 
-	LCD_FillScreen(BackColor);
 	LCD_Set_TextColor(Yellow, Blue);
-	LCD_PutStrig_XY(0, 0, "                         ");
-	LCD_PutStrig_XY(0, 1, "    TFT GLCD Adapter     ");
-	LCD_PutStrig_XY(0, 2, "                         ");
+	LCD_PutStrig_XY(0, 0, "                        ");
+	LCD_PutStrig_XY(0, 1, "    TFT GLCD Adapter    ");
+	LCD_PutStrig_XY(0, 2, "                        ");
 	LCD_Set_TextColor(White, BackColor);
-	LCD_PutStrig_XY(0, 4, "   Waiting for printer   ");
+	LCD_PutStrig_XY(0, 4, "   Waiting for printer  ");
 	LCD_PutStrig_XY(6, 5,       "connection...");
 }
 #endif

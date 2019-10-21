@@ -8,12 +8,12 @@
 
 #define pic_Ymin	LCDYMAX - 48
 //for one extruder config
-#define	pic1_Xmin1	CHAR_WIDTH		//HE
+#define	pic1_Xmin1	CHAR_WIDTH * 1	//HE
 #define	pic2_Xmin1	CHAR_WIDTH * 6	//BED
 #define	pic3_Xmin1	CHAR_WIDTH * 11	//FAN
-#define pic4_Xmin1	CHAR_WIDTH * 16	//HEAT
+#define pic4_Xmin1	CHAR_WIDTH * 15	//HEAT
 //for multy-extruders config
-#define	pic1_Xmin	0				//HE1
+#define	pic1_Xmin	0	//HE1
 #define	pic2_Xmin	CHAR_WIDTH * 4	//HE2
 #define	pic3_Xmin	CHAR_WIDTH * 8	//HE3
 #define	pic4_Xmin	CHAR_WIDTH * 13	//BED
@@ -28,7 +28,16 @@
 #define pic6_Ymin	pic_Ymin
 #endif
 
-#define PROGRESS_COLOR	Yellow
+#define PROGRESS_COLOR		Yellow	//color for progress bar frame
+
+#define CURSOR_TEXT_COLOR	Black
+#define CURSOR_BACK_COLOR	White
+
+#define EDIT_TEXT_COLOR		Yellow
+#define EDIT_BACK_COLOR		Auqa
+
+#define	ERROR_TEXT_COLOR	Yellow
+#define ERROR_BACK_COLOR	Red
 
 #define FB_SIZE	(CHARS_PER_LINE * TEXT_LINES + 2)	//text area + leds + pics
 
@@ -36,27 +45,24 @@ enum Commands {
 	GET_SPI_DATA = 0,	// is a read results of previous command
 	READ_BUTTONS,
 	READ_ENCODER,
-	LCD_WRITE,
+	LCD_WRITE,		// get data with output
 	BUZZER,
 	CONTRAST,
 	// Other commands... 0xE0 thru 0xFF
 	GET_LCD_ROW = 0xE0,
 	GET_LCD_COL,
-	CLEAR_BUFFER,
-	REDRAW,
-	INIT = 0xFE,  // Initialize
+	INIT = 0xFE,	// Initialize
 };
 
 // data[FB_SIZE - 1] - leds
 // data[FB_SIZE - 2] - pics
 uint8_t	data[FB_SIZE];
-uint8_t	datat[60] = {' '};
+uint8_t	datat[48] = {' '};
 
 uint8_t	cmd = 0;
 int16_t pos = -1;
 uint8_t toread = 0;
 uint8_t	new_command = 0;
-uint8_t	cour_pics = 0;
 uint8_t	cour_leds = 0;
 uint8_t	temps = 1;
 uint8_t	cour_row = 0;
@@ -64,6 +70,7 @@ uint16_t row_offset = 0;
 uint8_t progress_cleared = 0;
 uint8_t	protocol = Smoothie;
 uint16_t freq = 0, duration = 0;
+uint8_t pics;
 uint16_t dot_pos_x = CHAR_WIDTH;
 uint16_t dot_pos_y = 7 * CHAR_HEIGTH;
 int8_t encdiff;
@@ -91,7 +98,6 @@ void Rem_Lead_Zero(uint8_t i)
 //----------------------------------------------------------------------------
 void Get_Temps()
 {	//for Smoothieware
-	uint8_t j;
 	for (uint8_t i = 0; i < 20; i++)
 	{
 		//scan first line for temperatures
@@ -106,19 +112,15 @@ void Get_Temps()
 				{	//when first step and hotend present
 					datat[2] = 'H';	datat[3] = 'E';
 					Rem_Lead_Zero(i);
-					j = 21;
-					datat[j++] = data[i+1];	datat[j++] = data[i+2];	datat[j] = data[i+3];
-					j = 41;
-					datat[j++] = data[i+5];	datat[j++] = data[i+6];	datat[j] = data[i+7];
+					datat[17] = data[i+1];	datat[18] = data[i+2];	datat[19] = data[i+3];
+					datat[33] = data[i+5];	datat[34] = data[i+6];	datat[35] = data[i+7];
 				}
 				else
 				{
 					datat[0] = 'H';	datat[1] = 'E';	datat[2] = '1';
 					Rem_Lead_Zero(i);
-					j = 20;
-					datat[j++] = data[i+1];	datat[j++] = data[i+2];	datat[j] = data[i+3];
-					j = 40;
-					datat[j++] = data[i+5];	datat[j++] = data[i+6];	datat[j] = data[i+7];
+					datat[16] = data[i+1];	datat[17] = data[i+2];	datat[18] = data[i+3];
+					datat[32] = data[i+5];	datat[33] = data[i+6];	datat[34] = data[i+7];
 				}
 				break;
 			case 'B':
@@ -126,19 +128,15 @@ void Get_Temps()
 				{	//when first step and one hotend
 					datat[6] = 'B';	datat[7] = 'E';	datat[8] = 'D';
 					Rem_Lead_Zero(i);
-					j = 26;
-					datat[j++] = data[i+1];	datat[j++] = data[i+2];	datat[j] = data[i+3];
-					j = 46;
-					datat[j++] = data[i+5];	datat[j++] = data[i+6];	datat[j] = data[i+7];
+					datat[22] = data[i+1];	datat[23] = data[i+2];	datat[24] = data[i+3];
+					datat[38] = data[i+5];	datat[39] = data[i+6];	datat[40] = data[i+7];
 				}
 				else
 				{
 					datat[13] = 'B';	datat[14] = 'E';	datat[15] = 'D';
 					Rem_Lead_Zero(i);
-					j = 33;
-					datat[j++] = data[i+1];	datat[j++] = data[i+2];	datat[j] = data[i+3];
-					j = 53;
-					datat[j++] = data[i+5];	datat[j++] = data[i+6];	datat[j] = data[i+7];
+					datat[29] = data[i+1];	datat[30] = data[i+2];	datat[31] = data[i+3];
+					datat[45] = data[i+5];	datat[46] = data[i+6];	datat[47] = data[i+7];
 				}
 				break;
 			case '2':
@@ -146,75 +144,26 @@ void Get_Temps()
 				if (temps == 1)
 				{ // when first step
 					temps = 3;
+					uint8_t j;
 					//clean previous data
-					for (j =  0; j <  9; j++ ) datat[j] = ' ';
-					for (j = 20; j < 29; j++ ) datat[j] = ' ';
-					for (j = 40; j < 49; j++ ) datat[j] = ' ';
+					for (j = 0; j < 9; j++ ) datat[j] = ' ';
+					for (j = 16; j < 25; j++ ) datat[j] = ' ';
+					for (j = 32; j < 41; j++ ) datat[j] = ' ';
 				}
 				Rem_Lead_Zero(i);
-				j = 24;
-				datat[j++] = data[i+1];	datat[j++] = data[i+2];	datat[j] = data[i+3];
-				j = 44;
-				datat[j++] = data[i+5];	datat[j++] = data[i+6];	datat[j] = data[i+7];
+				datat[20] = data[i+1];	datat[21] = data[i+2];	datat[22] = data[i+3];
+				datat[36] = data[i+5];	datat[37] = data[i+6];	datat[38] = data[i+7];
 				break;
 			case '3':
 				datat[8] = 'H';	datat[9] = 'E';	datat[10] = '3';
 				Rem_Lead_Zero(i);
-				j = 28;
-				datat[j++] = data[i+1];	datat[j++] = data[i+2];	datat[j] = data[i+3];
-				j = 48;
-				datat[j++] = data[i+5];	datat[j++] = data[i+6];	datat[j] = data[i+7];
+				datat[24] = data[i+1];	datat[25] = data[i+2];	datat[26] = data[i+3];
+				datat[40] = data[i+5];	datat[41] = data[i+6];	datat[42] = data[i+7];
 				break;
 			}
 		}
 	}
 	for (uint8_t i = 0; i < 20; i++)	{data[i] = ' ';}
-}
-//----------------------------------------------------------------------------
-void Print_Fan()
-{
-	uint8_t i, t;
-	if (temps == 1)
-	{
-		i = 11;
-		datat[i++] = 'F';	datat[i++] = 'A';	datat[i] = 'N';
-		datat[32] = '%';
-		i = 51;
-	}
-	else
-	{
-#if defined(WITHOUT_HEAT_ICO) || defined(LCD400x240)
-		i = 17;
-		datat[i++] = 'F';	datat[i++] = 'A';	datat[i] = 'N';
-		datat[38] = '%';
-#endif
-		LCD_SetCursor(17, 7);
-		i = 57;
-	}
-
-	t = data[4 * CHARS_PER_LINE];
-
-	if	(t > 100) t = data[4 * CHARS_PER_LINE] = 100;
-
-	if 		(t == 0)		datat[i + 2] = '0';
-	else if	(t == 100)
-	{
-		datat[i++] = '1';	datat[i++] = '0';	datat[i] = '0';
-	}
-	else
-	{
-		datat[i++] = ' ';
-		if (t > 10)
-		{
-			t /= 10;
-			datat[i++] = t + '0';
-			data[4 * CHARS_PER_LINE] -= t * 10;
-		}
-		else
-			datat[i++] = ' ';
-		datat[i] = data[4 * CHARS_PER_LINE] + '0';
-	}
-	data[4 * CHARS_PER_LINE] = ' ';
 }
 //----------------------------------------------------------------------------
 void Print_Temps()
@@ -230,16 +179,18 @@ void Print_Temps()
 	//main screen
 	if (protocol == Smoothie)
 	{
-		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(datat[x]);
-		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(datat[20 + x]);
-		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(datat[40 + x]);
+		for (y = 5; y < 8; y++)
+		{
+			LCD_SetCursor(0, y);
+			for (x = 0; x < 16; x++)	LCD_DrawChar(datat[i++]);
+		}
 	}
 	else if (protocol == Marlin)
 	{
-		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[(5 * CHARS_PER_LINE) + x]);
-		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[(6 * CHARS_PER_LINE) + x]);
-		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[(7 * CHARS_PER_LINE) + x]);
-		if (data[5 * CHARS_PER_LINE + 2] == '1') temps = 3;
+		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[100 + x]);
+		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[120 + x]);
+		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[140 + x]);
+		if (data[102] == '1') temps = 3;
 	}
 	CS_LCD_set;
 }
@@ -283,31 +234,25 @@ void SetLeds()
 	leds = data[FB_SIZE - 1];
 	leds &= LED_MASK;
 
-	if (((cour_leds & LED_HOT) != (leds & LED_HOT)) && !(cour_pics & PIC_LOGO))
+	if ((leds & LED_HOT) && !(pics & PIC_LOGO))
 	{
-		if (leds & LED_HOT)
-		{
-			if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+		if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
 #if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
-			else			LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+		else			LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
 #endif
-		}
-		else
-		{
-			if (temps == 1)	LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
-#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
-			else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
-#endif
-		}
 	}
-	cour_leds = leds;
+	else
+	{
+		if (temps == 1)	LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
+#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
+		else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+#endif
+	}
 }
 //----------------------------------------------------------------------------
 void DrawIcons()
 {
 	const char border[] = {196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 0};
-
-	uint8_t pics;
 
 	pics = data[FB_SIZE - 2];
 	pics &= PIC_MASK;
@@ -332,7 +277,7 @@ void DrawIcons()
 			SPI_Cmd(SPI, DISABLE);
 
 			uint8_t i = 0;
-			for (uint8_t y = 0; y < 4; y++)
+			for (uint8_t y = 0; y < 5; y++)
 			{
 				LCD_SetCursor(0, y);
 				for (uint8_t x = 0; x < CHARS_PER_LINE; x++)
@@ -349,83 +294,76 @@ void DrawIcons()
 		LCD_Set_TextColor(White, BackColor);
 		duration = 500;
 		buzzer();
-		cour_pics = pics & PIC_LOGO;
 		return;
 	}
 
-	if (cour_pics != pics)
+	if (temps == 1)
 	{
-		if (temps == 1)
-		{
-			if ((cour_pics & PIC_HE1) != (pics & PIC_HE1))
-			{
-				if (pics & PIC_HE1) LCD_Draw_Picture (pic1_Xmin1, pic_Ymin, &extrude_48x48[0]);
-				else				LCD_Clear_Picture(pic1_Xmin1, pic_Ymin);
-			}
-			if ((cour_pics & PIC_BED) != (pics & PIC_BED))
-			{
-				if (pics & PIC_BED)	LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_48x48[0]);
-				else				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
-			}
-			if ((cour_pics & PIC_FAN) != (pics & PIC_FAN))
-			{
-				if (pics & PIC_FAN)	LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_48x48[0]);
-				else				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
-			}
-			if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
-			{
-				if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
-				else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
-			}
-		}
-		else
-		{
-			if ((cour_pics & PIC_HE1) != (pics & PIC_HE1))
-			{
-				if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude1_48x48[0]);
-				else				LCD_Clear_Picture(pic1_Xmin, pic_Ymin);
-			}
-			if ((cour_pics & PIC_HE2) != (pics & PIC_HE2))
-			{
-				if (pics & PIC_HE2)	LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude2_48x48[0]);
-				else				LCD_Clear_Picture(pic2_Xmin, pic_Ymin);
-			}
-			if ((cour_pics & PIC_HE3) != (pics & PIC_HE3))
-			{
-				if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude3_48x48[0]);
-				else				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
-			}
-			if ((cour_pics & PIC_BED) != (pics & PIC_BED))
-			{
-				if (pics & PIC_BED)	LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_48x48[0]);
-				else				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
-			}
-			if ((cour_pics & PIC_FAN) != (pics & PIC_FAN))
-			{
-				if (pics & PIC_FAN)	LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_48x48[0]);
-				else				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
-			}
-#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
-			if ((cour_pics & PIC_HOT) != (pics & PIC_HOT))
-			{
-				if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
-				else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
-			}
-#endif
+		if (pics & PIC_HE1) LCD_Draw_Picture (pic1_Xmin1, pic_Ymin, &extrude_48x48[0]);
+		else				LCD_Clear_Picture(pic1_Xmin1, pic_Ymin);
 
-		}
-		cour_pics = pics;
+		if (pics & PIC_BED)	LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_48x48[0]);
+		else				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
+
+		if (pics & PIC_FAN)	LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_48x48[0]);
+		else				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
+
+		if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+		else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
 	}
+	else
+	{
+		if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude1_48x48[0]);
+		else				LCD_Clear_Picture(pic1_Xmin, pic_Ymin);
+
+		if (pics & PIC_HE2)	LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude2_48x48[0]);
+		else				LCD_Clear_Picture(pic2_Xmin, pic_Ymin);
+
+		if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude3_48x48[0]);
+		else				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
+
+		if (pics & PIC_BED)	LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_48x48[0]);
+		else				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
+
+		if (pics & PIC_FAN)	LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_48x48[0]);
+		else				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
+
+#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
+		if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+		else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+#endif
+	}
+}
+//----------------------------------------------------------------------------
+uint8_t grid_points_x, grid_points_y;
+void UBL_Draw_Frame()
+{
+	uint8_t i;
+
+	grid_points_x = data[1] >> 4;
+	grid_points_y = data[1] & 0x0f;
+
+	//top line
+	for (i = 1; i < 10; i++)	data[i] = 11;
+	//top right corner
+	data[i] = 9;
+	//left line
+	for (i = CHARS_PER_LINE; i < (CHARS_PER_LINE * 7); i += CHARS_PER_LINE) data[i] = 8;
+	//right line
+	for (i = CHARS_PER_LINE + 10; i < (CHARS_PER_LINE * 7 + 10); i += CHARS_PER_LINE) data[i] = 8;
+	//bottom left corner
+	data[CHARS_PER_LINE * 7] = '+';
+	//bottom line
+	for (i = CHARS_PER_LINE * 7 + 1; i < (CHARS_PER_LINE * 7 + 10); i++) data[i] = 11;
+	//bottom right corner
+	data[CHARS_PER_LINE * 7 + 10] = 217;
 }
 //----------------------------------------------------------------------------
 void UBL_Draw_Dot()
 {	//for Marlin
-	uint8_t i, grid_points_x, grid_points_y;
+	uint8_t i;
 	uint8_t point_x, point_y;	//point_y - inverted
 	uint8_t step_x, step_y;
-
-	grid_points_x = data[FB_SIZE - 1] >> 4;
-	grid_points_y = data[FB_SIZE - 1] & 0x0f;
 
 	step_x = CHAR_WIDTH * 9 / (grid_points_x - 1);
 	step_y = CHAR_HEIGTH * 6 / (grid_points_y - 1);
@@ -498,7 +436,7 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 			i = percent / 10;
 			LCD_ClearArea(XMIN + 3, ymin + 2, XMIN + 3 + percent * 3, ymax - 2, pb_colors[i]);
 		}
-		else	//clear progress bar
+		else
 			LCD_ClearArea(XMIN + 3, ymin + 2, XMAX - 3, ymax - 2, Black);
 		c_p = percent;
 	}
@@ -509,10 +447,21 @@ uint16_t Print_Line(uint16_t i, uint8_t row)
 	if ((data[i] == '>') || (data[i] == 0x03))
 	{//change menu cursor
 		progress_cleared = 0;
-		LCD_Set_TextColor(Black, White);
+		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
+	}
+	else if (data[i] == '#')
+	{//change line color
+		progress_cleared = 0;
+		data[i] = ' ';
+		LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR);
+	}
+	else if (data[i] == '!')
+	{//change line color for errors
+		data[i] = ' ';
+		LCD_Set_TextColor(ERROR_TEXT_COLOR, ERROR_BACK_COLOR);
 	}
 	else
-		LCD_Set_TextColor(White, Black);
+		LCD_Set_TextColor(White, Black);	//default colors for text
 
 	LCD_SetCursor(0, row);
 	for (uint8_t x = 0; x < CHARS_PER_LINE; x++)
@@ -537,9 +486,7 @@ void handle_command()
 			progress_cleared = 0;
 			temps = 1;
 			LCD_FillScreen(BackColor);
-
-		case CLEAR_BUFFER:	//only text, not icons and leds
-			for (i = 0; i < 60; i++)	datat[i] = ' ';
+			for (i = 0; i < 48; i++)	datat[i] = ' ';
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[i] = ' ';
 			break;
 
@@ -547,13 +494,12 @@ void handle_command()
 			i = 0;
 			if (protocol == Smoothie)
 			{
-				if (data[CHARS_PER_LINE] == 'X')	Get_Temps();	//main screen
+				if (data[20] == 'X')	Get_Temps();	//main screen
 
 				for (y = 0; y < TEXT_LINES; y++)
 				{
-					if ((y == 4) && ((data[CHARS_PER_LINE] != ' ') && (data[CHARS_PER_LINE] != '>')))
+					if ((y == 4) && ((data[20] != ' ') && (data[20] != '>')))
 					{//main or start screen
-						Print_Fan();
 						if ((data[FB_SIZE - 2] && PIC_LOGO) == 0)
 							Draw_Progress_Bar(y, Get_Progress());
 						Print_Temps();
@@ -593,6 +539,8 @@ void handle_command()
 					LCD_Set_TextColor(White, Black);
 					if (pos == FB_SIZE)
 					{ //print all screen
+						if (data[0] == 218)
+							UBL_Draw_Frame();
 						for (y = 0; y < TEXT_LINES; y++)
 						{
 							if (data[i] == '%')
@@ -614,8 +562,10 @@ void handle_command()
 					else
 					{//print one line
 						i = row_offset;
-						if (data[i] == '%')	Draw_Progress_Bar(cour_row, data[i + 1]);
-						else				Print_Line(i, cour_row);
+						if (data[i] == '%')
+							Draw_Progress_Bar(cour_row, data[i + 1]);
+						else
+							Print_Line(i, cour_row);
 					}
 				}
 			}
@@ -624,6 +574,8 @@ void handle_command()
 		case BUZZER:
 			duration = data[0] << 8;
 			duration += data[1];
+			if (duration < 100)
+				duration = 100;
 			freq = data[2] << 8;
 			freq += data[3];
 			buzzer();
@@ -688,11 +640,6 @@ void I2C2_EV_IRQHandler(void)
 	    case I2C_EVENT_SLAVE_STOP_DETECTED:	//EV4 for write and read
 	    	if (cmd)
 	    		new_command = 1;
-	    	if (cmd == REDRAW)
-	    	{
-	    		cmd = LCD_WRITE;
-	    		pos = FB_SIZE;
-	    	}
 	    	while ((I2C->SR1 & I2C_SR1_ADDR) == I2C_SR1_ADDR) { I2C->SR1; I2C->SR2; }	// ADDR-Flag clear
 	    	while ((I2C->SR1 & I2C_SR1_STOPF) == I2C_SR1_STOPF) { I2C->SR1; I2C->CR1 |= 0x1; }	// STOPF Flag clear
 	    	break;
@@ -747,8 +694,6 @@ void SPI2_IRQHandler(void)
 			case CONTRAST:		cmd = b;	toread = 1;	pos = 0;	return;
 			case GET_LCD_ROW:	SPI->DR = TEXT_LINES;	return;
 			case GET_LCD_COL:	SPI->DR = CHARS_PER_LINE;	return;
-			case CLEAR_BUFFER:	cmd = b;	new_command = 1;	return;
-			case REDRAW: 		cmd = LCD_WRITE;	toread = 0; new_command = 1;	return;
 			case INIT:			cmd = b;	toread = 1;	pos = 0;	return;
 		}
 	}

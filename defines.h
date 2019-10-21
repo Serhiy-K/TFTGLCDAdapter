@@ -7,7 +7,7 @@
 enum protocols {Smoothie = 0, Marlin = 1};
 
 //#define	INVERT_ENCODER_DIR
-#define	WITHOUT_HEAT_ICO	//if you want see "FAN %" text insted of heat icon on 320x240 screen
+#define	WITHOUT_HEAT_ICO	//if you want see "FAN %" text insted heat icon on 320x240 screen
 
 //select only used LCD
 #define ILI9325
@@ -29,7 +29,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #endif
 #ifdef ILI9327
 #define	LCDMIN	240
-#define	LCDMAX	400
+#define	LCDMAX	384	//for even number of symols in line
 #define LCD400x240
 #endif
 
