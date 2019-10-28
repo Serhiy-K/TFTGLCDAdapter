@@ -1,3 +1,11 @@
+10/28/2019
+
+1. Code optimisation.
+2. Add centering text for Smoothieware on 400x240 LCD.
+3. Fix small bugs for output on 400x240 LCD.
+4. Change positions for first lines and progressbar for Smoothieware.
+5. Update and add new fotos.
+  
 10/20/2019
 
 1. Change init and text resolution for ILI9327 LCD. Now screen equal to 24x10 text screen

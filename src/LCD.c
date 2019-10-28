@@ -61,15 +61,15 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA((LCDYMAX - 1) - Y0);
 	LCD_Write_Com(0x2B);
 #ifdef LANDSCAPE_L
-	LCD_DATA((X0 + 32 + CHAR_WIDTH / 2) >> 8);
-	LCD_DATA(X0 + 32 + CHAR_WIDTH / 2);
-	LCD_DATA((X1 + 32 + CHAR_WIDTH / 2) >> 8);
-	LCD_DATA(X1 + 32 + CHAR_WIDTH / 2);
+	LCD_DATA((X0 + 32) >> 8);
+	LCD_DATA(X0 + 32);
+	LCD_DATA((X1 + 32) >> 8);
+	LCD_DATA(X1 + 32);
 #else
-	LCD_DATA((X0 + CHAR_WIDTH / 2) >> 8);
-	LCD_DATA(X0 + CHAR_WIDTH / 2);
-	LCD_DATA((X1 + CHAR_WIDTH / 2) >> 8);
-	LCD_DATA(X1 + CHAR_WIDTH / 2);
+	LCD_DATA((X0) >> 8);
+	LCD_DATA(X0);
+	LCD_DATA((X1) >> 8);
+	LCD_DATA(X1);
 #endif
 #endif	//ILI9327
 
@@ -470,19 +470,8 @@ void LCD_Init(void)
 	LCD_Write_Com(0x29);	//display on
 	LCD_Write_Com(0x2C);	//display on
 
-	//clear all 432x240 dots
-	LCD_Write_Com(0x2A);
-	LCD_DATA(0);	LCD_DATA(0);
-	LCD_DATA((LCDYMAX - 1) >> 8);	LCD_DATA(LCDYMAX - 1);
-	LCD_Write_Com(0x2B);
-	LCD_DATA(0);	LCD_DATA(0);
-	LCD_DATA(431 >> 8);	LCD_DATA(431);
-    do
-    {
-    	LCD_DATA(0);	LCD_DATA(0);
-    }
-    while (uint32_t ++cntT < (432 * LCDYMAX));
-    CS_LCD_set;
+	//clear 400x240 dots
+	LCD_ClearArea(0, 0, 399, LCDYMAX - 1, BackColor);
 
 	LCD_Set_TextColor(Yellow, Blue);
 	LCD_PutStrig_XY(0, 0, "                        ");

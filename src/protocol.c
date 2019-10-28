@@ -6,18 +6,35 @@
 #include "protocol.h"
 #include "systick.h"
 
+
+#define	TTO		0	// offset for text termo
+#define	TSO		16	// offset for setted termo
+#define	TMO		32	// offset for measured termo
+//for one extruder config
+#define HEO		1
+#define	B1O		6
+#define F1O		11
+#define H1O		15
+//for multy-extruders config
+#define HE1O	0
+#define HE2O	4
+#define HE3O	8
+#define	B3O		13
+#define F3O		17
+#define F3O		17
+
 #define pic_Ymin	LCDYMAX - 48
 //for one extruder config
-#define	pic1_Xmin1	CHAR_WIDTH * 1	//HE
-#define	pic2_Xmin1	CHAR_WIDTH * 6	//BED
-#define	pic3_Xmin1	CHAR_WIDTH * 11	//FAN
-#define pic4_Xmin1	CHAR_WIDTH * 15	//HEAT
+#define	pic1_Xmin1	CHAR_WIDTH * HEO	//HE
+#define	pic2_Xmin1	CHAR_WIDTH * B1O	//BED
+#define	pic3_Xmin1	CHAR_WIDTH * F1O	//FAN
+#define pic4_Xmin1	CHAR_WIDTH * H1O	//HEAT
 //for multy-extruders config
-#define	pic1_Xmin	0	//HE1
-#define	pic2_Xmin	CHAR_WIDTH * 4	//HE2
-#define	pic3_Xmin	CHAR_WIDTH * 8	//HE3
-#define	pic4_Xmin	CHAR_WIDTH * 13	//BED
-#define	pic5_Xmin	CHAR_WIDTH * 17	//FAN
+#define	pic1_Xmin	HE1O	//HE1
+#define	pic2_Xmin	CHAR_WIDTH * HE2O	//HE2
+#define	pic3_Xmin	CHAR_WIDTH * HE3O	//HE3
+#define	pic4_Xmin	CHAR_WIDTH * B3O	//BED
+#define	pic5_Xmin	CHAR_WIDTH * F3O	//FAN
 
 #ifdef	LCD320x240
 #define pic6_Xmin	pic5_Xmin	//HEAT
@@ -77,32 +94,26 @@ int8_t encdiff;
 uint8_t c_p = 0;
 
 //----------------------------------------------------------------------------
-uint8_t New_cmd()
+uint8_t New_cmd()	{ return new_command; }
+//----------------------------------------------------------------------------
+//For Smoothieware
+//----------------------------------------------------------------------------
+void Move_Text()
 {
-	return new_command;
-}
-//----------------------------------------------------------------------------
-void Rem_Lead_Zero(uint8_t i)
-{	//for Smoothieware
-	if (data[i+1] == '0')
-	{
-		data[i+1] = ' ';
-		if (data[i+2] == '0')	data[i+2] = ' ';
-	}
-	if (data[i+5] == '0')
-	{
-		data[i+5] = ' ';
-		if (data[i+6] == '0')	data[i+6] = ' ';
-	}
-}
-//----------------------------------------------------------------------------
-void Get_Temps()
-{	//for Smoothieware
-	for (uint8_t i = 0; i < 20; i++)
+	uint8_t i, to;
+	for (i = 0; i < 20; i++)
 	{
 		//scan first line for temperatures
 		if (data[i] == ':')
 		{
+			if (data[i+1] == '0')
+			{
+				data[i+1] = ' ';	if (data[i+2] == '0')	data[i+2] = ' ';
+			}
+			if (data[i+5] == '0')
+			{
+				data[i+5] = ' ';	if (data[i+6] == '0')	data[i+6] = ' ';
+			}
 			switch (data[i-1])
 			{
 			case 'T':	//by default
@@ -110,61 +121,168 @@ void Get_Temps()
 			case 'H':	//hotend
 				if (temps == 1)
 				{	//when first step and hotend present
-					datat[2] = 'H';	datat[3] = 'E';
-					Rem_Lead_Zero(i);
-					datat[17] = data[i+1];	datat[18] = data[i+2];	datat[19] = data[i+3];
-					datat[33] = data[i+5];	datat[34] = data[i+6];	datat[35] = data[i+7];
+					to = TTO + HEO + 1;	datat[to++] = 'H';	datat[to] = 'E';
+					to = TSO + HEO;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+					to = TMO + HEO;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				}
 				else
 				{
-					datat[0] = 'H';	datat[1] = 'E';	datat[2] = '1';
-					Rem_Lead_Zero(i);
-					datat[16] = data[i+1];	datat[17] = data[i+2];	datat[18] = data[i+3];
-					datat[32] = data[i+5];	datat[33] = data[i+6];	datat[34] = data[i+7];
+					to =TTO + HE1O;	datat[to++] = 'H';	datat[to++] = 'E';	datat[to] = '1';
+					to =TSO + HE1O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to++] = data[i+3];
+					to =TMO + HE1O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to++] = data[i+7];
 				}
 				break;
 			case 'B':
 				if (temps == 1)
 				{	//when first step and one hotend
-					datat[6] = 'B';	datat[7] = 'E';	datat[8] = 'D';
-					Rem_Lead_Zero(i);
-					datat[22] = data[i+1];	datat[23] = data[i+2];	datat[24] = data[i+3];
-					datat[38] = data[i+5];	datat[39] = data[i+6];	datat[40] = data[i+7];
+					to = TTO + B1O;	datat[to++] = 'B';	datat[to++] = 'E';	datat[to] = 'D';
+					to = TSO + B1O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+					to = TMO + B1O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				}
 				else
 				{
-					datat[13] = 'B';	datat[14] = 'E';	datat[15] = 'D';
-					Rem_Lead_Zero(i);
-					datat[29] = data[i+1];	datat[30] = data[i+2];	datat[31] = data[i+3];
-					datat[45] = data[i+5];	datat[46] = data[i+6];	datat[47] = data[i+7];
+					to = TTO + B3O;	datat[to++] = 'B';	datat[to++] = 'E';	datat[to++] = 'D';
+					to = TSO + B3O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+					to = TMO + B3O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				}
 				break;
 			case '2':
-				datat[4] = 'H';	datat[5] = 'E';	datat[6] = '2';
 				if (temps == 1)
 				{ // when first step
 					temps = 3;
 					uint8_t j;
-					//clean previous data
-					for (j = 0; j < 9; j++ ) datat[j] = ' ';
-					for (j = 16; j < 25; j++ ) datat[j] = ' ';
-					for (j = 32; j < 41; j++ ) datat[j] = ' ';
+					//clean previous text data
+					for (j = TTO; j < TTO + F1O; j++ ) datat[j] = ' ';
+					for (j = TSO; j < TSO + F1O; j++ ) datat[j] = ' ';
+					for (j = TMO; j < TMO + F1O; j++ ) datat[j] = ' ';
+					//clean previous icons
+					LCD_ClearArea(0, pic_Ymin, LCDXMAX - 1, LCDYMAX - 1, BackColor);
 				}
-				Rem_Lead_Zero(i);
-				datat[20] = data[i+1];	datat[21] = data[i+2];	datat[22] = data[i+3];
-				datat[36] = data[i+5];	datat[37] = data[i+6];	datat[38] = data[i+7];
+				to = TTO + HE2O;	datat[to++] = 'H';	datat[to++] = 'E';	datat[to] = '2';
+				to = TSO + HE2O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+				to = TMO + HE2O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				break;
 			case '3':
-				datat[8] = 'H';	datat[9] = 'E';	datat[10] = '3';
-				Rem_Lead_Zero(i);
-				datat[24] = data[i+1];	datat[25] = data[i+2];	datat[26] = data[i+3];
-				datat[40] = data[i+5];	datat[41] = data[i+6];	datat[42] = data[i+7];
+				to = TTO + HE3O;	datat[to++] = 'H';	datat[to++] = 'E';	datat[to] = '3';
+				to = TSO + HE3O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+				to = TMO + HE3O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				break;
 			}
 		}
 	}
-	for (uint8_t i = 0; i < 20; i++)	{data[i] = ' ';}
+	//move up 2 and 3 lines
+	for (i = 0; i < CHARS_PER_LINE * 2; i++)	{data[i] = data[i + CHARS_PER_LINE];}
 }
+//----------------------------------------------------------------------------
+uint8_t  Get_Progress()
+{
+	uint8_t percent;
+	percent = data[CHARS_PER_LINE + 18] - '0';	//fixed position
+	if (data[CHARS_PER_LINE + 17] != ' ')	percent += (data[CHARS_PER_LINE + 17] - '0') * 10;
+	if (data[CHARS_PER_LINE + 16] == '1')	percent = 100;
+	return percent;
+}
+//----------------------------------------------------------------------------
+void Check_for_edit_mode()
+{	//on edit param screen line 2 is free and line 3 has text
+	uint8_t i;
+	//check line 2
+	for (i = 0; i < CHARS_PER_LINE; i++)
+	{
+		if (data[CHARS_PER_LINE + i] != ' ') return;	//line 2  has text
+	}
+	//check line 3
+	for (i = CHARS_PER_LINE * 2; i < CHARS_PER_LINE * 3; i++)
+	{
+		if (data[i] != ' ')
+		{	//line 3 has text
+			for (i = CHARS_PER_LINE * 3 - 1; i > CHARS_PER_LINE * 2; i--)	data[i] = data[i - 1];	//shift text right
+			data[CHARS_PER_LINE * 2] = '#';	//put marker for new colors
+			return;
+		}
+	}
+}
+//----------------------------------------------------------------------------
+void SetLeds()
+{
+	uint8_t leds;
+
+	leds = data[FB_SIZE - 1];
+	leds &= LED_MASK;
+
+	if (leds & LED_HOT)
+	{
+		if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
+		else			LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+#endif
+	}
+	else
+	{
+		if (temps == 1)	LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
+#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
+		else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+#endif
+	}
+}
+//----------------------------------------------------------------------------
+// For Marlin
+//----------------------------------------------------------------------------
+uint8_t grid_points_x, grid_points_y;
+void UBL_Draw_Frame()
+{
+	uint8_t i;
+
+	grid_points_x = data[1] >> 4;
+	grid_points_y = data[1] & 0x0f;
+
+	//top line
+	for (i = 1; i < 10; i++)	data[i] = 11;
+	//top right corner
+	data[i] = 9;
+	//left line
+	for (i = CHARS_PER_LINE; i < (CHARS_PER_LINE * 7); i += CHARS_PER_LINE) data[i] = 8;
+	//right line
+	for (i = CHARS_PER_LINE + 10; i < (CHARS_PER_LINE * 7 + 10); i += CHARS_PER_LINE) data[i] = 8;
+	//bottom left corner
+	data[CHARS_PER_LINE * 7] = '+';
+	//bottom line
+	for (i = CHARS_PER_LINE * 7 + 1; i < (CHARS_PER_LINE * 7 + 10); i++) data[i] = 11;
+	//bottom right corner
+	data[CHARS_PER_LINE * 7 + 10] = 217;
+}
+//----------------------------------------------------------------------------
+void UBL_Draw_Dot()
+{
+	uint8_t i;
+	uint8_t point_x, point_y;	//point_y - inverted
+	uint8_t step_x, step_y;
+
+	step_x = CHAR_WIDTH * 9 / (grid_points_x - 1);
+	step_y = CHAR_HEIGTH * 6 / (grid_points_y - 1);
+
+	i = 0;
+	while (data[++i] != ',');	//scan first line for point position
+
+	point_x = data[i - 1] - '0';
+	if (data[i - 2] != '(')	//point_x >= 10
+		point_x += (data[i - 2] - '0') * 10;
+
+	if (data[i + 2] != ')') {	//point_y >= 10
+		point_y = (data[i + 1] - '0') * 10;
+		point_y += data[i + 2] - '0';
+	}
+	else {
+		point_y = data[i + 1] - '0';
+	}
+
+	dot_pos_x = CHAR_WIDTH + point_x * step_x;
+	dot_pos_y = 7 * CHAR_HEIGTH - point_y * step_y;
+
+	LCD_ClearArea(dot_pos_x - 3, dot_pos_y - 3, dot_pos_x + 3, dot_pos_y + 3, White);
+}
+//----------------------------------------------------------------------------
+// For Smoothieware and Marlin
 //----------------------------------------------------------------------------
 void Print_Temps()
 {
@@ -173,7 +291,6 @@ void Print_Temps()
 	#else
 		#define MX	20
 	#endif
-
 	uint8_t i, x, y;
 	i = 0;
 	//main screen
@@ -187,10 +304,10 @@ void Print_Temps()
 	}
 	else if (protocol == Marlin)
 	{
-		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[100 + x]);
-		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[120 + x]);
-		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[140 + x]);
-		if (data[102] == '1') temps = 3;
+		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 5 + x]);
+		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 6 + x]);
+		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 7 + x]);
+		if (data[CHARS_PER_LINE * 5 + 2] == '1') temps = 3;
 	}
 	CS_LCD_set;
 }
@@ -222,37 +339,17 @@ void buzzer()
 {
 	if (duration)
 	{
+		if (duration < 100)	duration = 100;
 		TIM3->BUZZER_CCR = 127;
 		TIM2->CR1 |= TIM_CR1_CEN;
 	}
 }
 //----------------------------------------------------------------------------
-void SetLeds()
-{
-	uint8_t leds;
-
-	leds = data[FB_SIZE - 1];
-	leds &= LED_MASK;
-
-	if ((leds & LED_HOT) && !(pics & PIC_LOGO))
-	{
-		if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
-#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
-		else			LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
-#endif
-	}
-	else
-	{
-		if (temps == 1)	LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
-#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
-		else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
-#endif
-	}
-}
-//----------------------------------------------------------------------------
 void DrawIcons()
 {
-	const char border[] = {196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 0};
+#define	LOGO_OFFSET		((CHARS_PER_LINE - 12) / 2)
+
+	char border[] = {196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 0};
 
 	pics = data[FB_SIZE - 2];
 	pics &= PIC_MASK;
@@ -261,29 +358,24 @@ void DrawIcons()
 	{	//Text Logo
 		LCD_Set_TextColor(Yellow, Blue);
 		if (protocol == Smoothie)
-		{	//only on SPI bus
-		    NVIC_DisableIRQ(I2C_IRQ);
-		    NVIC_DisableIRQ(I2C_ERR_IRQ);
-		    I2C_Cmd(I2C, DISABLE);
-
-			LCD_DrawChar_XY(4, 4, 218);	LCD_PutStrig(&border[0]);	LCD_DrawChar(191);	CS_LCD_set;
-			LCD_DrawChar_XY(4, 5, 179);	LCD_PutStrig("   Open   ");	LCD_DrawChar(179);	CS_LCD_set;
-			LCD_DrawChar_XY(4, 6, 179);	LCD_PutStrig(" Hardware ");	LCD_DrawChar(179);	CS_LCD_set;
-			LCD_DrawChar_XY(4, 7, 192);	LCD_PutStrig(&border[0]);	LCD_DrawChar(217);	CS_LCD_set;
+		{
+			LCD_DrawChar_XY(LOGO_OFFSET, 4, 218);	LCD_PutStrig(&border[0]);	LCD_DrawChar(191);	CS_LCD_set;
+			LCD_DrawChar_XY(LOGO_OFFSET, 5, 179);	LCD_PutStrig("   Open   ");	LCD_DrawChar(179);	CS_LCD_set;
+			LCD_DrawChar_XY(LOGO_OFFSET, 6, 179);	LCD_PutStrig(" Hardware ");	LCD_DrawChar(179);	CS_LCD_set;
+			LCD_DrawChar_XY(LOGO_OFFSET, 7, 192);	LCD_PutStrig(&border[0]);	LCD_DrawChar(217);	CS_LCD_set;
 		}
 		else if (protocol == Marlin)
-		{	//Text Logo from Marlin
-			NVIC_DisableIRQ(SPI_IRQ);
-			SPI_Cmd(SPI, DISABLE);
-
+		{
 			uint8_t i = 0;
 			for (uint8_t y = 0; y < 5; y++)
 			{
 				LCD_SetCursor(0, y);
 				for (uint8_t x = 0; x < CHARS_PER_LINE; x++)
 				{
-					if (data[i] == '-')	{
-						LCD_DrawChar(11); i++;
+					if (data[i] == '-')
+					{
+						LCD_DrawChar(11);
+						i++;
 					}
 					else
 						LCD_DrawChar(data[i++]);
@@ -308,8 +400,11 @@ void DrawIcons()
 		if (pics & PIC_FAN)	LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_48x48[0]);
 		else				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
 
-		if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
-		else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
+		if (protocol != Smoothie)
+		{
+			if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
+			else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
+		}
 	}
 	else
 	{
@@ -329,73 +424,13 @@ void DrawIcons()
 		else				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
 
 #if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
-		if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
-		else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+		if (protocol != Smoothie)
+		{
+			if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
+			else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
+		}
 #endif
 	}
-}
-//----------------------------------------------------------------------------
-uint8_t grid_points_x, grid_points_y;
-void UBL_Draw_Frame()
-{
-	uint8_t i;
-
-	grid_points_x = data[1] >> 4;
-	grid_points_y = data[1] & 0x0f;
-
-	//top line
-	for (i = 1; i < 10; i++)	data[i] = 11;
-	//top right corner
-	data[i] = 9;
-	//left line
-	for (i = CHARS_PER_LINE; i < (CHARS_PER_LINE * 7); i += CHARS_PER_LINE) data[i] = 8;
-	//right line
-	for (i = CHARS_PER_LINE + 10; i < (CHARS_PER_LINE * 7 + 10); i += CHARS_PER_LINE) data[i] = 8;
-	//bottom left corner
-	data[CHARS_PER_LINE * 7] = '+';
-	//bottom line
-	for (i = CHARS_PER_LINE * 7 + 1; i < (CHARS_PER_LINE * 7 + 10); i++) data[i] = 11;
-	//bottom right corner
-	data[CHARS_PER_LINE * 7 + 10] = 217;
-}
-//----------------------------------------------------------------------------
-void UBL_Draw_Dot()
-{	//for Marlin
-	uint8_t i;
-	uint8_t point_x, point_y;	//point_y - inverted
-	uint8_t step_x, step_y;
-
-	step_x = CHAR_WIDTH * 9 / (grid_points_x - 1);
-	step_y = CHAR_HEIGTH * 6 / (grid_points_y - 1);
-
-	i = 0;
-	while (data[++i] != ',');	//scan first line for point position
-
-	point_x = data[i - 1] - '0';
-	if (data[i - 2] != '(')	//point_x >= 10
-		point_x += (data[i - 2] - '0') * 10;
-
-	if (data[i + 2] != ')') {	//point_y >= 10
-		point_y = (data[i + 1] - '0') * 10;
-		point_y += data[i + 2] - '0';
-	}
-	else {
-		point_y = data[i + 1] - '0';
-	}
-
-	dot_pos_x = CHAR_WIDTH + point_x * step_x;
-	dot_pos_y = 7 * CHAR_HEIGTH - point_y * step_y;
-
-	LCD_ClearArea(dot_pos_x - 3, dot_pos_y - 3, dot_pos_x + 3, dot_pos_y + 3, White);
-}
-//----------------------------------------------------------------------------
-uint8_t  Get_Progress()
-{	//for Smoothieware
-	uint8_t percent;
-	percent = data[58] - '0';	//fixed position
-	if (data[57] != ' ')	percent += (data[57] - '0') * 10;
-	if (data[56] == '1')	percent = 100;
-	return percent;
 }
 //----------------------------------------------------------------------------
 void Draw_Progress_Bar(uint8_t y, uint8_t percent)
@@ -442,21 +477,26 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 	}
 }
 //----------------------------------------------------------------------------
-uint16_t Print_Line(uint16_t i, uint8_t row)
+void Print_Line(uint8_t row)
 {
+	uint16_t i = row * CHARS_PER_LINE;
+	uint8_t x;
+
+	//change colors for different lines
 	if ((data[i] == '>') || (data[i] == 0x03))
-	{//change menu cursor
+	{//menu cursor
 		progress_cleared = 0;
+		if (data[i] == '>')	data[i] = ' ';
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
 	}
 	else if (data[i] == '#')
-	{//change line color
+	{//edit line
 		progress_cleared = 0;
 		data[i] = ' ';
 		LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR);
 	}
 	else if (data[i] == '!')
-	{//change line color for errors
+	{//errors line
 		data[i] = ' ';
 		LCD_Set_TextColor(ERROR_TEXT_COLOR, ERROR_BACK_COLOR);
 	}
@@ -464,69 +504,68 @@ uint16_t Print_Line(uint16_t i, uint8_t row)
 		LCD_Set_TextColor(White, Black);	//default colors for text
 
 	LCD_SetCursor(0, row);
-	for (uint8_t x = 0; x < CHARS_PER_LINE; x++)
-	{
-		if ((x == 0) && (data[i] == '>'))
-			LCD_DrawChar(' '), i++, x++;
-		LCD_DrawChar(data[i++]);
+#ifdef LCD400x240
+	if (protocol == Smoothie)
+	{//shift text right for centering
+		LCD_DrawChar(' ');	LCD_DrawChar(' ');
+		for (x = 2; x < CHARS_PER_LINE; x++)	LCD_DrawChar(data[i++]);
 	}
+	else
+#else
+	for (x = 0; x < CHARS_PER_LINE; x++)	LCD_DrawChar(data[i++]);
+#endif
 	CS_LCD_set;
-	return i;
 }
 //----------------------------------------------------------------------------
 void handle_command()
 {
-	uint16_t x, y, i;
+	uint16_t y, i;
 
-	//update time for screen is about 33...41ms
+	//update time for screen is about 45ms for 320x240 resolution
 	switch(cmd)
 	{
 		case INIT:
 			protocol = data[0];
 			progress_cleared = 0;
 			temps = 1;
+			if (protocol == Smoothie)
+			{	//only on SPI bus
+			    NVIC_DisableIRQ(I2C_IRQ);
+			    NVIC_DisableIRQ(I2C_ERR_IRQ);
+			    I2C_Cmd(I2C, DISABLE);
+			}
+			else if (protocol == Marlin)
+			{
+				NVIC_DisableIRQ(SPI_IRQ);
+				SPI_Cmd(SPI, DISABLE);
+			}
 			LCD_FillScreen(BackColor);
-			for (i = 0; i < 48; i++)	datat[i] = ' ';
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[i] = ' ';
 			break;
 
 		case LCD_WRITE:
-			i = 0;
 			if (protocol == Smoothie)
 			{
-				if (data[20] == 'X')	Get_Temps();	//main screen
-
-				for (y = 0; y < TEXT_LINES; y++)
-				{
-					if ((y == 4) && ((data[20] != ' ') && (data[20] != '>')))
-					{//main or start screen
-						if ((data[FB_SIZE - 2] && PIC_LOGO) == 0)
-							Draw_Progress_Bar(y, Get_Progress());
-						Print_Temps();
-						DrawIcons();
-						SetLeds();
-						y = TEXT_LINES;
-					}
-					else
+				if ((data[CHARS_PER_LINE] == 'X') && (data[CHARS_PER_LINE + 6] == 'Y'))
+				{//main screen
+					Move_Text();
+					for (y = 0; y < 5; y++)
 					{
-						LCD_SetCursor(0, y);
-						for (x = 0; x < CHARS_PER_LINE; x++)
-						{
-							if (x == 0)
-							{
-								if (data[i] == '>')
-								{//change menu cursor
-									progress_cleared = 0;
-									LCD_Set_TextColor(Black, White);
-									data[i] = ' ';
-								}
-								else
-									LCD_Set_TextColor(White, Black);
-							}
-							LCD_DrawChar(data[i++]);
-						}
-						CS_LCD_set;
+						if (y == 2)	Draw_Progress_Bar(y, Get_Progress());
+						else		Print_Line(y);
 					}
+					Print_Temps();
+					DrawIcons();
+					SetLeds();
+				}
+				else
+				{
+					for (y = 0; y < TEXT_LINES; y++)
+					{
+						if (y == 1)	Check_for_edit_mode();
+						Print_Line(y);
+					}
+					if (data[FB_SIZE - 2] & PIC_LOGO)	DrawIcons();
 				}
 			}
 			else
@@ -543,11 +582,9 @@ void handle_command()
 							UBL_Draw_Frame();
 						for (y = 0; y < TEXT_LINES; y++)
 						{
-							if (data[i] == '%')
-							{
-								Draw_Progress_Bar(y, data[i + 1]);
-								i += CHARS_PER_LINE;
-							}
+							row_offset = y * CHARS_PER_LINE;
+							if (data[row_offset] == '%')
+								Draw_Progress_Bar(y, data[row_offset + 1]);
 							else if ((y == 5) && (data[0] == 'X'))
 							{//main screen
 								Print_Temps();
@@ -555,17 +592,17 @@ void handle_command()
 								y = TEXT_LINES;
 							}
 							else
-								i = Print_Line(i, y);
+								Print_Line(y);
 						}
-						if (data[0] == 218)	UBL_Draw_Dot();
+						if (data[0] == 218)
+							UBL_Draw_Dot();
 					}
 					else
 					{//print one line
-						i = row_offset;
-						if (data[i] == '%')
-							Draw_Progress_Bar(cour_row, data[i + 1]);
+						if (data[row_offset] == '%')
+							Draw_Progress_Bar(cour_row, data[row_offset + 1]);
 						else
-							Print_Line(i, cour_row);
+							Print_Line(cour_row);
 					}
 				}
 			}
@@ -574,8 +611,6 @@ void handle_command()
 		case BUZZER:
 			duration = data[0] << 8;
 			duration += data[1];
-			if (duration < 100)
-				duration = 100;
 			freq = data[2] << 8;
 			freq += data[3];
 			buzzer();
