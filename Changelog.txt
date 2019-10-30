@@ -1,3 +1,9 @@
+10/30/2019
+
+1. Fix error for Smoothieware when second hotend in config file marked as T2.
+2. Add text and persent under fan icon for Smoothieware.
+3. Small changes for Marlin.
+
 10/28/2019
 
 1. Code optimisation.
@@ -5,7 +11,7 @@
 3. Fix small bugs for output on 400x240 LCD.
 4. Change positions for first lines and progressbar for Smoothieware.
 5. Update and add new fotos.
-  
+
 10/20/2019
 
 1. Change init and text resolution for ILI9327 LCD. Now screen equal to 24x10 text screen

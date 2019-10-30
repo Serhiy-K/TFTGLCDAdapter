@@ -8,8 +8,8 @@
 
 
 #define	TTO		0	// offset for text termo
-#define	TSO		16	// offset for setted termo
-#define	TMO		32	// offset for measured termo
+#define	TMO		20	// offset for measured termo
+#define	TSO		40	// offset for setted termo
 //for one extruder config
 #define HEO		1
 #define	B1O		6
@@ -20,7 +20,6 @@
 #define HE2O	4
 #define HE3O	8
 #define	B3O		13
-#define F3O		17
 #define F3O		17
 
 #define pic_Ymin	LCDYMAX - 48
@@ -62,36 +61,38 @@ enum Commands {
 	GET_SPI_DATA = 0,	// is a read results of previous command
 	READ_BUTTONS,
 	READ_ENCODER,
-	LCD_WRITE,		// get data with output
+	LCD_WRITE,			// write data into buffer and output to screen
 	BUZZER,
 	CONTRAST,
 	// Other commands... 0xE0 thru 0xFF
 	GET_LCD_ROW = 0xE0,
 	GET_LCD_COL,
-	INIT = 0xFE,	// Initialize
+	LCD_PUT,			// only write data into buffer
+	REDRAW,
+	INIT = 0xFE			// Initialize
 };
 
 // data[FB_SIZE - 1] - leds
 // data[FB_SIZE - 2] - pics
 uint8_t	data[FB_SIZE];
-uint8_t	datat[48] = {' '};
+uint8_t	datat[60] = {' '};
 
 uint8_t	cmd = 0;
 int16_t pos = -1;
 uint8_t toread = 0;
 uint8_t	new_command = 0;
 uint8_t	cour_leds = 0;
-uint8_t	temps = 1;
+uint8_t	temps = 0;
 uint8_t	cour_row = 0;
 uint16_t row_offset = 0;
 uint8_t progress_cleared = 0;
 uint8_t	protocol = Smoothie;
 uint16_t freq = 0, duration = 0;
-uint8_t pics;
+uint8_t pics = 0;
 uint16_t dot_pos_x = CHAR_WIDTH;
 uint16_t dot_pos_y = 7 * CHAR_HEIGTH;
-int8_t encdiff;
 uint8_t c_p = 0;
+uint8_t next_tx = 0;
 
 //----------------------------------------------------------------------------
 uint8_t New_cmd()	{ return new_command; }
@@ -101,7 +102,7 @@ uint8_t New_cmd()	{ return new_command; }
 void Move_Text()
 {
 	uint8_t i, to;
-	for (i = 0; i < 20; i++)
+	for (i = 1; i < 13; i++)
 	{
 		//scan first line for temperatures
 		if (data[i] == ':')
@@ -116,62 +117,99 @@ void Move_Text()
 			}
 			switch (data[i-1])
 			{
-			case 'T':	//by default
+			case 'T':	//by default for hotend1
 			case 'E':	//extruder
 			case 'H':	//hotend
-				if (temps == 1)
-				{	//when first step and hotend present
-					to = TTO + HEO + 1;	datat[to++] = 'H';	datat[to] = 'E';
-					to = TSO + HEO;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
-					to = TMO + HEO;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
+				if ((data[i+10] == '1') || (data[i+10] == '2'))
+				{
+					temps = 3;
+					to =TTO + HE1O;	datat[to++] = 'H';	datat[to++] = 'E';	datat[to] = '1';
+					to =TMO + HE1O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to++] = data[i+3];
+					to =TSO + HE1O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to++] = data[i+7];
 				}
 				else
-				{
-					to =TTO + HE1O;	datat[to++] = 'H';	datat[to++] = 'E';	datat[to] = '1';
-					to =TSO + HE1O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to++] = data[i+3];
-					to =TMO + HE1O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to++] = data[i+7];
+				{	//when first step and hotend present
+					temps = 1;
+					to = TTO + HEO + 1;	datat[to++] = 'H';	datat[to] = 'E';
+					to = TMO + HEO;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+					to = TSO + HEO;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				}
 				break;
 			case 'B':
 				if (temps == 1)
 				{	//when first step and one hotend
 					to = TTO + B1O;	datat[to++] = 'B';	datat[to++] = 'E';	datat[to] = 'D';
-					to = TSO + B1O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
-					to = TMO + B1O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
+					to = TMO + B1O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+					to = TSO + B1O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				}
 				else
 				{
 					to = TTO + B3O;	datat[to++] = 'B';	datat[to++] = 'E';	datat[to++] = 'D';
-					to = TSO + B3O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
-					to = TMO + B3O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
+					to = TMO + B3O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+					to = TSO + B3O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				}
 				break;
-			case '2':
-				if (temps == 1)
-				{ // when first step
-					temps = 3;
-					uint8_t j;
-					//clean previous text data
-					for (j = TTO; j < TTO + F1O; j++ ) datat[j] = ' ';
-					for (j = TSO; j < TSO + F1O; j++ ) datat[j] = ' ';
-					for (j = TMO; j < TMO + F1O; j++ ) datat[j] = ' ';
-					//clean previous icons
-					LCD_ClearArea(0, pic_Ymin, LCDXMAX - 1, LCDYMAX - 1, BackColor);
-				}
+			case '1':	//by default for hotend2
 				to = TTO + HE2O;	datat[to++] = 'H';	datat[to++] = 'E';	datat[to] = '2';
-				to = TSO + HE2O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
-				to = TMO + HE2O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
+				to = TMO + HE2O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+				to = TSO + HE2O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				break;
-			case '3':
+			case '2':	//by default for hotend3
 				to = TTO + HE3O;	datat[to++] = 'H';	datat[to++] = 'E';	datat[to] = '3';
-				to = TSO + HE3O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
-				to = TMO + HE3O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
+				to = TMO + HE3O;	datat[to++] = data[i+1];	datat[to++] = data[i+2];	datat[to] = data[i+3];
+				to = TSO + HE3O;	datat[to++] = data[i+5];	datat[to++] = data[i+6];	datat[to] = data[i+7];
 				break;
 			}
 		}
 	}
 	//move up 2 and 3 lines
 	for (i = 0; i < CHARS_PER_LINE * 2; i++)	{data[i] = data[i + CHARS_PER_LINE];}
+
+	if (data[CHARS_PER_LINE * 4] == '%')
+	{
+		data[CHARS_PER_LINE * 4] = ' ';
+		i = data[FB_SIZE - 2];
+		if ((i & PIC_FAN) == 0)
+			data[CHARS_PER_LINE * 4 + 1] = 0;
+		if (temps == 1)
+		{
+			to = TTO + F1O;	datat[to++] = 'F';	datat[to++] = 'A';	datat[to] = 'N';
+			datat[TMO + F1O + 1] = '%';
+			to = TSO + F1O;
+			goto FAN_P;
+		}
+		else
+		{
+			to = TTO + F3O;	datat[to++] = 'F';	datat[to++] = 'A';	datat[to] = 'N';
+			datat[TMO + F3O + 1] = '%';
+			to = TSO + F3O;
+FAN_P:
+			if (data[CHARS_PER_LINE * 4 + 1] == 100)
+			{
+				datat[to++] = '1';	datat[to++] = '0';	datat[to] = '0';
+			}
+			else if (data[CHARS_PER_LINE * 4 + 1] == 0)
+			{
+				datat[to++] = ' ';	datat[to++] = '0';	datat[to] = ' ';
+			}
+			else
+			{
+				datat[to++] = ' ';
+				i = data[CHARS_PER_LINE * 4 + 1] / 10;
+				if (i == 0)
+				{
+					datat[to++] = data[CHARS_PER_LINE * 4 + 1] + '0';
+					datat[to] = ' ';
+				}
+				else
+				{
+					datat[to++] = i + '0';
+					datat[to] = (data[CHARS_PER_LINE * 4 + 1] - i * 10) + '0';
+				}
+			}
+		}
+		data[CHARS_PER_LINE * 4 + 1] = ' ';
+	}
 }
 //----------------------------------------------------------------------------
 uint8_t  Get_Progress()
@@ -291,16 +329,13 @@ void Print_Temps()
 	#else
 		#define MX	20
 	#endif
-	uint8_t i, x, y;
-	i = 0;
+	uint8_t x;
 	//main screen
 	if (protocol == Smoothie)
 	{
-		for (y = 5; y < 8; y++)
-		{
-			LCD_SetCursor(0, y);
-			for (x = 0; x < 16; x++)	LCD_DrawChar(datat[i++]);
-		}
+		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(datat[TTO + x]);
+		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(datat[TMO + x]);
+		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(datat[TSO + x]);
 	}
 	else if (protocol == Marlin)
 	{
@@ -527,7 +562,7 @@ void handle_command()
 		case INIT:
 			protocol = data[0];
 			progress_cleared = 0;
-			temps = 1;
+			temps = 0;
 			if (protocol == Smoothie)
 			{	//only on SPI bus
 			    NVIC_DisableIRQ(I2C_IRQ);
@@ -541,6 +576,7 @@ void handle_command()
 			}
 			LCD_FillScreen(BackColor);
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[i] = ' ';
+			for (i = 0; i < 60; i++)	datat[i] = ' ';
 			break;
 
 		case LCD_WRITE:
@@ -556,6 +592,7 @@ void handle_command()
 					}
 					Print_Temps();
 					DrawIcons();
+					if (temps == 0) break;	//first cycle
 					SetLeds();
 				}
 				else
@@ -653,11 +690,11 @@ void I2C2_EV_IRQHandler(void)
 	    	if (toread == 0)
 	    	{// command
 	    		cmd = b;	pos = -1;
-		    	if ((b == INIT) || (b == CONTRAST) || (b == BUZZER) || (b == LCD_WRITE)) toread = 1; //read data for command
+		    	if ((b == INIT) || (b == CONTRAST) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
 	    	}
 	    	else
 	    	{
-	    		if (cmd == LCD_WRITE)
+	    		if ((cmd == LCD_WRITE) || (cmd == LCD_PUT))
 	    		{
 	    			if (pos == -1)
 	    			{ //write to text buffer by line
@@ -673,8 +710,17 @@ void I2C2_EV_IRQHandler(void)
 			}
 	    	break;
 	    case I2C_EVENT_SLAVE_STOP_DETECTED:	//EV4 for write and read
-	    	if (cmd)
+	    	if (cmd == REDRAW)
+	    	{
+	    		cmd = LCD_WRITE;
+	    		pos = FB_SIZE;
+	    	}
+	    	else if (cmd == LCD_PUT)
+	    		toread = 0;
+
+	    	if ((cmd >= LCD_WRITE) && (cmd != LCD_PUT))
 	    		new_command = 1;
+
 	    	while ((I2C->SR1 & I2C_SR1_ADDR) == I2C_SR1_ADDR) { I2C->SR1; I2C->SR2; }	// ADDR-Flag clear
 	    	while ((I2C->SR1 & I2C_SR1_STOPF) == I2C_SR1_STOPF) { I2C->SR1; I2C->CR1 |= 0x1; }	// STOPF Flag clear
 	    	break;
@@ -682,21 +728,32 @@ void I2C2_EV_IRQHandler(void)
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_BUTTONS:	I2C->DR = Get_Buttons();	break;
-	    		case READ_ENCODER:	encdiff = (int8_t)TIM1->CNT;	TIM1->CNT = 0;
-					#ifndef	INVERT_ENCODER_DIR
-	    				I2C->DR = encdiff;
+	    		case READ_BUTTONS:
+	    			I2C->DR = Get_Buttons();
+					#ifdef	INVERT_ENCODER_DIR
+	    				next_tx = -(int8_t)TIM1->CNT;
 					#else
-	    				I2C->DR = -encdiff;
+	    				next_tx = (int8_t)TIM1->CNT;
 					#endif
+	    			TIM1->CNT = 0;
 	    			break;
-	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	break;
-	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	break;
+	    		case READ_ENCODER:
+	    			#ifdef	INVERT_ENCODER_DIR
+	    				I2C->DR = -(int8_t)TIM1->CNT;
+					#else
+	    				I2C->DR = (int8_t)TIM1->CNT;
+	    			#endif
+	    			TIM1->CNT = 0;
+	    			next_tx = Get_Buttons();
+	    			break;
+	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	break;
+	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	break;
 	    	}
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTING:	//EV3
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:	//EV3 - next data
+	    	I2C->DR = next_tx;
 	    	break;
 	}
 }

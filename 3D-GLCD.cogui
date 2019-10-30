@@ -21,15 +21,15 @@
 </editorArea>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" partName="defines.h" title="defines.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="165" selectionTopPixel="5"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="487" selectionTopPixel="2304"/>
 </editor>
 <editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/src/protocol.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/protocol.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="16578" selectionTopPixel="10797"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="5427" selectionTopPixel="3380"/>
 </editor>
 <editor id="org.eclipse.ui.DefaultTextEditor" name="Changelog.txt" partName="Changelog.txt" title="Changelog.txt" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\Changelog.txt" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Changelog.txt"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="154" selectionTopPixel="0"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="60" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -58,7 +58,7 @@
 </view>
 <view id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" partName="Memory Browser">
 <viewState>
-<MemoryBroser ComboItemsValue="0x200004ca;0x200004cf;0x200004d2;0x200004d8;0x200004da;0x200004dc;0x200004dd;0x200004de;0x200004df;" FocuseTabIndex="0" TabsValue="" TextValue="0x200004de" horizontalPosition="0" verticalPosition="0"/>
+<MemoryBroser ComboItemsValue="0x200004ce;0x200004de;" FocuseTabIndex="0" TabsValue="" TextValue="0x200004de" horizontalPosition="0" verticalPosition="0"/>
 </viewState>
 </view>
 <view id="org.eclipse.debug.ui.BreakpointView" partName="Breakpoints">
@@ -113,7 +113,7 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.79290617" ratioLeft="693" ratioRight="181" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.80717486" ratioLeft="720" ratioRight="172" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
@@ -189,8 +189,8 @@
 <hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
 <hide_toolbar_item_id id="org.coocox.builder.ui.build"/>
 <hide_toolbar_item_id id="org.coocox.welcome.ui.action.welcome"/>
-<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideProgramDownloadAction"/>
 <hide_toolbar_item_id id="org.coocox.component.ui.ShowRepositoryAction"/>
+<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideProgramDownloadAction"/>
 <view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="org.eclipse.debug.ui.DebugView"/>
 <view id="org.eclipse.debug.ui.BreakpointView"/>
@@ -219,7 +219,7 @@
 </folder>
 </info>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@1285de9" ratio="0.5857143" ratioLeft="492" ratioRight="348" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1fe39a1">
-<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
 <page content="org.eclipse.debug.ui.BreakpointView" label="Breakpoints"/>
@@ -233,7 +233,7 @@
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d8328" ratio="0.5006849" ratioLeft="731" ratioRight="729" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1285de9">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d8328" ratio="0.4861996" ratioLeft="687" ratioRight="726" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1285de9">
 <folder activePageID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" appearance="2" expanded="2">
 <page content="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" label="Memory Browser"/>
 <page content="org.coocox.codebugger.trace.ui.traceview" label="LabelNotFound"/>
@@ -264,160 +264,159 @@
 <navigationHistory>
 <editors>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/protocol.c"/>
-<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/main.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/LCD.c"/>
+<editor factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\defines.h" project="3D-GLCD"/>
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Changelog.txt"/>
 </editors>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="11852" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="12919" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="16579" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="defines.h" index="1">
-<position info="not_deleted" x="331" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="17900" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="17918" y="0"/>
-</item>
-<item historyLabel="main.c" index="2">
-<position info="not_deleted" x="154" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="16561" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="10413" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="10486" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="10413" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="10486" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="10513" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="10533" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position info="not_deleted" x="4037" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="16561" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="LCD.c" index="3">
-<position info="not_deleted" x="4037" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4541" y="0"/>
-</item>
-<item historyLabel="defines.h" index="1">
-<position info="not_deleted" x="719" y="7"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position/>
-</item>
-<item historyLabel="defines.h" index="1">
-<position info="not_deleted" x="742" y="7"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4577" y="0"/>
-</item>
-<item historyLabel="defines.h" index="1">
-<position info="not_deleted" x="742" y="7"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="4551" y="0"/>
-</item>
-<item historyLabel="defines.h" index="1">
-<position info="not_deleted" x="811" y="11"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="6635" y="0"/>
-</item>
-<item historyLabel="defines.h" index="1">
+<item historyLabel="defines.h" index="2">
 <position info="not_deleted" x="165" y="0"/>
 </item>
+<item historyLabel="Changelog.txt" index="3">
+<position info="not_deleted" x="89" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position/>
+</item>
+<item historyLabel="Changelog.txt" index="3">
+<position info="not_deleted" x="89" y="0"/>
+</item>
 <item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="6335" y="0"/>
+<position info="not_deleted" x="5133" y="0"/>
 </item>
-<item historyLabel="Changelog.txt" index="4">
-<position info="not_deleted" x="205" y="0"/>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="75" y="0"/>
 </item>
 <item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="6335" y="0"/>
+<position info="not_deleted" x="5133" y="0"/>
 </item>
-<item historyLabel="Changelog.txt" index="4">
-<position info="not_deleted" x="154" y="0"/>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5093" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5099" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5134" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5256" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5278" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5352" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5383" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5417" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6094" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6098" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="6139" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="17465" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="17555" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="17575" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5093" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="17555" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="9646" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="9910" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="9676" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="9910" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="9676" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5459" y="0"/>
+</item>
+<item historyLabel="defines.h" index="2">
+<position info="not_deleted" x="487" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5401" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="17555" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="17561" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5093" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5134" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5256" y="0"/>
+</item>
+<item historyLabel="protocol.c" index="0">
+<position info="not_deleted" x="5133" y="0"/>
+</item>
+<item historyLabel="Changelog.txt" index="3">
+<position info="not_deleted" x="60" y="0"/>
 </item>
 <item active="true" historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="6335" y="0"/>
+<position info="not_deleted" x="5133" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -426,11 +425,14 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="Changelog.txt" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\Changelog.txt">
-<persistable uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Changelog.txt"/>
-</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
 <persistable path="/3D-GLCD/main.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_i2c.h" tooltip="3D-GLCD/stm_lib/inc/stm32f10x_i2c.h">
+<persistable path="/3D-GLCD/stm_lib/inc/stm32f10x_i2c.h"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="Changelog.txt" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\Changelog.txt">
+<persistable uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Changelog.txt"/>
 </file>
 <file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="WatchScreen.cpp" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\screens\3dprinter\WatchScreen.cpp">
 <persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/screens/3dprinter/WatchScreen.cpp"/>
@@ -464,12 +466,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="3D-GLCD/src/LCD.c">
 <persistable path="/3D-GLCD/src/LCD.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x.h" tooltip="3D-GLCD/cmsis_boot/stm32f10x.h">
-<persistable path="/3D-GLCD/cmsis_boot/stm32f10x.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" tooltip="3D-GLCD/src/protocol.c">
-<persistable path="/3D-GLCD/src/protocol.c"/>
 </file>
 </mruList>
 </workbench>
