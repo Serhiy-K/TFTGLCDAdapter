@@ -67,8 +67,8 @@ enum Commands {
 	// Other commands... 0xE0 thru 0xFF
 	GET_LCD_ROW = 0xE0,
 	GET_LCD_COL,
-	LCD_PUT,			// only write data into buffer
-	REDRAW,
+	LCD_PUT,			// for Marlin, only write data into buffer
+	REDRAW,				// for Marlin
 	INIT = 0xFE			// Initialize
 };
 
@@ -337,19 +337,22 @@ void Print_Temps()
 		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(datat[TMO + x]);
 		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(datat[TSO + x]);
 	}
-	else if (protocol == Marlin)
+	else if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
 	{
 		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 5 + x]);
 		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 6 + x]);
 		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 7 + x]);
-		if (data[CHARS_PER_LINE * 5 + 2] == '1') temps = 3;
+		if (data[CHARS_PER_LINE * 5 + 2] == '1')
+			temps = 3;
+		else
+			temps = 1;
 	}
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
 uint8_t Get_Buttons()
 {
-	int8_t b;
+	uint8_t b;
 
 	b = 0;
 	if (protocol == Smoothie)
@@ -361,7 +364,7 @@ uint8_t Get_Buttons()
 		if ((BTN_PORTB->IDR & BUTTON_PIN4) == 0)	b |= BUTTON_AUX1;
 		if ((BTN_PORTB->IDR & BUTTON_PIN5) == 0)	b |= BUTTON_AUX2;
 	}
-	else if (protocol == Marlin)
+	else if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
 	{
 		if ((ENC_PORT->IDR & ENC_BUT) == 0)			b |= EN_C;
 		if ((BTN_PORTA->IDR & BUTTON_PIN1) == 0)	b |= EN_D;
@@ -399,7 +402,7 @@ void DrawIcons()
 			LCD_DrawChar_XY(LOGO_OFFSET, 6, 179);	LCD_PutStrig(" Hardware ");	LCD_DrawChar(179);	CS_LCD_set;
 			LCD_DrawChar_XY(LOGO_OFFSET, 7, 192);	LCD_PutStrig(&border[0]);	LCD_DrawChar(217);	CS_LCD_set;
 		}
-		else if (protocol == Marlin)
+		else if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
 		{
 			uint8_t i = 0;
 			for (uint8_t y = 0; y < 5; y++)
@@ -427,13 +430,27 @@ void DrawIcons()
 	if (temps == 1)
 	{
 		if (pics & PIC_HE1) LCD_Draw_Picture (pic1_Xmin1, pic_Ymin, &extrude_48x48[0]);
-		else				LCD_Clear_Picture(pic1_Xmin1, pic_Ymin);
+		else				LCD_Draw_Picture (pic1_Xmin1, pic_Ymin, &extrude_off_48x48[0]);
 
 		if (pics & PIC_BED)	LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_48x48[0]);
-		else				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
+		else
+		{
+			if (((protocol == Smoothie) && (datat[TTO + B1O] == 'B')) ||
+				((protocol != Smoothie) && (data[CHARS_PER_LINE * 5 + B1O] == 'B')))	//bed present in off state
+				LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_off_48x48[0]);
+			else
+				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
+		}
 
 		if (pics & PIC_FAN)	LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_48x48[0]);
-		else				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
+		else
+		{
+			if (((protocol == Smoothie) && ((datat[TSO + F1O + 1] >= '0') || (datat[TSO + F1O + 2] >= '0'))) ||
+				((protocol != Smoothie) && (data[CHARS_PER_LINE * 7 + F1O + 2] >= '0')))	//fan present in off state
+				LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_off_48x48[0]);
+			else
+				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
+		}
 
 		if (protocol != Smoothie)
 		{
@@ -444,19 +461,40 @@ void DrawIcons()
 	else
 	{
 		if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude1_48x48[0]);
-		else				LCD_Clear_Picture(pic1_Xmin, pic_Ymin);
+		else				LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude_off_48x48[0]);
 
 		if (pics & PIC_HE2)	LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude2_48x48[0]);
-		else				LCD_Clear_Picture(pic2_Xmin, pic_Ymin);
+		else				LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude_off_48x48[0]);
 
 		if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude3_48x48[0]);
-		else				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
+		else
+		{
+			if (((protocol == Smoothie) && (datat[TTO + HE3O] == 'H')) ||
+				((protocol != Smoothie) && (data[CHARS_PER_LINE * 5 + HE3O] == 'H')))
+				LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude_off_48x48[0]);
+			else
+				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
+		}
 
 		if (pics & PIC_BED)	LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_48x48[0]);
-		else				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
+		else
+		{
+			if (((protocol == Smoothie) && (datat[TTO + B3O] == 'B')) ||
+				((protocol != Smoothie) && (data[CHARS_PER_LINE * 5 + B3O] == 'B')))
+				LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_off_48x48[0]);
+			else
+				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
+		}
 
 		if (pics & PIC_FAN)	LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_48x48[0]);
-		else				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
+		else
+		{
+			if (((protocol == Smoothie) && ((datat[TSO + F3O + 1] >= '0') || (datat[TSO + F3O + 2] >= '0'))) ||
+				((protocol != Smoothie) && (data[CHARS_PER_LINE * 7 + F3O + 2] >= '0')))
+				LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_off_48x48[0]);
+			else
+				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
+		}
 
 #if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
 		if (protocol != Smoothie)
@@ -556,26 +594,30 @@ void handle_command()
 {
 	uint16_t y, i;
 
+	new_command = 0;
+	toread = 0;
+
 	//update time for screen is about 45ms for 320x240 resolution
 	switch(cmd)
 	{
 		case INIT:
 			protocol = data[0];
-			progress_cleared = 0;
-			temps = 0;
-			if (protocol == Smoothie)
+			if ((protocol == Smoothie) || (protocol == MarlinSPI))
 			{	//only on SPI bus
 			    NVIC_DisableIRQ(I2C_IRQ);
 			    NVIC_DisableIRQ(I2C_ERR_IRQ);
 			    I2C_Cmd(I2C, DISABLE);
 			}
-			else if (protocol == Marlin)
+			else if (protocol == MarlinI2C)
 			{
 				NVIC_DisableIRQ(SPI_IRQ);
 				SPI_Cmd(SPI, DISABLE);
 			}
+			progress_cleared = 0;
+			temps = 0;
 			LCD_FillScreen(BackColor);
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[i] = ' ';
+			data[FB_SIZE - 2] = 0;	data[FB_SIZE - 1] = 0;
 			for (i = 0; i < 60; i++)	datat[i] = ' ';
 			break;
 
@@ -607,6 +649,7 @@ void handle_command()
 			}
 			else
 			{
+		case LCD_PUT:
 			//print all screen or one line
 				if (data[FB_SIZE - 2] & PIC_LOGO)
 					DrawIcons();
@@ -654,12 +697,9 @@ void handle_command()
 			break;
 
 		case CONTRAST:
-			i = data[0] << 8;
-			TIM3->CONTRAST_CCR = i + data[1];
+			TIM3->CONTRAST_CCR = (uint16_t)data[0];
 			break;
 	}
-	new_command = 0;
-	toread = 0;
 }
 //#################################################################################
 void TIM2_IRQHandler(void)
@@ -712,13 +752,11 @@ void I2C2_EV_IRQHandler(void)
 	    case I2C_EVENT_SLAVE_STOP_DETECTED:	//EV4 for write and read
 	    	if (cmd == REDRAW)
 	    	{
-	    		cmd = LCD_WRITE;
-	    		pos = FB_SIZE;
+	    		cmd = LCD_WRITE;	pos = FB_SIZE;	new_command = 1;
 	    	}
-	    	else if (cmd == LCD_PUT)
-	    		toread = 0;
-
-	    	if ((cmd >= LCD_WRITE) && (cmd != LCD_PUT))
+	    	else if ((cmd == LCD_PUT) && (pos == FB_SIZE))
+	    		new_command = 1;
+	    	else if ((cmd >= LCD_WRITE) && (cmd != LCD_PUT))
 	    		new_command = 1;
 
 	    	while ((I2C->SR1 & I2C_SR1_ADDR) == I2C_SR1_ADDR) { I2C->SR1; I2C->SR2; }	// ADDR-Flag clear
@@ -781,18 +819,38 @@ void SPI2_IRQHandler(void)
 					SPI->DR = -(int8_t)c;
 				#endif
 				return;
-			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
+			case LCD_WRITE:
+				if (protocol == Smoothie)
+				{
+			case LCD_PUT:
+					cmd = b;	toread = FB_SIZE;	pos = 0;	return;
+				}
+				else
+				{
+					cmd = b;	toread = CHARS_PER_LINE;	pos = -1;	return;
+				}
 			case BUZZER:		cmd = b;	toread = 4;	pos = 0;	return;
 			case CONTRAST:		cmd = b;	toread = 1;	pos = 0;	return;
 			case GET_LCD_ROW:	SPI->DR = TEXT_LINES;	return;
 			case GET_LCD_COL:	SPI->DR = CHARS_PER_LINE;	return;
+			case REDRAW:		cmd = LCD_WRITE;	pos = FB_SIZE;	new_command = 1;	return;
 			case INIT:			cmd = b;	toread = 1;	pos = 0;	return;
 		}
 	}
 	else
 	{
-		data[pos++] = b;
-		toread--;
-		if (toread == 0)	new_command = 1;
+		if (pos == -1)
+		{
+			cour_row = b;
+			row_offset = b * CHARS_PER_LINE;
+			pos = row_offset;
+		}
+		else
+		{
+			data[pos++] = b;
+			toread--;
+			if (toread == 0)
+				new_command = 1;
+		}
 	}
 }

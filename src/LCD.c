@@ -224,7 +224,7 @@ void LCD_DrawChar(char c)
 	const char *ptr; // pointer to char data
 	uint8_t mask = 0x80;  // 0b10000000
 
-	if (protocol == Marlin)
+	if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
 		c = HD44780_to_ASCII(c);
 	ptr = &FONT[(uint8_t)c][0];
 	for(i = 0; i < CHAR_BYTES; i++)
