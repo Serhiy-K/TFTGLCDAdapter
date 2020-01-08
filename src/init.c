@@ -8,6 +8,7 @@
 #include "init.h"
 #include "systick.h"
 #include "system_stm32f10x.h"
+#include "LCD.h"
 
 static void Init_GPIO(void)
 {
@@ -26,13 +27,15 @@ static void Init_GPIO(void)
 	GPIO_InitStructure.GPIO_Pin    = LCD_DATA_MASK;
 	GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 
+	CS_LCD_set;	WR_LCD_set;	RS_LCD_set;	RES_LCD_set;
+
 	// Init Encoder lines
-	GPIO_InitStructure.GPIO_Pin    = ENC_A | ENC_B | ENC_BUT;
+	GPIO_InitStructure.GPIO_Pin    = ENC_A | ENC_B;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_IPU;
 	GPIO_Init(ENC_PORT, &GPIO_InitStructure);
 
 	// Init Button
-	GPIO_InitStructure.GPIO_Pin    = BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1;
+	GPIO_InitStructure.GPIO_Pin    = BUTTONS_A_MSK;
 	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin    = BUTTON_PIN5 | BUTTON_PIN4;
 	GPIO_Init(BTN_PORTB, &GPIO_InitStructure);
@@ -101,10 +104,10 @@ static void Timer3_init(void)
   		AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_1;
 
 	// Compute the prescaler value
-	PrescalerValue = (uint16_t) (SystemCoreClock / 256000);
+	PrescalerValue = (uint16_t) (SystemCoreClock / 256000);	//frequency = 1kHz for Period = 255
 
 	// Time base configuration
-	TIM_TimeBaseStructure.TIM_Period = 255;	//frequency = 1kHz
+	TIM_TimeBaseStructure.TIM_Period = 255;
 	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
@@ -205,4 +208,5 @@ void Global_Init(void)
 	Timer3_init();
 	spi_init();
 	i2c_init();
+	LCD_Init();
 }

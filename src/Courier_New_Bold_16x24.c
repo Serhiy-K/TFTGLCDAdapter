@@ -157,7 +157,7 @@ const char Courier_New_Bold_16x24[256][48] = {
     0b00000000, 0b01111111, 0b10000000,
     0b00000000, 0b00011110, 0b00000000
 },
-{//0x08 = 0xb3 for pseudographic frames in no-english languages
+{//0x08 = 0xb3 for pseudographic frames with HD44780 translation
     0b00000000, 0b00000000, 0b00000000,
     0b00000000, 0b00000000, 0b00000000,
     0b00000000, 0b00000000, 0b00000000,
@@ -175,7 +175,7 @@ const char Courier_New_Bold_16x24[256][48] = {
     0b00000000, 0b00000000, 0b00000000,
     0b00000000, 0b00000000, 0b00000000
 },
-{//0x09 = 0xbf
+{//0x09 = 0xbf for pseudographic frames with HD44780 translation
     0b00000000, 0b00011000, 0b00000000,
     0b00000000, 0b00011000, 0b00000000,
     0b00000000, 0b00011000, 0b00000000,
@@ -193,7 +193,7 @@ const char Courier_New_Bold_16x24[256][48] = {
     0b00000000, 0b00000000, 0b00000000,
     0b00000000, 0b00000000, 0b00000000
 },
-{//0x0a = 0xc0
+{//0x0a = 0xc0 for pseudographic frames with HD44780 translation
     0b00000000, 0b00000000, 0b00000000,
     0b00000000, 0b00000000, 0b00000000,
     0b00000000, 0b00000000, 0b00000000,
@@ -211,7 +211,7 @@ const char Courier_New_Bold_16x24[256][48] = {
     0b00000000, 0b00011000, 0b00000000,
     0b00000000, 0b00011000, 0b00000000
 },
-{//0x0b = 0xc4
+{//0x0b = 0xc4 for pseudographic frames with HD44780 translation
     0b00000000, 0b00011000, 0b00000000,
     0b00000000, 0b00011000, 0b00000000,
     0b00000000, 0b00011000, 0b00000000,

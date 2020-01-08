@@ -67,8 +67,8 @@ enum Commands {
 	// Other commands... 0xE0 thru 0xFF
 	GET_LCD_ROW = 0xE0,
 	GET_LCD_COL,
-	LCD_PUT,			// for Marlin, only write data into buffer
-	REDRAW,				// for Marlin
+	LCD_PUT,			// only write data into buffer
+	REDRAW,
 	INIT = 0xFE			// Initialize
 };
 
@@ -81,13 +81,14 @@ uint8_t	cmd = 0;
 int16_t pos = -1;
 uint8_t toread = 0;
 uint8_t	new_command = 0;
-uint8_t	cour_leds = 0;
 uint8_t	temps = 0;
 uint8_t	cour_row = 0;
 uint16_t row_offset = 0;
 uint8_t progress_cleared = 0;
 uint8_t	protocol = Smoothie;
-uint16_t freq = 0, duration = 0;
+uint8_t boozcnt = 0;
+uint8_t boozcntcur = 0;
+uint16_t freq[5] = {0}, duration[3] = {0};	//up to 5 different tones
 uint8_t pics = 0;
 uint16_t dot_pos_x = CHAR_WIDTH;
 uint16_t dot_pos_y = 7 * CHAR_HEIGTH;
@@ -320,7 +321,37 @@ void UBL_Draw_Dot()
 	LCD_ClearArea(dot_pos_x - 3, dot_pos_y - 3, dot_pos_x + 3, dot_pos_y + 3, White);
 }
 //----------------------------------------------------------------------------
-// For Smoothieware and Marlin
+// Common
+//----------------------------------------------------------------------------
+uint8_t read_buttons()
+{
+	uint32_t b;
+
+	b = BTN_PORTA->IDR & BUTTONS_A_MSK;
+	if (protocol == Smoothie)
+	{
+		switch (b)
+		{
+			case (BUTTONS_A_MSK & ~ENC_BUT):		return BUTTON_SELECT;
+			case (BUTTONS_A_MSK & ~BUTTON_PIN1):	return BUTTON_PAUSE;
+			case (BUTTONS_A_MSK & ~BUTTON_PIN2):	return BUTTON_RIGHT;
+			case (BUTTONS_A_MSK & ~BUTTON_PIN3):	return BUTTON_LEFT;
+		}
+		b = BTN_PORTB->IDR;
+		if	(!(b & BUTTON_PIN4))	return BUTTON_AUX1;
+		if	(!(b & BUTTON_PIN5))	return BUTTON_AUX2;
+	}
+	else
+	{
+		switch (b)
+		{
+			case (BUTTONS_A_MSK & ~ENC_BUT):		return EN_C;
+			case (BUTTONS_A_MSK & ~BUTTON_PIN1):	return EN_D;
+			case (BUTTONS_A_MSK & ~BUTTON_PIN2):	return KILL;
+		}
+	}
+	return 0;
+}
 //----------------------------------------------------------------------------
 void Print_Temps()
 {
@@ -337,7 +368,7 @@ void Print_Temps()
 		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(datat[TMO + x]);
 		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(datat[TSO + x]);
 	}
-	else if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
+	else
 	{
 		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 5 + x]);
 		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[CHARS_PER_LINE * 6 + x]);
@@ -350,37 +381,19 @@ void Print_Temps()
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
-uint8_t Get_Buttons()
-{
-	uint8_t b;
-
-	b = 0;
-	if (protocol == Smoothie)
-	{
-		if ((ENC_PORT->IDR & ENC_BUT) == 0)			b |= BUTTON_SELECT;
-		if ((BTN_PORTA->IDR & BUTTON_PIN1) == 0)	b |= BUTTON_PAUSE;
-		if ((BTN_PORTA->IDR & BUTTON_PIN2) == 0)	b |= BUTTON_RIGHT;
-		if ((BTN_PORTA->IDR & BUTTON_PIN3) == 0)	b |= BUTTON_LEFT;
-		if ((BTN_PORTB->IDR & BUTTON_PIN4) == 0)	b |= BUTTON_AUX1;
-		if ((BTN_PORTB->IDR & BUTTON_PIN5) == 0)	b |= BUTTON_AUX2;
-	}
-	else if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
-	{
-		if ((ENC_PORT->IDR & ENC_BUT) == 0)			b |= EN_C;
-		if ((BTN_PORTA->IDR & BUTTON_PIN1) == 0)	b |= EN_D;
-		if ((BTN_PORTA->IDR & BUTTON_PIN2) == 0)	b |= KILL;
-	}
-	return b;
-}
-//----------------------------------------------------------------------------
 void buzzer()
-{
-	if (duration)
-	{
-		if (duration < 100)	duration = 100;
-		TIM3->BUZZER_CCR = 127;
-		TIM2->CR1 |= TIM_CR1_CEN;
-	}
+{	//set new freq and duration
+	if ((boozcnt > boozcntcur) && boozcntcur) return;
+	if (freq[boozcntcur] > 2000)	freq[boozcntcur] = 2000;
+	if (freq[boozcntcur] == 0)		freq[boozcntcur] = 1000;
+	if (duration[boozcntcur] < 50)	duration[boozcntcur] = 50;
+
+	uint32_t divider = 256 * freq[boozcntcur];
+	uint16_t PrescalerValue = (uint16_t) (SystemCoreClock / divider);
+	TIM3->PSC = PrescalerValue;
+	TIM3->BUZZER_CCR = 127;
+
+	TIM2->CR1 |= TIM_CR1_CEN;
 }
 //----------------------------------------------------------------------------
 void DrawIcons()
@@ -422,8 +435,12 @@ void DrawIcons()
 			CS_LCD_set;
 		}
 		LCD_Set_TextColor(White, BackColor);
-		duration = 500;
+		boozcnt = 0;
+		boozcntcur = 0;
+		duration[0] = 500;	//ms
+		freq[0] = 1000;		//Hz
 		buzzer();
+		boozcnt++;
 		return;
 	}
 
@@ -603,7 +620,7 @@ void handle_command()
 		case INIT:
 			protocol = data[0];
 			if ((protocol == Smoothie) || (protocol == MarlinSPI))
-			{	//only on SPI bus
+			{
 			    NVIC_DisableIRQ(I2C_IRQ);
 			    NVIC_DisableIRQ(I2C_ERR_IRQ);
 			    I2C_Cmd(I2C, DISABLE);
@@ -689,11 +706,12 @@ void handle_command()
 			break;	//LCD_WRITE
 
 		case BUZZER:
-			duration = data[0] << 8;
-			duration += data[1];
-			freq = data[2] << 8;
-			freq += data[3];
+			duration[boozcnt] = data[0] << 8;
+			duration[boozcnt] += data[1];
+			freq[boozcnt] = data[2] << 8;
+			freq[boozcnt] += data[3];
 			buzzer();
+			boozcnt++;
 			break;
 
 		case CONTRAST:
@@ -705,12 +723,19 @@ void handle_command()
 void TIM2_IRQHandler(void)
 {
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-	if (duration)
-		duration--;
+	if (duration[boozcntcur])	duration[boozcntcur]--;
 	else
 	{
-		TIM2->CR1 &= ~TIM_CR1_CEN;	//stop timer2
-		TIM3->BUZZER_CCR = 0;		//buzzer off
+		if (--boozcnt)
+		{
+			boozcntcur++;	buzzer();	//new freq with new duration
+		}
+		else
+		{
+			TIM2->CR1 &= ~TIM_CR1_CEN;	//stop timer2
+			TIM3->BUZZER_CCR = 0;		//buzzer off
+			boozcntcur = 0;
+		}
 	}
 }
 //----------------------------------------------------------------------------
@@ -754,9 +779,7 @@ void I2C2_EV_IRQHandler(void)
 	    	{
 	    		cmd = LCD_WRITE;	pos = FB_SIZE;	new_command = 1;
 	    	}
-	    	else if ((cmd == LCD_PUT) && (pos == FB_SIZE))
-	    		new_command = 1;
-	    	else if ((cmd >= LCD_WRITE) && (cmd != LCD_PUT))
+	    	else if (((cmd == LCD_PUT) && (pos == FB_SIZE)) || ((cmd >= LCD_WRITE) && (cmd != LCD_PUT)))
 	    		new_command = 1;
 
 	    	while ((I2C->SR1 & I2C_SR1_ADDR) == I2C_SR1_ADDR) { I2C->SR1; I2C->SR2; }	// ADDR-Flag clear
@@ -766,23 +789,22 @@ void I2C2_EV_IRQHandler(void)
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_BUTTONS:
-	    			I2C->DR = Get_Buttons();
-					#ifdef	INVERT_ENCODER_DIR
-	    				next_tx = -(int8_t)TIM1->CNT;
-					#else
-	    				next_tx = (int8_t)TIM1->CNT;
-					#endif
+	    		case READ_BUTTONS:	I2C->DR = read_buttons();
+				#ifdef	INVERT_ENCODER_DIR
+	    			next_tx = -(int8_t)TIM1->CNT;
+				#else
+	    			next_tx = (int8_t)TIM1->CNT;
+				#endif
 	    			TIM1->CNT = 0;
 	    			break;
 	    		case READ_ENCODER:
-	    			#ifdef	INVERT_ENCODER_DIR
-	    				I2C->DR = -(int8_t)TIM1->CNT;
-					#else
-	    				I2C->DR = (int8_t)TIM1->CNT;
-	    			#endif
+				#ifdef	INVERT_ENCODER_DIR
+	    			I2C->DR = -(int8_t)TIM1->CNT;
+				#else
+	    			I2C->DR = (int8_t)TIM1->CNT;
+				#endif
 	    			TIM1->CNT = 0;
-	    			next_tx = Get_Buttons();
+	    			next_tx = read_buttons();
 	    			break;
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	break;
 	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	break;
@@ -804,21 +826,21 @@ void I2C2_ER_IRQHandler(void)
 void SPI2_IRQHandler(void)
 {
 	uint8_t b = SPI->DR;  // grab byte from SPI Data Register, reset Interrupt flag
-	int16_t c;
 
 	if (toread == 0)
 	{// command
 		switch(b)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
-			case READ_BUTTONS:	SPI->DR = Get_Buttons();	return;
-			case READ_ENCODER:	c = TIM1->CNT;	TIM1->CNT = 0;
-				#ifndef	INVERT_ENCODER_DIR
-					SPI->DR = (int8_t)c;
-				#else
-					SPI->DR = -(int8_t)c;
-				#endif
-				return;
+			case READ_BUTTONS:	SPI->DR = read_buttons();	break;
+			case READ_ENCODER:
+			#ifdef	INVERT_ENCODER_DIR
+				SPI->DR = -(int8_t)TIM1->CNT;
+			#else
+				SPI->DR = (int8_t)TIM1->CNT;
+			#endif
+				TIM1->CNT = 0;
+				break;
 			case LCD_WRITE:
 				if (protocol == Smoothie)
 				{

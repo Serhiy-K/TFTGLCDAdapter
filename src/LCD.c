@@ -198,6 +198,7 @@ void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos)
  Input          : HD44780 char c
  Output         : ASCII char c
 ******************************************************************************/
+/*
 uint8_t HD44780_to_ASCII(char c)
 {
 	const uint8_t transcode[] =
@@ -214,6 +215,7 @@ uint8_t HD44780_to_ASCII(char c)
 	else
 		return c;
 }
+*/
 /******************************************************************************
  Description    : Draw char to current position
  Input          : char c
@@ -224,8 +226,8 @@ void LCD_DrawChar(char c)
 	const char *ptr; // pointer to char data
 	uint8_t mask = 0x80;  // 0b10000000
 
-	if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
-		c = HD44780_to_ASCII(c);
+//	if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
+//		c = HD44780_to_ASCII(c);
 	ptr = &FONT[(uint8_t)c][0];
 	for(i = 0; i < CHAR_BYTES; i++)
 	{
@@ -308,12 +310,6 @@ void LCD_PutStrig_XY(uint16_t XPos, uint16_t YPos, char *str)
 ******************************************************************************/
 void LCD_Init(void)
 {
-	CS_LCD_set;
-	WR_LCD_set;
-	RS_LCD_set;
-
-	TEST_PORT->BSRR = TEST_PIN;
-
 	/* Reset chip */
    	RES_LCD_clr;
    	delay_ms(10);
@@ -409,10 +405,6 @@ void LCD_Init(void)
 ******************************************************************************/
 void LCD_Init(void)
 {
-	CS_LCD_set;
-	WR_LCD_set;
-	RS_LCD_set;
-
 	/* Reset chip */
    	RES_LCD_clr;
    	delay_ms(10);
@@ -490,10 +482,6 @@ void LCD_Init(void)
 ******************************************************************************/
 void LCD_Init(void)
 {
-	CS_LCD_set;
-	WR_LCD_set;
-	RS_LCD_set;
-
 	/* Reset chip */
    	RES_LCD_clr;
    	delay_ms(10);

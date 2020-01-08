@@ -7,7 +7,7 @@
 enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 
 //#define	INVERT_ENCODER_DIR
-//#define	WITHOUT_HEAT_ICO	//if you want see "FAN %" text insted heat icon on 320x240 screen
+#define	WITHOUT_HEAT_ICO	//if you want see "FAN %" text insted heat icon on 320x240 screen
 
 //select only used LCD
 #define ILI9325
@@ -75,15 +75,16 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define	ENC_PORT        GPIOA
 #define	ENC_A           GPIO_Pin_9
 #define	ENC_B           GPIO_Pin_8
-#define	ENC_BUT         GPIO_Pin_10
 //buttons
 #define	BTN_PORTA	    GPIOA
+#define	ENC_BUT         GPIO_Pin_10
 #define	BUTTON_PIN1	    GPIO_Pin_11
 #define	BUTTON_PIN2	    GPIO_Pin_12
 #define	BUTTON_PIN3	    GPIO_Pin_15
 #define	BTN_PORTB	    GPIOB
 #define	BUTTON_PIN4	    GPIO_Pin_3
 #define	BUTTON_PIN5	    GPIO_Pin_4
+#define	BUTTONS_A_MSK	(BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1 | ENC_BUT)
 
 #define	CONTRAST_PORT	GPIOB
 #define	BUZZER_PIN1		//BUZZER_PIN0 or BUZZER_PIN1

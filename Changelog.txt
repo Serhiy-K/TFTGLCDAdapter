@@ -1,3 +1,9 @@
+07/01/2020
+
+1. Remove transcode from HD44780 encoding. Marlin should send text in extended ASCII with corresponded national codepage.
+   Panel font must have the same codepage to outout all national symbols and pseudographic symbols.
+2. Add support for buzzer frequency change for Marlin.
+
 11/10/2019
 
 1. Fix error with temps number set for Marlin.
