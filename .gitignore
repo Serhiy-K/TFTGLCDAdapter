@@ -1,5 +1,3 @@
-3D-GLCD/Debug/obj
-3D-GLCD/Debug/bin/*.elf
-3D-GLCD/Debug/bin/*.hex
-3D-GLCD/Debug/bin/*.map
-3D-GLCD/Debug/bin/*.xml
+Firmware/3D-GLCD/Debug/obj
+Firmware/3D-GLCD/Debug/bin
+

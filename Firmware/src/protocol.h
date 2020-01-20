@@ -4,6 +4,6 @@
 #include "defines.h"
 
 uint8_t New_cmd();
-void handle_command();
+void Command_Handler();
 
 #endif

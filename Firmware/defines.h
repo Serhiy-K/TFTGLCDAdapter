@@ -86,10 +86,10 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define	BUTTON_PIN5	    GPIO_Pin_4
 #define	BUTTONS_A_MSK	(BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1 | ENC_BUT)
 
-#define	CONTRAST_PORT	GPIOB
+#define	BRIGHTNES_PORT	GPIOB
 #define	BUZZER_PIN1		//BUZZER_PIN0 or BUZZER_PIN1
-#define	CONTRAST_PIN0	//CONTRAST_PIN1 or CONTRAST_PIN0
-#define	INIT_CONTRAST	200
+#define	BRIGHTNES_PIN0	//BRIGHTNES_PIN1 or BRIGHTNES_PIN0
+#define	INIT_BRIGHTNES	200
 
 #ifdef	BUZZER_PIN0
  #define	BUZZER_PIN		GPIO_Pin_0
@@ -100,13 +100,13 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
  #define	BUZZER_CCR		CCR4
 #endif
 
-#ifdef	CONTRAST_PIN0
- #define	CONTRAST_PIN	GPIO_Pin_0
- #define	CONTRAST_CCR	CCR3
+#ifdef	BRIGHTNES_PIN0
+ #define	BRIGHTNES_PIN	GPIO_Pin_0
+ #define	BRIGHTNES_CCR	CCR3
 #endif
-#ifdef	CONTRAST_PIN1
- #define	CONTRAST_PIN	GPIO_Pin_1
- #define	CONTRAST_CCR	CCR4
+#ifdef	BRIGHTNES_PIN1
+ #define	BRIGHTNES_PIN	GPIO_Pin_1
+ #define	BRIGHTNES_CCR	CCR4
 #endif
 
 //buttons bits for Smoothie

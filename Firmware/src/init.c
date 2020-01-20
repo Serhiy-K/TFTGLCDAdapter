@@ -10,7 +10,7 @@
 #include "system_stm32f10x.h"
 #include "LCD.h"
 
-static void Init_GPIO(void)
+static void GPIO_init(void)
 {
 	GPIO_InitTypeDef	GPIO_InitStructure;
 
@@ -41,9 +41,9 @@ static void Init_GPIO(void)
 	GPIO_Init(BTN_PORTB, &GPIO_InitStructure);
 
   	// PWM signals init
-    GPIO_InitStructure.GPIO_Pin    = CONTRAST_PIN | BUZZER_PIN;
+    GPIO_InitStructure.GPIO_Pin    = BRIGHTNES_PIN | BUZZER_PIN;
     GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_AF_PP;
-    GPIO_Init(CONTRAST_PORT, &GPIO_InitStructure);
+    GPIO_Init(BRIGHTNES_PORT, &GPIO_InitStructure);
 
     // Configure pins for SPI2
     GPIO_InitStructure.GPIO_Pin = SPI_MOSI | SPI_MISO | SPI_SCK | SPI_CS;
@@ -88,7 +88,7 @@ static void Timer2_init(void)
 	NVIC_EnableIRQ(TIM2_IRQn);
 }
 /***********************************************************
- Timer3 for PWM (BUZZER, CONTRAST)
+ Timer3 for PWM (BUZZER, BRIGHTNES)
 ***********************************************************/
 static void Timer3_init(void)
 {
@@ -100,7 +100,7 @@ static void Timer3_init(void)
 	// TIM3 clock enable
   	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
-  	if (CONTRAST_PIN != GPIO_Pin_1)
+  	if (BRIGHTNES_PIN != GPIO_Pin_1)
   		AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_1;
 
 	// Compute the prescaler value
@@ -127,13 +127,13 @@ static void Timer3_init(void)
 	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
 #endif
 
-    // PWM1 Mode configuration for Contrast
-	TIM_OCInitStructure.TIM_Pulse = INIT_CONTRAST;
-#ifdef	CONTRAST_PIN0
+    // PWM1 Mode configuration for BRIGHTNES
+	TIM_OCInitStructure.TIM_Pulse = INIT_BRIGHTNES;
+#ifdef	BRIGHTNES_PIN0
 	TIM_OC3Init(TIM3, &TIM_OCInitStructure);
 	TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
 #endif
-#ifdef	CONTRAST_PIN1	//Channel4
+#ifdef	BRIGHTNES_PIN1	//Channel4
 	TIM_OC4Init(TIM3, &TIM_OCInitStructure);
 	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
 #endif
@@ -144,7 +144,7 @@ static void Timer3_init(void)
 }
 /***********************************************************
 ***********************************************************/
-void spi_init()
+static void SPI_init()
 {
     SPI_InitTypeDef		SPI_InitStructure;
 
@@ -170,7 +170,7 @@ void spi_init()
 }
 /***********************************************************
 ***********************************************************/
-void i2c_init()
+static void I2C_init()
 {
     I2C_InitTypeDef		I2C_InitStructure;
 
@@ -202,11 +202,11 @@ void Global_Init(void)
 {
 	SystemInit();
 	delay_init();
-	Init_GPIO();
+	GPIO_init();
 	Timer1_init();
 	Timer2_init();
 	Timer3_init();
-	spi_init();
-	i2c_init();
+	SPI_init();
+	I2C_init();
 	LCD_Init();
 }

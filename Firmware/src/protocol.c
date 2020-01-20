@@ -29,7 +29,7 @@
 #define	pic3_Xmin1	CHAR_WIDTH * F1O	//FAN
 #define pic4_Xmin1	CHAR_WIDTH * H1O	//HEAT
 //for multy-extruders config
-#define	pic1_Xmin	HE1O	//HE1
+#define	pic1_Xmin	HE1O				//HE1
 #define	pic2_Xmin	CHAR_WIDTH * HE2O	//HE2
 #define	pic3_Xmin	CHAR_WIDTH * HE3O	//HE3
 #define	pic4_Xmin	CHAR_WIDTH * B3O	//BED
@@ -57,13 +57,15 @@
 
 #define FB_SIZE	(CHARS_PER_LINE * TEXT_LINES + 2)	//text area + leds + pics
 
+#define	MAX_FREQS	5
+
 enum Commands {
 	GET_SPI_DATA = 0,	// is a read results of previous command
 	READ_BUTTONS,
 	READ_ENCODER,
 	LCD_WRITE,			// write data into buffer and output to screen
 	BUZZER,
-	CONTRAST,
+	BRIGHTNES,			//CONTRAST command in Smoothieware
 	// Other commands... 0xE0 thru 0xFF
 	GET_LCD_ROW = 0xE0,
 	GET_LCD_COL,
@@ -86,9 +88,9 @@ uint8_t	cour_row = 0;
 uint16_t row_offset = 0;
 uint8_t progress_cleared = 0;
 uint8_t	protocol = Smoothie;
-uint8_t boozcnt = 0;
-uint8_t boozcntcur = 0;
-uint16_t freq[5] = {0}, duration[3] = {0};	//up to 5 different tones
+uint8_t buzcnt = 0;
+uint8_t buzcntcur = 0;
+uint16_t freq[MAX_FREQS] = {0}, duration[MAX_FREQS] = {0};	//different tones
 uint8_t pics = 0;
 uint16_t dot_pos_x = CHAR_WIDTH;
 uint16_t dot_pos_y = 7 * CHAR_HEIGTH;
@@ -213,7 +215,7 @@ FAN_P:
 	}
 }
 //----------------------------------------------------------------------------
-uint8_t  Get_Progress()
+uint8_t Get_Progress()
 {
 	uint8_t percent;
 	percent = data[CHARS_PER_LINE + 18] - '0';	//fixed position
@@ -242,7 +244,7 @@ void Check_for_edit_mode()
 	}
 }
 //----------------------------------------------------------------------------
-void SetLeds()
+void Set_Leds()
 {
 	uint8_t leds;
 
@@ -318,12 +320,12 @@ void UBL_Draw_Dot()
 	dot_pos_x = CHAR_WIDTH + point_x * step_x;
 	dot_pos_y = 7 * CHAR_HEIGTH - point_y * step_y;
 
-	LCD_ClearArea(dot_pos_x - 3, dot_pos_y - 3, dot_pos_x + 3, dot_pos_y + 3, White);
+	LCD_FillRect(dot_pos_x - 3, dot_pos_y - 3, dot_pos_x + 3, dot_pos_y + 3, White);
 }
 //----------------------------------------------------------------------------
 // Common
 //----------------------------------------------------------------------------
-uint8_t read_buttons()
+uint8_t Read_Buttons()
 {
 	uint32_t b;
 
@@ -338,8 +340,8 @@ uint8_t read_buttons()
 			case (BUTTONS_A_MSK & ~BUTTON_PIN3):	return BUTTON_LEFT;
 		}
 		b = BTN_PORTB->IDR;
-		if	(!(b & BUTTON_PIN4))	return BUTTON_AUX1;
-		if	(!(b & BUTTON_PIN5))	return BUTTON_AUX2;
+		if (!(b & BUTTON_PIN4))	return BUTTON_AUX1;
+		if (!(b & BUTTON_PIN5))	return BUTTON_AUX2;
 	}
 	else
 	{
@@ -381,14 +383,14 @@ void Print_Temps()
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
-void buzzer()
+void Buzzer()
 {	//set new freq and duration
-	if ((boozcnt > boozcntcur) && boozcntcur) return;
-	if (freq[boozcntcur] > 2000)	freq[boozcntcur] = 2000;
-	if (freq[boozcntcur] == 0)		freq[boozcntcur] = 1000;
-	if (duration[boozcntcur] < 50)	duration[boozcntcur] = 50;
+	if ((buzcnt > buzcntcur) && buzcntcur) return;
+	if (freq[buzcntcur] > 2000)		freq[buzcntcur] = 2000;
+	if (freq[buzcntcur] == 0)		freq[buzcntcur] = 1000;
+	if (duration[buzcntcur] < 50)	duration[buzcntcur] = 50;
 
-	uint32_t divider = 256 * freq[boozcntcur];
+	uint32_t divider = 256 * freq[buzcntcur];
 	uint16_t PrescalerValue = (uint16_t) (SystemCoreClock / divider);
 	TIM3->PSC = PrescalerValue;
 	TIM3->BUZZER_CCR = 127;
@@ -396,7 +398,7 @@ void buzzer()
 	TIM2->CR1 |= TIM_CR1_CEN;
 }
 //----------------------------------------------------------------------------
-void DrawIcons()
+void Draw_Icons()
 {
 #define	LOGO_OFFSET		((CHARS_PER_LINE - 12) / 2)
 
@@ -423,24 +425,19 @@ void DrawIcons()
 				LCD_SetCursor(0, y);
 				for (uint8_t x = 0; x < CHARS_PER_LINE; x++)
 				{
-					if (data[i] == '-')
-					{
-						LCD_DrawChar(11);
-						i++;
-					}
-					else
-						LCD_DrawChar(data[i++]);
+					if (data[i++] == '-')	LCD_DrawChar(11);
+					else					LCD_DrawChar(data[i++]);
 				}
 			}
 			CS_LCD_set;
 		}
 		LCD_Set_TextColor(White, BackColor);
-		boozcnt = 0;
-		boozcntcur = 0;
+		buzcnt = 0;
+		buzcntcur = 0;
 		duration[0] = 500;	//ms
 		freq[0] = 1000;		//Hz
-		buzzer();
-		boozcnt++;
+		Buzzer();
+		buzcnt++;
 		return;
 	}
 
@@ -549,20 +546,20 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 	}
 
 	//draw progress bar frame
-	LCD_ClearArea(XMIN, ymin, XMIN, ymax, PROGRESS_COLOR);			// left |
-	LCD_ClearArea(XMIN + 1, ymin, XMAX, ymin, PROGRESS_COLOR);		// top -
-	LCD_ClearArea(XMIN + 1, ymax, XMAX, ymax, PROGRESS_COLOR);		// bot -
-	LCD_ClearArea(XMAX, ymin + 1, XMAX, ymax - 1, PROGRESS_COLOR);	// right |
+	LCD_FillRect(XMIN, ymin, XMIN, ymax, PROGRESS_COLOR);			// left |
+	LCD_FillRect(XMIN + 1, ymin, XMAX, ymin, PROGRESS_COLOR);		// top -
+	LCD_FillRect(XMIN + 1, ymax, XMAX, ymax, PROGRESS_COLOR);		// bot -
+	LCD_FillRect(XMAX, ymin + 1, XMAX, ymax - 1, PROGRESS_COLOR);	// right |
 
 	if (c_p != percent)
 	{//change progress bar
 		if (percent > c_p) //draw progress bar
 		{
 			i = percent / 10;
-			LCD_ClearArea(XMIN + 3, ymin + 2, XMIN + 3 + percent * 3, ymax - 2, pb_colors[i]);
+			LCD_FillRect(XMIN + 3, ymin + 2, XMIN + 3 + percent * 3, ymax - 2, pb_colors[i]);
 		}
 		else
-			LCD_ClearArea(XMIN + 3, ymin + 2, XMAX - 3, ymax - 2, Black);
+			LCD_FillRect(XMIN + 3, ymin + 2, XMAX - 3, ymax - 2, Black);
 		c_p = percent;
 	}
 }
@@ -607,7 +604,7 @@ void Print_Line(uint8_t row)
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
-void handle_command()
+void Command_Handler()
 {
 	uint16_t y, i;
 
@@ -650,9 +647,9 @@ void handle_command()
 						else		Print_Line(y);
 					}
 					Print_Temps();
-					DrawIcons();
+					Draw_Icons();
 					if (temps == 0) break;	//first cycle
-					SetLeds();
+					Set_Leds();
 				}
 				else
 				{
@@ -661,7 +658,7 @@ void handle_command()
 						if (y == 1)	Check_for_edit_mode();
 						Print_Line(y);
 					}
-					if (data[FB_SIZE - 2] & PIC_LOGO)	DrawIcons();
+					if (data[FB_SIZE - 2] & PIC_LOGO)	Draw_Icons();
 				}
 			}
 			else
@@ -669,7 +666,7 @@ void handle_command()
 		case LCD_PUT:
 			//print all screen or one line
 				if (data[FB_SIZE - 2] & PIC_LOGO)
-					DrawIcons();
+					Draw_Icons();
 				else
 				{
 					LCD_Set_TextColor(White, Black);
@@ -685,7 +682,7 @@ void handle_command()
 							else if ((y == 5) && (data[0] == 'X'))
 							{//main screen
 								Print_Temps();
-								DrawIcons();
+								Draw_Icons();
 								y = TEXT_LINES;
 							}
 							else
@@ -706,16 +703,16 @@ void handle_command()
 			break;	//LCD_WRITE
 
 		case BUZZER:
-			duration[boozcnt] = data[0] << 8;
-			duration[boozcnt] += data[1];
-			freq[boozcnt] = data[2] << 8;
-			freq[boozcnt] += data[3];
-			buzzer();
-			boozcnt++;
+			duration[buzcnt] = data[0] << 8;
+			duration[buzcnt] += data[1];
+			freq[buzcnt] = data[2] << 8;
+			freq[buzcnt] += data[3];
+			Buzzer();
+			buzcnt++;
 			break;
 
-		case CONTRAST:
-			TIM3->CONTRAST_CCR = (uint16_t)data[0];
+		case BRIGHTNES:
+			TIM3->BRIGHTNES_CCR = (uint16_t)data[0];
 			break;
 	}
 }
@@ -723,18 +720,19 @@ void handle_command()
 void TIM2_IRQHandler(void)
 {
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-	if (duration[boozcntcur])	duration[boozcntcur]--;
+	if (duration[buzcntcur])
+		duration[buzcntcur]--;
 	else
 	{
-		if (--boozcnt)
+		if (--buzcnt)
 		{
-			boozcntcur++;	buzzer();	//new freq with new duration
+			buzcntcur++;	Buzzer();	//new freq with new duration
 		}
 		else
 		{
 			TIM2->CR1 &= ~TIM_CR1_CEN;	//stop timer2
 			TIM3->BUZZER_CCR = 0;		//buzzer off
-			boozcntcur = 0;
+			buzcntcur = 0;
 		}
 	}
 }
@@ -755,7 +753,7 @@ void I2C2_EV_IRQHandler(void)
 	    	if (toread == 0)
 	    	{// command
 	    		cmd = b;	pos = -1;
-		    	if ((b == INIT) || (b == CONTRAST) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
+		    	if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
 	    	}
 	    	else
 	    	{
@@ -789,7 +787,7 @@ void I2C2_EV_IRQHandler(void)
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_BUTTONS:	I2C->DR = read_buttons();
+	    		case READ_BUTTONS:	I2C->DR = Read_Buttons();
 				#ifdef	INVERT_ENCODER_DIR
 	    			next_tx = -(int8_t)TIM1->CNT;
 				#else
@@ -804,7 +802,7 @@ void I2C2_EV_IRQHandler(void)
 	    			I2C->DR = (int8_t)TIM1->CNT;
 				#endif
 	    			TIM1->CNT = 0;
-	    			next_tx = read_buttons();
+	    			next_tx = Read_Buttons();
 	    			break;
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	break;
 	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	break;
@@ -832,7 +830,7 @@ void SPI2_IRQHandler(void)
 		switch(b)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
-			case READ_BUTTONS:	SPI->DR = read_buttons();	break;
+			case READ_BUTTONS:	SPI->DR = Read_Buttons();	break;
 			case READ_ENCODER:
 			#ifdef	INVERT_ENCODER_DIR
 				SPI->DR = -(int8_t)TIM1->CNT;
@@ -852,7 +850,7 @@ void SPI2_IRQHandler(void)
 					cmd = b;	toread = CHARS_PER_LINE;	pos = -1;	return;
 				}
 			case BUZZER:		cmd = b;	toread = 4;	pos = 0;	return;
-			case CONTRAST:		cmd = b;	toread = 1;	pos = 0;	return;
+			case BRIGHTNES:		cmd = b;	toread = 1;	pos = 0;	return;
 			case GET_LCD_ROW:	SPI->DR = TEXT_LINES;	return;
 			case GET_LCD_COL:	SPI->DR = CHARS_PER_LINE;	return;
 			case REDRAW:		cmd = LCD_WRITE;	pos = FB_SIZE;	new_command = 1;	return;

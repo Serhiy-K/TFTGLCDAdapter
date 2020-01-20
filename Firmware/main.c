@@ -10,6 +10,6 @@ int main(void)
 	while (1)
 	{
 		if (New_cmd())
-			handle_command();
+			Command_Handler();
 	}
 }

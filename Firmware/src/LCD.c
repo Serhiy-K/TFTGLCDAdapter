@@ -118,7 +118,7 @@ void LCD_FillScreen(uint16_t Color)
  Description    : Fill screen area with one color
  Input          : X0pos, Y0pos, X1pos, Y1pos, Color
 ******************************************************************************/
-void LCD_ClearArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1pos, uint16_t Color)
+void LCD_FillRect(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1pos, uint16_t Color)
 {
 	uint32_t pntNum;
 	uint16_t CH = Color >> 8;
@@ -163,7 +163,7 @@ void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos)
 	uint16_t CL = (BackColor & 0x00ff);
 
 	LCD_SetArea(X0pos, Y0pos, X0pos + 47, Y0pos + 47 );
-	for(i = 0; i < 2304; i++)
+	for (i = 0; i < 2304; i++)
 	{
 		LCD_DATA(CH);	LCD_DATA(CL);
 	}
@@ -229,34 +229,12 @@ void LCD_DrawChar(char c)
 //	if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
 //		c = HD44780_to_ASCII(c);
 	ptr = &FONT[(uint8_t)c][0];
-	for(i = 0; i < CHAR_BYTES; i++)
+	for (i = 0; i < CHAR_BYTES; i++)
 	{
-		for(j = 0; j < 8; j++)
+		for (j = 0; j < 8; j++)
 		{
-			if(*ptr & mask) {LCD_DATA(TCH);	LCD_DATA(TCL);}
-			else 			{LCD_DATA(BCH);	LCD_DATA(BCL);}
-			mask = mask >> 1;
-		}
-		mask = 0x80;
-		ptr++;
-	}
-	Xcour++;	//increment cursor position
-}
-/******************************************************************************
- Description    : Draw symbol to current char position
- Input          : pointer to 16x24 symbol table
-******************************************************************************/
-void LCD_DrawSymbol(const uint8_t *ptr)
-{
-	uint8_t i, j;
-	uint8_t mask = 0x80;
-
-	for(i = 0; i < CHAR_BYTES; i++)
-	{
-		for(j = 0; j < 8; j++)
-		{
-			if(*ptr & mask) {LCD_DATA(TCH);	LCD_DATA(TCL);}
-			else 			{LCD_DATA(BCH);	LCD_DATA(BCL);}
+			if (*ptr & mask)	{LCD_DATA(TCH);	LCD_DATA(TCL);}
+			else 				{LCD_DATA(BCH);	LCD_DATA(BCL);}
 			mask = mask >> 1;
 		}
 		mask = 0x80;
@@ -282,14 +260,13 @@ void LCD_DrawChar_XY(uint16_t XPos, uint16_t YPos, char c)
 ******************************************************************************/
 void LCD_PutStrig(char *str)
 {
-	while(*str != 0)
+	while (*str != 0)
 	{
 		if (Xcour >= CHARS_PER_LINE) break;
 		LCD_DrawChar(*str);
 		str++;		// next symbol
 	}
 }
-
 /******************************************************************************
  Description    : Draw text string to specified position
  Input          : XPos, YPos, *str
@@ -302,6 +279,32 @@ void LCD_PutStrig_XY(uint16_t XPos, uint16_t YPos, char *str)
 	LCD_SetCursor(XPos, YPos);
 	LCD_PutStrig(str);
 	CS_LCD_set;
+}
+/******************************************************************************
+ Description    : Draw Start Screen
+******************************************************************************/
+void LCD_Draw_StartScreen()
+{
+#ifdef LCD320x240
+	LCD_FillScreen(BackColor);
+	LCD_Set_TextColor(Yellow, Blue);
+	LCD_PutStrig_XY(0, 0, "    3-D Printer     ");
+	LCD_PutStrig_XY(0, 1, " 320x240 TFT Panel  ");
+	LCD_PutStrig_XY(0, 2, "      Ver.1.1       ");
+	LCD_Set_TextColor(White, BackColor);
+	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
+	LCD_PutStrig_XY(4, 5,     "connection..");
+#else
+	//clear 400x240 dots
+	LCD_ClearArea(0, 0, 399, LCDYMAX - 1, BackColor);
+	LCD_Set_TextColor(Yellow, Blue);
+	LCD_PutStrig_XY(0, 0, "      3-D Printer       ");
+	LCD_PutStrig_XY(0, 1, "   400x240 TFT Panel    ");
+	LCD_PutStrig_XY(0, 2, "        Ver.1.1         ");
+	LCD_Set_TextColor(White, BackColor);
+	LCD_PutStrig_XY(0, 4, "   Waiting for printer  ");
+	LCD_PutStrig_XY(6, 5,       "connection...");
+#endif
 }
 #ifdef ILI9325
 /******************************************************************************
@@ -385,16 +388,7 @@ void LCD_Init(void)
 	Set_LCD_REG(0x92, 0x0000);
 	Set_LCD_REG(0x07, 0x0133); // 262K color and display ON
 
-	CS_LCD_set;
-
-	LCD_FillScreen(BackColor);
-	LCD_Set_TextColor(Yellow, Blue);
-	LCD_PutStrig_XY(0, 0, "                    ");
-	LCD_PutStrig_XY(0, 1, "  TFT GLCD Adapter  ");
-	LCD_PutStrig_XY(0, 2, "                    ");
-	LCD_Set_TextColor(White, BackColor);
-	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
-	LCD_PutStrig_XY(4, 5,     "connection..");
+	LCD_Draw_StartScreen();
 }
 #endif
 
@@ -462,16 +456,7 @@ void LCD_Init(void)
 	LCD_Write_Com(0x29);	//display on
 	LCD_Write_Com(0x2C);	//display on
 
-	//clear 400x240 dots
-	LCD_ClearArea(0, 0, 399, LCDYMAX - 1, BackColor);
-
-	LCD_Set_TextColor(Yellow, Blue);
-	LCD_PutStrig_XY(0, 0, "                        ");
-	LCD_PutStrig_XY(0, 1, "    TFT GLCD Adapter    ");
-	LCD_PutStrig_XY(0, 2, "                        ");
-	LCD_Set_TextColor(White, BackColor);
-	LCD_PutStrig_XY(0, 4, "   Waiting for printer  ");
-	LCD_PutStrig_XY(6, 5,       "connection...");
+	LCD_Draw_StartScreen();
 }
 #endif
 
@@ -549,15 +534,6 @@ void LCD_Init(void)
    	delay_ms(100);
    	LCD_Write_Com(0x29);   	//TURN ON DISPLAY
 
-	CS_LCD_set;
-
-	LCD_FillScreen(BackColor);
-	LCD_Set_TextColor(Yellow, Blue);
-	LCD_PutStrig_XY(0, 0, "                    ");
-	LCD_PutStrig_XY(0, 1, "  TFT GLCD Adapter  ");
-	LCD_PutStrig_XY(0, 2, "                    ");
-	LCD_Set_TextColor(White, BackColor);
-	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
-	LCD_PutStrig_XY(4, 5,     "connection..");
+	LCD_Draw_StartScreen();
 }
 #endif

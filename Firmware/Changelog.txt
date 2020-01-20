@@ -1,4 +1,9 @@
-07/01/2020
+01/20/2020
+
+1. Change Start Screen text.
+2. Small code formating.
+
+01/07/2020
 
 1. Remove transcode from HD44780 encoding. Marlin should send text in extended ASCII with corresponded national codepage.
    Panel font must have the same codepage to outout all national symbols and pseudographic symbols.
@@ -19,7 +24,7 @@
 3. Fix small bugs for output on 400x240 LCD.
 4. Change positions for first lines and progressbar for Smoothieware.
 5. Update and add new fotos.
-  
+
 10/20/2019
 
 1. Change init and text resolution for ILI9327 LCD. Now screen equal to 24x10 text screen

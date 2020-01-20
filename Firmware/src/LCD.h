@@ -58,7 +58,7 @@ extern const char Courier_New_Bold_16x24[256][48];
 extern const char LiberationMono_16x24[256][48];
 
 void LCD_SetArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1pos);
-void LCD_ClearArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1, uint16_t Color);
+void LCD_FillRect(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1, uint16_t Color);
 void LCD_FillScreen(uint16_t Color);
 void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const char *pic);
 void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos);
@@ -66,7 +66,6 @@ void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos);
 void LCD_Set_TextColor(uint16_t front, uint16_t back);
 void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos);
 void LCD_DrawChar(char c);
-void LCD_DrawSymbol(const uint8_t *ptr);
 void LCD_DrawChar_XY(uint16_t XPos, uint16_t YPos, char c);
 void LCD_PutStrig(char *str);
 void LCD_PutStrig_XY(uint16_t XPos, uint16_t YPos, char *str);
