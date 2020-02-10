@@ -11,7 +11,7 @@ Hardware directory include pcb-project for this adapter created in Altium Design
 
 Discussion about this TFT GLCD Adapter and my realization Smoothieboard you may find on https://www.radiokot.ru/forum/viewtopic.php?f=25&t=162580
 
-## Useing
+## Using
 To connect with Smoothieware TFT GLCD Adapter uses only SPI bus, for Marlin - SPI or I2C bus.
 
 For use this adapter with Smoothieware you need:
