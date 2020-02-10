@@ -788,20 +788,10 @@ void I2C2_EV_IRQHandler(void)
 	    	switch (cmd)
 	    	{
 	    		case READ_BUTTONS:	I2C->DR = Read_Buttons();
-				#ifdef	INVERT_ENCODER_DIR
-	    			next_tx = -(int8_t)TIM1->CNT;
-				#else
-	    			next_tx = (int8_t)TIM1->CNT;
-				#endif
-	    			TIM1->CNT = 0;
+	    			next_tx = (int8_t)TIM1->CNT;	TIM1->CNT = 0;
 	    			break;
 	    		case READ_ENCODER:
-				#ifdef	INVERT_ENCODER_DIR
-	    			I2C->DR = -(int8_t)TIM1->CNT;
-				#else
-	    			I2C->DR = (int8_t)TIM1->CNT;
-				#endif
-	    			TIM1->CNT = 0;
+	    			I2C->DR = (int8_t)TIM1->CNT;	TIM1->CNT = 0;
 	    			next_tx = Read_Buttons();
 	    			break;
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	break;
@@ -831,14 +821,7 @@ void SPI2_IRQHandler(void)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
 			case READ_BUTTONS:	SPI->DR = Read_Buttons();	break;
-			case READ_ENCODER:
-			#ifdef	INVERT_ENCODER_DIR
-				SPI->DR = -(int8_t)TIM1->CNT;
-			#else
-				SPI->DR = (int8_t)TIM1->CNT;
-			#endif
-				TIM1->CNT = 0;
-				break;
+			case READ_ENCODER:	SPI->DR = (int8_t)TIM1->CNT;	TIM1->CNT = 0;	break;
 			case LCD_WRITE:
 				if (protocol == Smoothie)
 				{
