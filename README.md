@@ -3,7 +3,7 @@
 TFT GLCD Adapter was developed as low cost replacement for monochrome LCDs with low resolution fonts.
 It works with Smoothieware, Marlin 1.1.9 and Marlin 2.0.x.
 
-<img src="./Hardware/Photos/Smoothie-progressbar.jpg" align="middle"/>
+<center><img src="./Hardware/Photos/Smoothie-progressbar.jpg"></center>
 
 To connect with Smoothieware TFT GLCD Adapter uses only SPI bus, for Marlin - SPI or I2C bus.
 
