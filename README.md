@@ -7,7 +7,7 @@ TFT GLCD Adapter based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on 
 
 Firmware for TFT GLCD Adapter created with CoIDE.
 
-Hardware directory include pcb-project for this adapter created in Altium Designer and real photos.
+Hardware directory include pcb-project for this adapter created in Altium Designer, gerber files and real photos.
 
 Discussion about this TFT GLCD Adapter and my realization Smoothieboard you may find on https://www.radiokot.ru/forum/viewtopic.php?f=25&t=162580
 
@@ -16,14 +16,14 @@ To connect with Smoothieware TFT GLCD Adapter uses only SPI bus, for Marlin - SP
 
 For use this adapter with Smoothieware you need:
 * Compile Smoothieware firmware from https://github.com/Serhiy-K/Smoothieware/tree/add_new_panel.
-* Set "panel.enable" parameter in **config** file to "true".
-* Change "panel.lcd" parameter in **config** file to "tft_glcd_adapter".
+* Set `panel.enable` parameter in **config** file to `true`.
+* Change `panel.lcd` parameter in **config** file to `tft_glcd_adapter`.
 * Set proper parameters for SPI bus.
 
 For use this adapter with Marlin you need:
 * Add/replace your Marlin's files with files from suitable archive in "For-Marlin" directory.
-* Check TFTGLCD_ADAPTER section in **Conditionals_LCD.h** and recompile Marlin firmware.
-* Read Readme.txt in "For-Marlin" directory for more details.
+* Check `TFTGLCD_ADAPTER` section in **Conditionals_LCD.h** and recompile Marlin firmware.
+* Read README.md in "For-Marlin" directory for more details.
 
 ## Connect to 5V boards
 TFT GLCD Adapter developed to connect with main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) you need add level converter for SPI input signals. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. Also on this picture you may see level converter for I2C bus.
