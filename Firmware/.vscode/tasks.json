@@ -1,0 +1,177 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Make Debug",
+			"type": "shell",
+			"command": "make -s -j 10 all DEBUG=1",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
+			},
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Make Release",
+			"type": "shell",
+			"command": "make -s -j 10 all",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Make Clean Debug",
+			"type": "shell",
+			"command": "make -s clean DEBUG=1",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Make Clean Release",
+			"type": "shell",
+			"command": "make -s clean",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Write to Flash MCU JLink",
+			"type": "shell",
+			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\FlashMCU.jlink",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {
+					"executable": "cmd.exe",
+					"args": ["/C"]
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Write to Flash MCU BMP",
+			"type": "shell",
+			"command": "arm-none-eabi-gdb -q -batch -nx -ex 'target extended-remote COM2' -ex 'set ELFNAME 3D-GLCD/Debug/bin/3D-GLCD.elf' -x bmp-flash.scr",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {
+					"executable": "cmd.exe",
+					"args": ["/C"]
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Read Flash from MCU JLink",
+			"type": "shell",
+			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\ReadMCU.jlink",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {
+					"executable": "cmd.exe",
+					"args": ["/C"]
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Erase Flash MCU JLink",
+			"type": "shell",
+			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\EraseMCU.jlink",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {
+					"executable": "cmd.exe",
+					"args": ["/C"]
+				}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Reset MCU JLink",
+			"type": "shell",
+			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\ResetMCU.jlink",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {
+					"executable": "cmd.exe",
+					"args": ["/C"]
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "GDB Server JLink",
+			"type": "shell",
+			"command": "start JLinkGDBServer.exe -select USB -device Cortex-M3 -if SWD -speed 1000 -ir",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {
+					"executable": "cmd.exe",
+					"args": ["/C"]
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "OPENOCD STlink",
+			"type": "shell",
+			"command": "openocd -s D:/Devel/ARM/OpenOCD/scripts -f interface/stlink.cfg -f target/stm32f1x.cfg",
+			"options": {
+				"cwd": "${workspaceRoot}",
+				"shell": {
+					"executable": "cmd.exe",
+					"args": ["/C"]
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		}
+	]
+}

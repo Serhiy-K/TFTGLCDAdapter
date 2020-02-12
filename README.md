@@ -5,7 +5,7 @@ TFT GLCD Adapter was developed as low cost replacement for monochrome LCDs with 
 
 TFT GLCD Adapter based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325 or ILI9341 chip with 320x240 resolution or ILI9327 chip  with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button.
 
-Firmware for TFT GLCD Adapter created with CoIDE.
+Firmware for TFT GLCD Adapter created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE.
 
 Hardware directory include pcb-project for this adapter created in Altium Designer, gerber files and real photos.
 

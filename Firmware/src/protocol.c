@@ -110,14 +110,9 @@ void Move_Text()
 		//scan first line for temperatures
 		if (data[i] == ':')
 		{
-			if (data[i+1] == '0')
-			{
-				data[i+1] = ' ';	if (data[i+2] == '0')	data[i+2] = ' ';
-			}
-			if (data[i+5] == '0')
-			{
-				data[i+5] = ' ';	if (data[i+6] == '0')	data[i+6] = ' ';
-			}
+			if (data[i+1] == '0')	{data[i+1] = ' ';	if (data[i+2] == '0')	data[i+2] = ' ';}
+			if (data[i+5] == '0')	{data[i+5] = ' ';	if (data[i+6] == '0')	data[i+6] = ' ';}
+			
 			switch (data[i-1])
 			{
 			case 'T':	//by default for hotend1
@@ -165,8 +160,8 @@ void Move_Text()
 			}
 		}
 	}
-	//move up 2 and 3 lines
-	for (i = 0; i < CHARS_PER_LINE * 2; i++)	{data[i] = data[i + CHARS_PER_LINE];}
+	//move up lines 2 and 3
+	for (i = 0; i < CHARS_PER_LINE * 2; i++)	data[i] = data[i + CHARS_PER_LINE];
 
 	if (data[CHARS_PER_LINE * 4] == '%')
 	{
@@ -386,8 +381,8 @@ void Print_Temps()
 void Buzzer()
 {	//set new freq and duration
 	if ((buzcnt > buzcntcur) && buzcntcur) return;
+	if (freq[buzcntcur] <= BUZ_MIN_FREQ)	freq[buzcntcur] = BUZ_MIN_FREQ;
 	if (freq[buzcntcur] > 2000)		freq[buzcntcur] = 2000;
-	if (freq[buzcntcur] == 0)		freq[buzcntcur] = 1000;
 	if (duration[buzcntcur] < 50)	duration[buzcntcur] = 50;
 
 	uint32_t divider = 256 * freq[buzcntcur];
@@ -440,6 +435,8 @@ void Draw_Icons()
 		buzcnt++;
 		return;
 	}
+
+	if (temps == 0)	return;
 
 	if (temps == 1)
 	{

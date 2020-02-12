@@ -21,6 +21,7 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 //#define FONT	Courier_New_Bold_16x24
 #define FONT	LiberationMono_16x24
 
+#define BUZ_MIN_FREQ    400 //in Hz
 
 #if defined(ILI9325) || defined(ILI9341)
 #define	LCDMIN	240

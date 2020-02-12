@@ -1,0 +1,14 @@
+{
+	"cortex-debug.enableTelemetry": false,
+	"cortex-debug.armToolchainPath": "D:/Devel/ARM/gcc-5/bin",
+	"files.associations": {
+		"lcd.h": "c",
+		"stm32f10x.h": "c",
+		"stm32f10x_i2c.h": "c",
+		"systick.h": "c",
+		"pictures.h": "c",
+		"protocol.h": "c"
+	}
+//	"cortex-debug.openocdPath": "D:/Devel/ARM/OpenOCD/bin"
+//	"cortex-debug.JLinkGDBServerPath": "C:/Program Files (x86)/SEGGER/JLink/JLinkGDBServerCL.exe"
+}

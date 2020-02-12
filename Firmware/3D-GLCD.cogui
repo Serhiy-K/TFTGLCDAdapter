@@ -17,9 +17,9 @@
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Firmware/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Firmware/src/protocol.c" workbook="DefaultEditorWorkbook">
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/TFTGLCDAdapter/Firmware/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/TFTGLCDAdapter/Firmware/src/protocol.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/protocol.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="10200" selectionTopPixel="6591"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="10200" selectionTopPixel="1755"/>
 </editor>
 </editors>
 <views>
@@ -27,10 +27,9 @@
 <viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="0">
 <expanded>
 <element path="/3D-GLCD"/>
-<element path="/3D-GLCD/src"/>
 </expanded>
 <selection>
-<element path="/3D-GLCD/src/init.c"/>
+<element path="/3D-GLCD"/>
 </selection>
 </viewState>
 </view>
@@ -103,7 +102,7 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.80717486" ratioLeft="720" ratioRight="172" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.6723953" ratioLeft="626" ratioRight="305" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
@@ -250,13 +249,10 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/main.c"/>
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/README.md"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/protocol.c"/>
+<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor">
+<org.coocox.builder.ui.editors.ConfigEditor/>
+</editor>
 </editors>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="6139" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="17465" y="0"/>
-</item>
 <item historyLabel="protocol.c" index="0">
 <position info="not_deleted" x="17555" y="0"/>
 </item>
@@ -398,6 +394,10 @@
 <item historyLabel="README.md" index="12">
 <position info="not_deleted" x="1432" y="0"/>
 </item>
+<item historyLabel="protocol.c" index="13">
+<position info="not_deleted" x="10200" y="0"/>
+</item>
+<item historyLabel="Configuration" index="14"/>
 <item active="true" historyLabel="protocol.c" index="13">
 <position info="not_deleted" x="10200" y="0"/>
 </item>
@@ -408,52 +408,52 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
-<file factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage" name="" tooltip="">
+<file factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor" name="" tooltip="">
 <persistable>
-<org.coocox.welcome.ui.WelcomePage/>
+<org.coocox.builder.ui.editors.ConfigEditor/>
 </persistable>
-</file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="README.md" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\README.md">
-<persistable uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/README.md"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
 <persistable path="/3D-GLCD/main.c"/>
 </file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="Changelog.txt" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\Changelog.txt">
-<persistable uri="file:/D:/Devel/Projects/CoIDE/TFTGLCDAdapter/Changelog.txt"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="AutoCorrectCH.c" tooltip="NeilScope3/drivers/analog/AutoCorrectCH.c">
+<persistable path="/NeilScope3/drivers/analog/AutoCorrectCH.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="Courier_New_Bold_16x24.c" tooltip="3D-GLCD/src/Courier_New_Bold_16x24.c">
-<persistable path="/3D-GLCD/src/Courier_New_Bold_16x24.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="init.c" tooltip="Soldering_iron/src/init.c">
+<persistable path="/Soldering_iron/src/init.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.c" tooltip="3D-GLCD/src/LCD.c">
-<persistable path="/3D-GLCD/src/LCD.c"/>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LCD.h" tooltip="D:\Devel\Projects\COIDE\Soldering_iron\src\LCD.h">
+<persistable path="D:\Devel\Projects\COIDE\Soldering_iron\src\LCD.h" project="Soldering_iron"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="LiberationMono-Regular_16x24.c" tooltip="3D-GLCD/src/LiberationMono-Regular_16x24.c">
-<persistable path="/3D-GLCD/src/LiberationMono-Regular_16x24.c"/>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="defines.h" tooltip="D:\Devel\Projects\COIDE\Soldering_iron\defines.h">
+<persistable path="D:\Devel\Projects\COIDE\Soldering_iron\defines.h" project="Soldering_iron"/>
 </file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.h" tooltip="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h">
-<persistable path="D:\Devel\Projects\CoIDE\TFTGLCDAdapter\src\protocol.h" project="3D-GLCD"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="Soldering_iron/main.c">
+<persistable path="/Soldering_iron/main.c"/>
 </file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="EPM570_RegVar.h" tooltip="D:\Devel\Projects\CoIDE\neil-scope3-NXP\drivers\epm570\EPM570_RegVar.h">
-<persistable path="D:\Devel\Projects\CoIDE\neil-scope3-NXP\drivers\epm570\EPM570_RegVar.h" project="NeilScope3"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="systick.c" tooltip="Soldering_iron/src/systick.c">
+<persistable path="/Soldering_iron/src/systick.c"/>
 </file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="EPM570_Registers.h" tooltip="D:\Devel\Projects\CoIDE\neil-scope3-NXP\drivers\epm570\EPM570_Registers.h">
-<persistable path="D:\Devel\Projects\CoIDE\neil-scope3-NXP\drivers\epm570\EPM570_Registers.h" project="NeilScope3"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="core_cm3.h" tooltip="Soldering_iron/cmsis/core_cm3.h">
+<persistable path="/Soldering_iron/cmsis/core_cm3.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="EPM570_Registers.c" tooltip="NeilScope3/drivers/epm570/EPM570_Registers.c">
-<persistable path="/NeilScope3/drivers/epm570/EPM570_Registers.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_tim.c" tooltip="Soldering_iron/stm_lib/src/stm32f10x_tim.c">
+<persistable path="/Soldering_iron/stm_lib/src/stm32f10x_tim.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_i2c.h" tooltip="3D-GLCD/stm_lib/inc/stm32f10x_i2c.h">
-<persistable path="/3D-GLCD/stm_lib/inc/stm32f10x_i2c.h"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="startup_stm32f10x_md.c" tooltip="Soldering_iron/cmsis_boot/startup/startup_stm32f10x_md.c">
+<persistable path="/Soldering_iron/cmsis_boot/startup/startup_stm32f10x_md.c"/>
 </file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="WatchScreen.cpp" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\screens\3dprinter\WatchScreen.cpp">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/screens/3dprinter/WatchScreen.cpp"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_spi.h" tooltip="Soldering_iron/stm_lib/inc/stm32f10x_spi.h">
+<persistable path="/Soldering_iron/stm_lib/inc/stm32f10x_spi.h"/>
 </file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="PanelScreen.cpp" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\PanelScreen.cpp">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/PanelScreen.cpp"/>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="systick.h" tooltip="D:\Devel\Projects\COIDE\Soldering_iron\src\systick.h">
+<persistable path="D:\Devel\Projects\COIDE\Soldering_iron\src\systick.h" project="Soldering_iron"/>
 </file>
-<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="UniversalAdapter.cpp" tooltip="D:\Devel\Projects\Smoothieware\src\modules\utils\panel\panels\UniversalAdapter.cpp">
-<persistable uri="file:/D:/Devel/Projects/Smoothieware/src/modules/utils/panel/panels/UniversalAdapter.cpp"/>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="math.h" tooltip="D:\Devel\ARM\gcc-5\arm-none-eabi\include\math.h">
+<persistable path="D:\Devel\ARM\gcc-5\arm-none-eabi\include\math.h" project="Soldering_iron"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
+<persistable path="/3D-GLCD/main.c"/>
 </file>
 </mruList>
 </workbench>

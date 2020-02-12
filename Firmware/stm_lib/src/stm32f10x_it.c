@@ -11,11 +11,6 @@ Comments:   :  This file provides template for all exceptions handler and
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-#include "defines.h"
-#include "main.h"
-#include "init.h"
-#include "systick.h"
-
 
 /******************************************************************************/
 /*            Cortex-M3 Processor Exceptions Handlers                         */
@@ -134,63 +129,6 @@ void SysTick_Handler(void)
   */
 void RTC_IRQHandler(void)
 {
-/*	uint32_t Curent_RTC_Counter;
-	int32_t tTime, wTime;
-
-	if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
-	{
-		NVIC_ClearPendingIRQ(RTC_IRQn);
-		RTC_ClearITPendingBit(RTC_IT_SEC);
-		RTC_WaitForLastTask();
-
-		if( HostMode == DISABLE ) {
-
-			// If counter is equal to 86399: one day was elapsed
-			if(RTC_GetCounter() == 86399)
-			{
-				/ Wait until last write operation on RTC registers has finished
-				RTC_WaitForLastTask();
-				// Reset counter value
-				RTC_SetCounter(0x0);
-				// Wait until last write operation on RTC registers has finished
-				RTC_WaitForLastTask();
-			}
-
-
-			Curent_RTC_Counter = RTC_GetCounter();
-
-			// Set message event
-			if(gMessage.Visible == TRUE)
-			{
-				tTime = Curent_RTC_Counter - gMessage.TimeOFF;
-				if(tTime > 0)
-				{
-					MessageEvent = SET;
-				}
-			}
-
-			// Verify auto power OFF
-			if((AutoOff_Timer.State == ENABLE) && (HostMode != ENABLE))
-			{
-				tTime = Curent_RTC_Counter - AutoOff_Timer.ResetTime;
-				wTime = AutoOff_Timer.Work_Minutes * 60;
-
-				if(tTime >= wTime)
-				{
-					__disable_irq();
-					SavePreference();
-					Beep_Start();
-
-					GPIOC->BRR = GPIO_Pin_15;
-				}
-			}
-
-			// batt update
-			if(show_ADC_flag != SET) {
-				ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-			}
-		}
-	}*/
 }
 
 
@@ -209,9 +147,9 @@ void TIM1_UP_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void TIM2_IRQHandler(void)
-{
-}
+//void TIM2_IRQHandler(void)
+//{
+//}
 
 
 /**
@@ -311,13 +249,6 @@ void DMA1_Channel5_IRQHandler(void)
   */
 void EXTI9_5_IRQHandler(void)
 {
-/*	if(EXTI_GetITStatus(EXTI_Line8) != RESET)
-	{
-		EXTI_ClearITPendingBit(EXTI_Line8);
-//		NVIC_DisableIRQ(EXTI9_5_IRQn);
-
-		USB_CP2102_Connect_Event = TRUE;
-	}*/
 }
 
 

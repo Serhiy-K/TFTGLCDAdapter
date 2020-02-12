@@ -1,0 +1,49 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "J-Link Debug",
+			"cwd": "${workspaceRoot}",
+			"executable": "3D-GLCD/Debug/bin/3D-GLCD.elf",
+			"svdFile": ".vscode/STM32F103xx.svd",
+			"request": "launch",
+			"type": "cortex-debug",
+			"servertype": "jlink",
+			"device": "Cortex-M3",
+			"interface": "swd",
+			"ipAddress": null,
+            "serialNumber": null
+		},
+		{
+			"name": "BMP Debug",
+			"cwd": "${workspaceRoot}",
+			"executable": "3D-GLCD/Debug/bin/3D-GLCD.elf",
+//			"executable": "3D-GLCD/Release/bin/3D-GLCD.elf",
+			"svdFile": ".vscode/STM32F103xx.svd",
+			"request": "launch",
+			"type": "cortex-debug",
+			"servertype": "bmp",
+			"device": "STM32F103CB",
+			"BMPGDBSerialPort": "COM2",
+			"targetId": 1,
+			"runToMain": true,
+			"interface": "swd"
+		},
+		{
+			"name": "OpenOCD ST-Link Debug",
+			"cwd": "${workspaceRoot}",
+			"executable": "3D-GLCD/Debug/bin/3D-GLCD.elf",
+			"svdFile": "${workspaceRoot}/.vscode/STM32F103.svd",
+			"configFiles": [
+				"${workspaceRoot}/OpenOCD/stm32f1x.cfg"
+			],
+			"request": "launch",
+			"type": "cortex-debug",
+			"servertype": "openocd",
+			"runToMain": true,
+			"showDevDebugOutput": true,
+			"device": "STM32F103CB",
+			"interface": "swd"
+		}
+	]
+}

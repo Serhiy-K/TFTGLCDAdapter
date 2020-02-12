@@ -1,3 +1,11 @@
+02/12/2020
+
+1. Change project structure - add inc directory, move all project *.h files to it, move main.c to src.
+2. Fix wrong start "shadow" icons.
+3. Add new BUZ_MIN_FREQ parameter for set minimum frequency for buzzer.
+4. Add Makefile and STM32F103C8Tx_FLASH.ld for buld without CoIDE.
+5. Add VSCode support.
+
 02/10/2020
 
 1. Change encoder init for INVERT_ENCODER_DIR param.

@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "arm_c_cpp_properties",
+            "includePath": [
+                "${workspaceRoot}/cmsis",
+                "${workspaceRoot}/cmsis/boot",
+                "${workspaceRoot}/inc",
+                "${workspaceRoot}/stm_lib/inc"
+            ],
+            "defines": [
+                "USE_STDPERIPH_DRIVER",
+                "STM32F103xB", "STM32F10X_MD",
+                "__ASSEMBLY__"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+			"intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
