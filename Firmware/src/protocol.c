@@ -381,7 +381,8 @@ void Print_Temps()
 void Buzzer()
 {	//set new freq and duration
 	if ((buzcnt > buzcntcur) && buzcntcur) return;
-	if (freq[buzcntcur] <= BUZ_MIN_FREQ)	freq[buzcntcur] = BUZ_MIN_FREQ;
+//	if (freq[buzcntcur] <= BUZ_MIN_FREQ)	freq[buzcntcur] = BUZ_MIN_FREQ;
+	freq[buzcntcur] *= (BUZ_FREQ_MP * 10) / 10;
 	if (freq[buzcntcur] > 2000)		freq[buzcntcur] = 2000;
 	if (duration[buzcntcur] < 50)	duration[buzcntcur] = 50;
 
@@ -430,7 +431,7 @@ void Draw_Icons()
 		buzcnt = 0;
 		buzcntcur = 0;
 		duration[0] = 500;	//ms
-		freq[0] = 1000;		//Hz
+		freq[0] = LOGO_FREQ;
 		Buzzer();
 		buzcnt++;
 		return;

@@ -6,10 +6,13 @@
 
 enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 
+//============================================================================================
+//                                Main parameters
+//============================================================================================
 //#define	INVERT_ENCODER_DIR
 #define	WITHOUT_HEAT_ICO	//if you want see "FAN %" text insted heat icon on 320x240 screen
 
-//select only used LCD
+//select only one LCD type
 #define ILI9325
 //#define ILI9327
 //#define ILI9341
@@ -17,11 +20,18 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 //display orientations
 #define	LANDSCAPE_L	//LCD chip placed left
 
-//prefered font
+//prefered monospace font
 //#define FONT	Courier_New_Bold_16x24
 #define FONT	LiberationMono_16x24
 
-#define BUZ_MIN_FREQ    400 //in Hz
+#define	CHAR_WIDTH	16
+#define	CHAR_HEIGTH	24
+
+//buzzer frequency
+#define BUZ_FREQ_MP     1.8     //frequency multiplier. Change to get more suitable tones
+#define LOGO_FREQ       1000 / BUZ_FREQ_MP
+
+//============================================================================================
 
 #if defined(ILI9325) || defined(ILI9341)
 #define	LCDMIN	240
@@ -37,11 +47,7 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define	LCDXMAX	LCDMAX
 #define	LCDYMAX	LCDMIN
 
-//monospace font 16õ24
-#define	CHAR_WIDTH	16
-#define	CHAR_HEIGTH	24
 #define	CHAR_BYTES	(CHAR_WIDTH * CHAR_HEIGTH / 8)
-
 #define	CHARS_PER_LINE	LCDXMAX/CHAR_WIDTH
 #define	TEXT_LINES		LCDYMAX/CHAR_HEIGTH
 
