@@ -7,22 +7,11 @@
 ######################################
 TARGET = 3D-GLCD
 
-######################################
-# building variables
-######################################
-# debug build?
-#DEBUG = 1
-
 #######################################
 # paths
 #######################################
-ifdef DEBUG
 BUILD_DIR = $(TARGET)/Debug/obj
 OUT_DIR = $(TARGET)/Debug/bin
-else
-BUILD_DIR = $(TARGET)/Release/obj
-OUT_DIR = $(TARGET)/Release/bin
-endif
 
 ######################################
 # source
@@ -92,23 +81,14 @@ C_INCLUDES = \
 #CPP_INCLUDES =
 
 # optimization
-ifdef DEBUG
 OPT = -Og
-else
-OPT = -Os
-endif
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections 
 CPPFLAGS = $(CPP_INCLUDES) -std=c++14
 
-#ifeq ($(DEBUG), 1)
-ifdef DEBUG
-CFLAGS += -g -gdwarf-2 
-else
-CFLAGS += -g0
-endif
+CFLAGS += -g2
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"

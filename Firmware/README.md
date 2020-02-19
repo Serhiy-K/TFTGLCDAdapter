@@ -11,5 +11,5 @@ Read and change **inc/defines.h** to set proper parameters.
 * `LANDSCAPE_L`                   - orientation LCD when LCD chip placed left
 * `FONT`                          - font for text. Courier_New_Bold or LiberationMono
 * `CHAR_WIDTH` and `CHAR_HEIGTH`  - font size
-* `BUZ_FREQ_MP`                   - buzzer frequency multiplier. Change to get more suitable tones
+* `BUZ_FREQ_MP`                   - buzzer input frequency multiplier. Change to get more suitable tones
 * `LOGO_FREQ`                     - buzzer frequency for start logo

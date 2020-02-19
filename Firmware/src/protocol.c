@@ -381,7 +381,6 @@ void Print_Temps()
 void Buzzer()
 {	//set new freq and duration
 	if ((buzcnt > buzcntcur) && buzcntcur) return;
-//	if (freq[buzcntcur] <= BUZ_MIN_FREQ)	freq[buzcntcur] = BUZ_MIN_FREQ;
 	freq[buzcntcur] *= (BUZ_FREQ_MP * 10) / 10;
 	if (freq[buzcntcur] > 2000)		freq[buzcntcur] = 2000;
 	if (duration[buzcntcur] < 50)	duration[buzcntcur] = 50;
@@ -609,7 +608,7 @@ void Command_Handler()
 	new_command = 0;
 	toread = 0;
 
-	//update time for screen is about 45ms for 320x240 resolution
+	//update time for screen is about 45..55ms for 320x240 resolution
 	switch(cmd)
 	{
 		case INIT:
@@ -627,7 +626,7 @@ void Command_Handler()
 			}
 			progress_cleared = 0;
 			temps = 0;
-			LCD_FillScreen(BackColor);
+			LCD_ClearScreen();
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[i] = ' ';
 			data[FB_SIZE - 2] = 0;	data[FB_SIZE - 1] = 0;
 			for (i = 0; i < 60; i++)	datat[i] = ' ';
@@ -669,7 +668,7 @@ void Command_Handler()
 				{
 					LCD_Set_TextColor(White, Black);
 					if (pos == FB_SIZE)
-					{ //print all screen
+					{//print all screen
 						if (data[0] == 218)
 							UBL_Draw_Frame();
 						for (y = 0; y < TEXT_LINES; y++)

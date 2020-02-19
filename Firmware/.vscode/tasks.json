@@ -2,9 +2,9 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Make Debug",
+			"label": "Make All",
 			"type": "shell",
-			"command": "make -s -j 10 all DEBUG=1",
+			"command": "make -s -j 10 all",
 			"options": {
 				"cwd": "${workspaceRoot}",
 				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
@@ -13,35 +13,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Make Release",
-			"type": "shell",
-			"command": "make -s -j 10 all",
-			"options": {
-				"cwd": "${workspaceRoot}",
-				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
-			},
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Make Clean Debug",
-			"type": "shell",
-			"command": "make -s clean DEBUG=1",
-			"options": {
-				"cwd": "${workspaceRoot}",
-				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
-			},
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Make Clean Release",
+			"label": "Make Clean",
 			"type": "shell",
 			"command": "make -s clean",
 			"options": {
@@ -55,9 +27,9 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Write to Flash MCU JLink",
+			"label": "Write to Flash MCU BMP",
 			"type": "shell",
-			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\FlashMCU.jlink",
+			"command": "arm-none-eabi-gdb -q -batch -nx -ex 'target extended-remote COM2' -ex 'set ELFNAME 3D-GLCD/Debug/bin/3D-GLCD.elf' -x bmp-flash.scr",
 			"options": {
 				"cwd": "${workspaceRoot}",
 				"shell": {
@@ -72,9 +44,9 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Write to Flash MCU BMP",
+			"label": "Write to Flash MCU JLink",
 			"type": "shell",
-			"command": "arm-none-eabi-gdb -q -batch -nx -ex 'target extended-remote COM2' -ex 'set ELFNAME 3D-GLCD/Debug/bin/3D-GLCD.elf' -x bmp-flash.scr",
+			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\FlashMCU.jlink",
 			"options": {
 				"cwd": "${workspaceRoot}",
 				"shell": {
