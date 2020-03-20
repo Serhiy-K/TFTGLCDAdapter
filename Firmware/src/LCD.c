@@ -113,7 +113,7 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	WR_Puls;
 #endif
 	LCD_DATA_PORT->BSRR = 0x22; WR_Puls;
-#endif
+#endif	//ILI9325
 
 #if defined(ILI9327) || defined(ILI9341)
 	LCD_DATA(0x2C);
@@ -522,8 +522,7 @@ void LCD_Init(void)
 	Bit B7 - Page Address Order :	0 = Top to Bottom	1 = Bottom to Top
 	Bit B6 - Column Address Order:	0 = Left to Right	1 = Right to Left
 	Bit B5 - Page/Column Order:		0 = Normal Mode		1 = Reverse Mode
-	Bit B4 - Line Address Order:	
-	0 = LCD Refresh Top to Bottom	1 = LCD Refresh Bottom to Top
+	Bit B4 - Line Address Order:	0 = LCD Refresh Top to Bottom	1 = LCD Refresh Bottom to Top
 	Bit B3 - RGB/BGR Order:			0 = RGB order		1 = BGR order
 	Bit B2 - Display Data Latch Data Order:	This bit is set to 0. (Not supported)
 	Bit B1 - Horizontal Flip:		0 = Normal display	1 = Flipped display
