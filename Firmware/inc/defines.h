@@ -68,7 +68,7 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define	LCD_RS			GPIO_Pin_8
 #define	LCD_CS			GPIO_Pin_9
 #define LCD_H_PORT      GPIOC
-#define LCD_H_WR        GPIO_Pin_13 //WR for additional 8-bit reg
+#define LCD_H_WR        GPIO_Pin_14 //WR for additional 8-bit reg
 //SPI
 #define	SPI				SPI2
 #define SPI_PORT		GPIOB
