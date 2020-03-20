@@ -2,6 +2,11 @@
 
 1. Add support for LCD with 16-bit data bus.
 
+02/19/2020
+
+1. Optimize output to screen.
+2. Change BUZ_MIN_FREQ to BUZ_FREQ_MP for change input buzzer frequency.
+
 02/12/2020
 
 1. Change project structure - add inc directory, move all project *.h files to it, move main.c to src.

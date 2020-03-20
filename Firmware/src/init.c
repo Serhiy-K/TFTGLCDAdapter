@@ -14,13 +14,14 @@ static void GPIO_init(void)
 {
 	GPIO_InitTypeDef	GPIO_InitStructure;
 
-	// Enabling clock for GPIO A,B
-	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_AFIOEN;
+	// Enabling clock for GPIO A,B,C
+	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN | RCC_APB2ENR_AFIOEN;
 
 	AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
 
 	// Init LCD control bus and LCD Data bus
-	GPIO_InitStructure.GPIO_Pin    = LCD_RST | LCD_WR | LCD_RS | LCD_CS;
+	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
+	GPIO_InitStructure.GPIO_Pin    = LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
 	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
 	GPIO_Init(LCD_CTRL_PORT, &GPIO_InitStructure);

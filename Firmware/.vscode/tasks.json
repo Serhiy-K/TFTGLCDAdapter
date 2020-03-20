@@ -27,9 +27,9 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Write to Flash MCU JLink",
+			"label": "Write to Flash MCU BMP",
 			"type": "shell",
-			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\FlashMCU.jlink",
+			"command": "arm-none-eabi-gdb -q -batch -nx -ex 'target extended-remote COM2' -ex 'set ELFNAME 3D-GLCD/Debug/bin/3D-GLCD.elf' -x bmp-flash.scr",
 			"options": {
 				"cwd": "${workspaceRoot}",
 				"shell": {
@@ -44,9 +44,9 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Write to Flash MCU BMP",
+			"label": "Write to Flash MCU JLink",
 			"type": "shell",
-			"command": "arm-none-eabi-gdb -q -batch -nx -ex 'target extended-remote COM2' -ex 'set ELFNAME 3D-GLCD/Debug/bin/3D-GLCD.elf' -x bmp-flash.scr",
+			"command": "JLink.exe -Device STM32F103CB -If SWD -Speed 1000 JLink\\FlashMCU.jlink",
 			"options": {
 				"cwd": "${workspaceRoot}",
 				"shell": {

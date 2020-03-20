@@ -18,7 +18,6 @@
 			"name": "BMP Debug",
 			"cwd": "${workspaceRoot}",
 			"executable": "3D-GLCD/Debug/bin/3D-GLCD.elf",
-//			"executable": "3D-GLCD/Release/bin/3D-GLCD.elf",
 			"svdFile": ".vscode/STM32F103xx.svd",
 			"request": "launch",
 			"type": "cortex-debug",

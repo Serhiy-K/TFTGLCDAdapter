@@ -23,8 +23,16 @@
 #define WR_Puls		    WR_LCD_clr; WR_LCD_set;
 #define H_WR_Puls	    H_WR_LCD_clr; H_WR_LCD_set;
 
-#define LCD_DATA(data)      LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
 #define H_LCD_DATA(data)	LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; H_WR_Puls;
+#define LCD_DATA(data)	    LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
+
+#ifdef LCD_16BIT_BUS
+#define LCD_DATA_00         LCD_DATA_PORT->BRR = LCD_DATA_MASK; H_WR_Puls; WR_Puls;
+#define LCD_DATA_FF         LCD_DATA_PORT->BSRR = LCD_DATA_MASK; H_WR_Puls; WR_Puls;
+#else
+#define LCD_DATA_00         LCD_DATA_PORT->BRR = LCD_DATA_MASK; WR_Puls; WR_Puls;
+#define LCD_DATA_FF         LCD_DATA_PORT->BSRR = LCD_DATA_MASK; WR_Puls; WR_Puls;
+#endif
 
 // colors
 #define Black       		0x0000
@@ -59,12 +67,10 @@
 
 #define BackColor	Black
 
-extern const char Courier_New_Bold_16x24[256][48];
-extern const char LiberationMono_16x24[256][48];
+extern const char FONT[256][48];
 
-void LCD_SetArea(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1pos);
+void LCD_ClearScreen();
 void LCD_FillRect(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1, uint16_t Color);
-void LCD_FillScreen(uint16_t Color);
 void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const char *pic);
 void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos);
 
@@ -77,4 +83,4 @@ void LCD_PutStrig_XY(uint16_t XPos, uint16_t YPos, char *str);
 
 void LCD_Init(void);
 
-#endif
+#endif  //_LCD_H_

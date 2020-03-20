@@ -55,10 +55,14 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define	CHARS_PER_LINE	LCDXMAX/CHAR_WIDTH
 #define	TEXT_LINES		LCDYMAX/CHAR_HEIGTH
 
+#define	TEST_PORT	    GPIOC
+#define	TEST_PIN	    GPIO_Pin_13
+
 //LCD interface
 #define LCD_DATA_PORT	GPIOA
 #define	LCD_DATA_MASK	0x00ff
 #define LCD_CTRL_PORT	GPIOB
+#define	LCD_RD			GPIO_Pin_5
 #define	LCD_RST			GPIO_Pin_6
 #define	LCD_WR			GPIO_Pin_7
 #define	LCD_RS			GPIO_Pin_8
@@ -155,6 +159,4 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define PIC_HOT     0x40
 #define PIC_MASK	PIC_HOT | PIC_FAN | PIC_BED | PIC_HE3 | PIC_HE2 | PIC_HE1 | PIC_LOGO
 
-#define	TEST_PORT	GPIOB
-#define	TEST_PIN	GPIO_Pin_5
-#endif
+#endif  //_DEFINES_H_
