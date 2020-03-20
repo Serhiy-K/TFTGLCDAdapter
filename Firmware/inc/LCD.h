@@ -23,7 +23,7 @@
 #define WR_Puls         WR_LCD_clr; WR_LCD_set;
 #define H_WR_Puls       H_WR_LCD_set; H_WR_LCD_clr;
 
-#define H_LCD_DATA(data)	LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; H_WR_Puls;
+#define H_LCD_DATA(data)    LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; H_WR_Puls;
 #define LCD_DATA(data)      LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
 
 #ifdef LCD_16BIT_BUS
@@ -35,7 +35,7 @@
 #endif
 
 // colors
-#define Black       		0x0000
+#define Black               0x0000
 #define LightBlack          0x0841
 #define LightBlack2         0x3186
 #define Gray                0x8c71
