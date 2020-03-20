@@ -18,10 +18,21 @@ extern uint8_t	protocol;
 static __inline void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 {
 	RS_LCD_clr;
-	LCD_DATA(0x00);	LCD_DATA(RegisterIndex);
+	LCD_DATA_PORT->BRR = LCD_DATA_MASK;
+#ifdef LCD_16BIT_BUS
+	H_WR_Puls;
+#else
+	WR_Puls;
+#endif
+	LCD_DATA_PORT->BSRR = RegisterIndex; WR_Puls;
 	RS_LCD_set;
 
-	LCD_DATA(Data >> 8);	LCD_DATA(Data & 0x00ff);
+#ifdef LCD_16BIT_BUS
+	H_LCD_DATA(Data >> 8);
+#else
+	LCD_DATA(Data >> 8);
+#endif
+	LCD_DATA(Data & 0x00ff);
 }
 #endif
 
@@ -89,7 +100,13 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	RS_LCD_clr;
 	//lcd_Draw_Start
 #ifdef ILI9325
-	LCD_DATA(0x00);	LCD_DATA(0x22);
+	LCD_DATA_PORT->BRR = LCD_DATA_MASK;
+#ifdef LCD_16BIT_BUS
+	H_WR_Puls;
+#else
+	WR_Puls;
+#endif
+	LCD_DATA_PORT->BSRR = 0x22; WR_Puls;
 #endif
 
 #if defined(ILI9327) || defined(ILI9341)
@@ -109,7 +126,12 @@ void LCD_FillScreen(uint16_t Color)
     LCD_SetArea(0, 0, LCDXMAX - 1, LCDYMAX - 1);
     do
     {
-    	LCD_DATA(CH);	LCD_DATA(CL);
+#ifdef LCD_16BIT_BUS
+    	H_LCD_DATA(CH);
+#else
+    	LCD_DATA(CH);
+#endif
+		LCD_DATA(CL);
     }
     while (++cntT < (LCDXMAX * LCDYMAX));
     CS_LCD_set;
@@ -130,13 +152,18 @@ void LCD_FillRect(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1pos
    LCD_SetArea(X0pos, Y0pos, X1pos, Y1pos);
    do
    {
-	   LCD_DATA(CH);	LCD_DATA(CL);
+#ifdef LCD_16BIT_BUS
+    	H_LCD_DATA(CH);
+#else
+    	LCD_DATA(CH);
+#endif
+		LCD_DATA(CL);
    }
    while (pntNum--);
    CS_LCD_set;
 }
 /******************************************************************************
- Description    : Draw picture 48õ48
+ Description    : Draw picture 48x48
  Input          : X0pos, Y0pos, *pic
 ******************************************************************************/
 void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const char *pic)
@@ -146,13 +173,18 @@ void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const char *pic)
 	LCD_SetArea(X0pos, Y0pos, X0pos + 47, Y0pos + 47 );
 	for (i = 0; i < 2304; i++)
 	{
-		LCD_DATA(colors[*pic - 'A'] >> 8);	LCD_DATA(colors[*pic - 'A'] & 0x00ff);
+#ifdef LCD_16BIT_BUS
+		H_LCD_DATA(colors[*pic - 'A'] >> 8);
+#else
+		LCD_DATA(colors[*pic - 'A'] >> 8);
+#endif
+		LCD_DATA(colors[*pic - 'A'] & 0x00ff);
 		pic++;
 	}
 	CS_LCD_set;
 }
 /******************************************************************************
- Description    : Erase picture 48õ48
+ Description    : Erase picture 48x48
  Input          : X0pos, Y0pos
 ******************************************************************************/
 void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos)
@@ -165,7 +197,12 @@ void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos)
 	LCD_SetArea(X0pos, Y0pos, X0pos + 47, Y0pos + 47 );
 	for (i = 0; i < 2304; i++)
 	{
-		LCD_DATA(CH);	LCD_DATA(CL);
+#ifdef LCD_16BIT_BUS
+    	H_LCD_DATA(CH);
+#else
+    	LCD_DATA(CH);
+#endif
+		LCD_DATA(CL);
 	}
 	CS_LCD_set;
 }
@@ -233,8 +270,13 @@ void LCD_DrawChar(char c)
 	{
 		for (j = 0; j < 8; j++)
 		{
+#ifdef LCD_16BIT_BUS
+			if (*ptr & mask)	{H_LCD_DATA(TCH);	LCD_DATA(TCL);}
+			else 				{H_LCD_DATA(BCH);	LCD_DATA(BCL);}
+#else
 			if (*ptr & mask)	{LCD_DATA(TCH);	LCD_DATA(TCL);}
 			else 				{LCD_DATA(BCH);	LCD_DATA(BCL);}
+#endif
 			mask = mask >> 1;
 		}
 		mask = 0x80;
@@ -322,9 +364,11 @@ void LCD_Init(void)
    	delay_ms(100);			/* Wait Stability */
 
    	//for 8-bit interface
+#ifndef LCD_16BIT_BUS
    	RS_LCD_clr;
    	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
+#endif
 
    	Set_LCD_REG(0x02, 0x0200); // set 1 line inversion
 #ifdef	LANDSCAPE_L
@@ -408,9 +452,11 @@ void LCD_Init(void)
    	delay_ms(100);			/* Wait Stability */
 
    	//for 8-bit interface
+#ifndef LCD_16BIT_BUS
    	RS_LCD_clr;
    	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
+#endif
 
    	LCD_Write_Com(0xE9);
 	LCD_DATA(0x20);
@@ -427,14 +473,14 @@ void LCD_Init(void)
 	LCD_DATA(0x10);	LCD_DATA(0x10);	LCD_DATA(0x02);	LCD_DATA(0x02);
 	LCD_Write_Com(0x36);	//output orientation
 /*
-	Bit B7 – Page Address Order :	0 = Top to Bottom	1 = Bottom to Top
-	Bit B6 – Column Address Order:	0 = Left to Right	1 = Right to Left
-	Bit B5 – Page/Column Order:		0 = Normal Mode		1 = Reverse Mode
-	Bit B4 –Line Address Order:		0 = LCD Refresh Top to Bottom	1 = LCD Refresh Bottom to Top
-	Bit B3 – RGB/BGR Order:			0 = RGB order		1 = BGR order
-	Bit B2 –Display Data Latch Data Order:	This bit is set to ‘0’. (Not supported)
-	Bit B1 – Horizontal Flip:		0 = Normal display	1 = Flipped display
-	Bit B0 – Vertical Flip:			0 = Normal display	1 = Flipped display
+	Bit B7 - Page Address Order :	0 = Top to Bottom	1 = Bottom to Top
+	Bit B6 - Column Address Order:	0 = Left to Right	1 = Right to Left
+	Bit B5 - Page/Column Order:		0 = Normal Mode		1 = Reverse Mode
+	Bit B4 - Line Address Order:		0 = LCD Refresh Top to Bottom	1 = LCD Refresh Bottom to Top
+	Bit B3 - RGB/BGR Order:			0 = RGB order		1 = BGR order
+	Bit B2 - Display Data Latch Data Order:	This bit is set to 0. (Not supported)
+	Bit B1 - Horizontal Flip:		0 = Normal display	1 = Flipped display
+	Bit B0 - Vertical Flip:			0 = Normal display	1 = Flipped display
 */
 	LCD_DATA(0b01001000);	//B6=1, BGR=1
 	LCD_Write_Com(0xC0);	//Panel Driving Setting
@@ -476,9 +522,11 @@ void LCD_Init(void)
    	delay_ms(100);			/* Wait Stability */
 
    	//for 8-bit interface
+#ifndef LCD_16BIT_BUS
    	RS_LCD_clr;
    	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
+#endif
 
   	LCD_Write_Com(0xCB);   	//POWER CONTROL A
    	LCD_DATA(0x39);   	LCD_DATA(0x2C);   	LCD_DATA(0x00);   	LCD_DATA(0x34);   	LCD_DATA(0x02);

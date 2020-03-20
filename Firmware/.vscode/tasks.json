@@ -2,9 +2,9 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Make Debug",
+			"label": "Make All",
 			"type": "shell",
-			"command": "make -s -j 10 all DEBUG=1",
+			"command": "make -s -j 10",
 			"options": {
 				"cwd": "${workspaceRoot}",
 				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
@@ -13,35 +13,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Make Release",
-			"type": "shell",
-			"command": "make -s -j 10 all",
-			"options": {
-				"cwd": "${workspaceRoot}",
-				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
-			},
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Make Clean Debug",
-			"type": "shell",
-			"command": "make -s clean DEBUG=1",
-			"options": {
-				"cwd": "${workspaceRoot}",
-				"shell": {"executable": "cmd.exe",	"args": ["/C"]}
-			},
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Make Clean Release",
+			"label": "Make Clean",
 			"type": "shell",
 			"command": "make -s clean",
 			"options": {

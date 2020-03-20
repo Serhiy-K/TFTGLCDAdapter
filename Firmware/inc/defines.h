@@ -17,6 +17,10 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 //#define ILI9327
 //#define ILI9341
 
+//for LCD with 16 bit data bus
+//controller direct connected to D7..D0 LCD data bus and by additional 8-bit reg to D15..D8 LCD data bus
+//#define LCD_16BIT_BUS
+
 //display orientations
 #define	LANDSCAPE_L	//LCD chip placed left
 
@@ -59,6 +63,8 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define	LCD_WR			GPIO_Pin_7
 #define	LCD_RS			GPIO_Pin_8
 #define	LCD_CS			GPIO_Pin_9
+#define LCD_H_PORT      GPIOC
+#define LCD_H_WR        GPIO_Pin_13 //WR for additional 8-bit reg
 //SPI
 #define	SPI				SPI2
 #define SPI_PORT		GPIOB

@@ -5,21 +5,26 @@
 #include "defines.h"
 
 
-#define RES_LCD_set	LCD_CTRL_PORT->BSRR = LCD_RST;
-#define RES_LCD_clr	LCD_CTRL_PORT->BSRR = LCD_RST << 16;
+#define RES_LCD_set     LCD_CTRL_PORT->BSRR = LCD_RST;
+#define RES_LCD_clr	    LCD_CTRL_PORT->BRR = LCD_RST;
 
-#define RS_LCD_set	LCD_CTRL_PORT->BSRR = LCD_RS;
-#define RS_LCD_clr	LCD_CTRL_PORT->BSRR = LCD_RS << 16;
+#define RS_LCD_set  	LCD_CTRL_PORT->BSRR = LCD_RS;
+#define RS_LCD_clr	    LCD_CTRL_PORT->BRR = LCD_RS;
 
-#define WR_LCD_set	LCD_CTRL_PORT->BSRR = LCD_WR;
-#define WR_LCD_clr	LCD_CTRL_PORT->BSRR = LCD_WR << 16;
+#define WR_LCD_set	    LCD_CTRL_PORT->BSRR = LCD_WR;
+#define WR_LCD_clr	    LCD_CTRL_PORT->BRR = LCD_WR;
 
-#define CS_LCD_set	LCD_CTRL_PORT->BSRR = LCD_CS;
-#define CS_LCD_clr	LCD_CTRL_PORT->BSRR = LCD_CS << 16;
+#define H_WR_LCD_set	LCD_H_PORT->BSRR = LCD_H_WR;
+#define H_WR_LCD_clr	LCD_H_PORT->BRR = LCD_H_WR;
 
-#define WR_Puls		WR_LCD_clr; WR_LCD_set;
+#define CS_LCD_set	    LCD_CTRL_PORT->BSRR = LCD_CS;
+#define CS_LCD_clr	    LCD_CTRL_PORT->BRR = LCD_CS;
 
-#define LCD_DATA(data)	LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
+#define WR_Puls		    WR_LCD_clr; WR_LCD_set;
+#define H_WR_Puls	    H_WR_LCD_clr; H_WR_LCD_set;
+
+#define LCD_DATA(data)      LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
+#define H_LCD_DATA(data)	LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; H_WR_Puls;
 
 // colors
 #define Black       		0x0000

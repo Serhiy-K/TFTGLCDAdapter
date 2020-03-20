@@ -24,6 +24,10 @@ static void GPIO_init(void)
 	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
 	GPIO_Init(LCD_CTRL_PORT, &GPIO_InitStructure);
+#ifdef LCD_16BIT_BUS
+	GPIO_InitStructure.GPIO_Pin    = LCD_H_WR;
+	GPIO_Init(LCD_H_PORT, &GPIO_InitStructure);
+#endif
 	GPIO_InitStructure.GPIO_Pin    = LCD_DATA_MASK;
 	GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 

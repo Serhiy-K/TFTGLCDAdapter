@@ -1,3 +1,7 @@
+03/20/2020
+
+1. Add support for LCD with 16-bit data bus.
+
 02/12/2020
 
 1. Change project structure - add inc directory, move all project *.h files to it, move main.c to src.
