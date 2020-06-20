@@ -11,6 +11,9 @@
 #define RS_LCD_set      LCD_CTRL_PORT->BSRR = LCD_RS;
 #define RS_LCD_clr      LCD_CTRL_PORT->BRR = LCD_RS;
 
+#define RD_LCD_set      LCD_CTRL_PORT->BSRR = LCD_RD;
+#define RD_LCD_clr      LCD_CTRL_PORT->BRR = LCD_RD;
+
 #define WR_LCD_set      LCD_CTRL_PORT->BSRR = LCD_WR;
 #define WR_LCD_clr      LCD_CTRL_PORT->BRR = LCD_WR;
 
@@ -23,15 +26,12 @@
 #define WR_Puls         WR_LCD_clr; WR_LCD_set;
 #define H_WR_Puls       H_WR_LCD_set; H_WR_LCD_clr;
 
-#define H_LCD_DATA(data)    LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; H_WR_Puls;
-#define LCD_DATA(data)      LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
-
-#ifdef LCD_16BIT_BUS
-#define LCD_DATA_00         LCD_DATA_PORT->BRR = LCD_DATA_MASK; H_WR_Puls; WR_Puls;
-#define LCD_DATA_FF         LCD_DATA_PORT->BSRR = LCD_DATA_MASK; H_WR_Puls; WR_Puls;
+#ifndef HW_VER_2
+ #define LCD_DATA(data)     LCD_DATA_PORT->BRR = LCD_DATA_MASK; LCD_DATA_PORT->BSRR = data; WR_Puls;
+ #define LCD_DATA_00        LCD_DATA_PORT->BRR = LCD_DATA_MASK; WR_Puls; WR_Puls;
+ #define LCD_DATA_FF        LCD_DATA_PORT->BSRR = LCD_DATA_MASK; WR_Puls; WR_Puls;
 #else
-#define LCD_DATA_00         LCD_DATA_PORT->BRR = LCD_DATA_MASK; WR_Puls; WR_Puls;
-#define LCD_DATA_FF         LCD_DATA_PORT->BSRR = LCD_DATA_MASK; WR_Puls; WR_Puls;
+ #define LCD_DATA(data)     LCD_DATA_PORT->ODR = (uint16_t)data; WR_Puls;
 #endif
 
 // colors

@@ -4,7 +4,7 @@
             "name": "arm_c_cpp_properties",
             "includePath": [
                 "${workspaceRoot}/cmsis",
-                "${workspaceRoot}/cmsis/boot",
+                "${workspaceRoot}/cmsis_boot",
                 "${workspaceRoot}/inc",
                 "${workspaceRoot}/stm_lib/inc"
             ],

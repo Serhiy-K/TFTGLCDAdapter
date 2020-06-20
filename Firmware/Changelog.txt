@@ -1,3 +1,13 @@
+06/20/2020
+
+1. Add new hardware version for support real 16 bit LCD data bus.
+2. Remove support 16-bit LCD data bus with 8-bit controller data bus.
+3. Change algorithm for output screen buffer.
+4. Change encoder init to use gpio interrupt insted STM32 hardware encoder interface.
+5. Add LCD_ORIENT_PIN - hardware selection for LCD orientation.
+6. Fix 3 chars in LiberationMono font.
+7. Fix logo output for Marlin.
+
 03/20/2020
 
 1. Add support for LCD with 16-bit data bus.

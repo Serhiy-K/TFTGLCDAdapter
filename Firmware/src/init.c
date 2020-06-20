@@ -10,48 +10,73 @@
 #include "system_stm32f10x.h"
 #include "LCD.h"
 
+extern uint8_t orientation;
+
 static void GPIO_init(void)
 {
 	GPIO_InitTypeDef	GPIO_InitStructure;
 
-	// Enabling clock for GPIO A,B,C
+	// Enabling clock for GPIO A,B,C, AFIO
 	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN | RCC_APB2ENR_AFIOEN;
 
 	AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
 
+	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_50MHz;
+#if !defined(SET_ORIENT_RIGHT) && !defined(SET_ORIENT_LEFT)
+	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Pin	= LCD_ORIENT_PIN;
+	GPIO_Init(LCD_ORIENT_PORT, &GPIO_InitStructure);
+	orientation = LCD_ORIENT_PORT->IDR & LCD_ORIENT_PIN;	//get LCD orientation
+#else
+#ifdef SET_ORIENT_RIGHT
+	orientation = 0;
+#else
+	orientation = 1;
+#endif
+#endif
 	// Init LCD control bus and LCD Data bus
 	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
 	GPIO_InitStructure.GPIO_Pin	= LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
-	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
 	GPIO_Init(LCD_CTRL_PORT, &GPIO_InitStructure);
-#ifdef LCD_16BIT_BUS
-	LCD_H_PORT->BRR = LCD_H_WR;
-	GPIO_InitStructure.GPIO_Pin	= LCD_H_WR;
-	GPIO_Init(LCD_H_PORT, &GPIO_InitStructure);
-#endif
 	GPIO_InitStructure.GPIO_Pin	= LCD_DATA_MASK;
 	GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
-
-	CS_LCD_set;	WR_LCD_set;	RS_LCD_set;	RES_LCD_set;
 
 	// Init Encoder lines
 	GPIO_InitStructure.GPIO_Pin	= ENC_A | ENC_B;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_IPU;
 	GPIO_Init(ENC_PORT, &GPIO_InitStructure);
 
+#ifndef HW_VER_2
+	AFIO->EXTICR[2] &= ~(AFIO_EXTICR3_EXTI9);
+	AFIO->EXTICR[2] |= AFIO_EXTICR3_EXTI9_PA; //channel 9 EXTI connected to PA9
+#else
+	AFIO->EXTICR[0] &= ~(AFIO_EXTICR1_EXTI0);
+	AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB; //channel 0 EXTI connected to PB0
+#endif
+	EXTI->FTSR |= ENC_A;	//falling
+	EXTI->PR = ENC_A;		//clear flag
+	EXTI->IMR |= ENC_A;		//enable interrupt from channel 0
+	NVIC_EnableIRQ(ENC_IRQn);
+
 	// Init Button
+#ifndef HW_VER_2
 	GPIO_InitStructure.GPIO_Pin	= BUTTONS_A_MSK;
 	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin	= BUTTON_PIN5 | BUTTON_PIN4;
-	GPIO_Init(BTN_PORTB, &GPIO_InitStructure);
+#else
+	GPIO_InitStructure.GPIO_Pin	= ENC_BUT;
+	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin	= BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1;
+#endif
+	GPIO_Init(BTN_PORT2, &GPIO_InitStructure);
 
 	// PWM signals init
 	GPIO_InitStructure.GPIO_Pin	= BRIGHTNES_PIN | BUZZER_PIN;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_AF_PP;
 	GPIO_Init(BRIGHTNES_PORT, &GPIO_InitStructure);
 
-	// Configure pins for SPI2
+	// Configure pins for SPI
 	GPIO_InitStructure.GPIO_Pin = SPI_MOSI | SPI_MISO | SPI_SCK | SPI_CS;
 	GPIO_Init(SPI_PORT, &GPIO_InitStructure);
 
@@ -60,58 +85,56 @@ static void GPIO_init(void)
 	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_AF_OD;
 	GPIO_Init(I2C_PORT, &GPIO_InitStructure);
 
+#ifndef HW_VER_2
 	//for test output
 	GPIO_InitStructure.GPIO_Pin		= TEST_PIN;
 	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_Out_PP;
 	GPIO_Init(TEST_PORT, &GPIO_InitStructure);
-}
-/***********************************************************
- Timer1 for encoder
-***********************************************************/
-static void Timer1_init(void)
-{
-	RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-	TIM1->CCMR1 |= TIM_CCMR1_IC1F | TIM_CCMR1_IC2F;
-	TIM1->CCMR1 |= TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_0;
-#ifdef	INVERT_ENCODER_DIR
-	TIM1->CCER = TIM_CCER_CC1P;
-#else
-	TIM1->CCER = TIM_CCER_CC1P | TIM_CCER_CC2P;
 #endif
-	TIM1->SMCR = TIM_SMCR_SMS_0;
-	TIM1->ARR = 0xffff;
-	TIM1->CNT = 0;
-	TIM1->CR1 |= TIM_CR1_CEN;	//one puls mode
 }
 /***********************************************************
- Timer2 for buzzer duration
+ Timer for encoder anti-bounce input
 ***********************************************************/
-static void Timer2_init(void)
+static void Timer_Delay_init(void)
 {
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-	TIM2->CR1 = TIM_CR1_URS; // up counter, only overflow interrupt
-	TIM2->PSC = 72;	// FclkT2 = 1MHz
-	TIM2->CNT = 0;
-	TIM2->ARR = 1000;	// 1ms period
-	TIM2->DIER = TIM_DIER_UIE;
-	TIM2->EGR = TIM_EGR_UG;
-	NVIC_EnableIRQ(TIM2_IRQn);
+	RCC->APB1ENR |= Delay_RCC_ENR;	// up counter, only update interrupt
+	Timer_Del->PSC = 72;	// Fclk = 1MHz
+	Timer_Del->ARR = 1000;	//delay, us
+	Timer_Del->DIER = TIM_DIER_UIE;
+	Timer_Del->EGR = TIM_EGR_UG;
+	NVIC_SetPriority(Delay_IRQ, 1);
+	NVIC_EnableIRQ(Delay_IRQ);
 }
 /***********************************************************
- Timer3 for PWM (BUZZER, BRIGHTNES)
+ Timer for buzzer duration
 ***********************************************************/
-static void Timer3_init(void)
+static void Timer_Duration_init(void)
+{
+	RCC->APB1ENR |= Dur_RCC_ENR;	// up counter, only update interrupt
+	Timer_D->PSC = 72;	// Fclk = 1MHz
+	Timer_D->CNT = 0;
+	Timer_D->ARR = 1000;	// 1ms period
+	Timer_D->DIER = TIM_DIER_UIE;
+	Timer_D->EGR = TIM_EGR_UG;
+	NVIC_SetPriority(Duration_IRQ, 1);
+	NVIC_EnableIRQ(Duration_IRQ);
+}
+/***********************************************************
+ Timer for PWM (BUZZER, BRIGHTNES)
+***********************************************************/
+static void Timer_PWM_init(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef  TIM_OCInitStructure;
 
 	uint16_t PrescalerValue = 0;
 
-	// TIM3 clock enable
-  	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	// TIM clock enable
+  	RCC_APB1PeriphClockCmd(PWM_RCC_ENR, ENABLE);
 
-  	if (BRIGHTNES_PIN != GPIO_Pin_1)
-  		AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_1;
+#ifndef HW_VER_2
+	AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_1;
+#endif
 
 	// Compute the prescaler value
 	PrescalerValue = (uint16_t) (SystemCoreClock / 256000);	//frequency = 1kHz for Period = 255
@@ -121,36 +144,24 @@ static void Timer3_init(void)
 	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	TIM_TimeBaseInit(Timer_P, &TIM_TimeBaseStructure);
 
 	// PWM1 Mode configuration for Buzzer
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_Pulse = 0;
-#ifdef	BUZZER_PIN0
-	TIM_OC3Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
-#ifdef	BUZZER_PIN1
-	TIM_OC4Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
+	TIM_OC4Init(Timer_P, &TIM_OCInitStructure);
+	TIM_OC4PreloadConfig(Timer_P, TIM_OCPreload_Enable);
 
-	// PWM1 Mode configuration for BRIGHTNES
-	TIM_OCInitStructure.TIM_Pulse = INIT_BRIGHTNES;
-#ifdef	BRIGHTNES_PIN0
-	TIM_OC3Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
-#ifdef	BRIGHTNES_PIN1	//Channel4
-	TIM_OC4Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
-#endif
+	// PWM1 Mode configuration for LCD BRIGHTNES
+	TIM_OCInitStructure.TIM_Pulse = LCD_BRIGHTNES;
+	TIM_OC3Init(Timer_P, &TIM_OCInitStructure);
+	TIM_OC3PreloadConfig(Timer_P, TIM_OCPreload_Enable);
 
-	TIM_ARRPreloadConfig(TIM3, ENABLE);
+	TIM_ARRPreloadConfig(Timer_P, ENABLE);
 
-	TIM_Cmd(TIM3, ENABLE);
+	TIM_Cmd(Timer_P, ENABLE);
 }
 /***********************************************************
 ***********************************************************/
@@ -213,9 +224,9 @@ void Global_Init(void)
 	SystemInit();
 	delay_init();
 	GPIO_init();
-	Timer1_init();
-	Timer2_init();
-	Timer3_init();
+	Timer_Delay_init();
+	Timer_Duration_init();
+	Timer_PWM_init();
 	SPI_init();
 	I2C_init();
 	LCD_Init();

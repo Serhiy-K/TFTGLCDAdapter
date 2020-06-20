@@ -7,9 +7,12 @@ int main(void)
 	Global_Init();
 	__enable_irq();
 
+	while (New_cmd() != INIT) {}
+
 	while (1)
 	{
-		if (New_cmd())
+		if (New_cmd() == INIT)
 			Command_Handler();
+		out_buffer();
 	}
 }

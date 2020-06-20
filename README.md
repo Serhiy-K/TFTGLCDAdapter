@@ -3,11 +3,13 @@ TFT GLCD Adapter was developed as low cost replacement for monochrome LCDs with 
 
 <img src="./Hardware/Photos/Smoothie-progressbar.jpg"  width="265" height="200">
 
-TFT GLCD Adapter based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325 or ILI9341 chip with 320x240 resolution or ILI9327 chip  with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button.
+TFT GLCD Adapter "Version 1.0" based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325 or ILI9341 chip with 320x240 resolution or ILI9327 chip  with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
+
+TFT GLCD Adapter "Version 2.0" based on the same STM32F103C8T6 controller, but has own PCB. It desighned to connect LCD and controller by 16-bit data bus. Also this adapter has standart EXP2 connector for connect to printer's main board and integrated Micro-SD connector.
 
 Firmware for TFT GLCD Adapter created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE.
 
-Hardware directory include pcb-project for this adapter created in Altium Designer, gerber files and real photos.
+Hardware directory include pcb-projects for this adapter created in Altium Designer, gerber files and real photos.
 
 Discussion about this TFT GLCD Adapter and my realization Smoothieboard you may find on https://www.radiokot.ru/forum/viewtopic.php?f=25&t=162580
 
@@ -26,11 +28,9 @@ For use this adapter with Marlin you need:
 * Read **Readme.txt** in "For-Marlin" directory for more details.
 
 ## Connect to 5V boards
-TFT GLCD Adapter developed to connect with main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) you need add level converter for SPI input signals. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. Also on this picture you may see level converter for I2C bus.
+TFT GLCD Adapter "Version 1.0" developed to connect with main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) you need add level converter for SPI input signals. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. Also on this picture you may see level converter for I2C bus. TFT GLCD Adapter "Version 2.0" already has level converter for SPI input signals.
 
-## Add SD support
-If you want add SD-card support to TFT GLCD Adapter you need add multiplexer for MISO signal between panel MISO and SD-card MISO signals. This need because panel and SD-card share the same SPI bus. Two posible variants you may see on picture below.
-
-Also you may change panel connector to standart EXP2 pinout.
+## Add SD support to TFT GLCD Adapter "Version 1.0"
+If you want add SD-card support you need add multiplexer for MISO signal between panel MISO and SD-card MISO signals. This need because panel and SD-card share the same SPI bus. Two posible variants you may see on picture below and in TFT GLCD Adapter "Version 2.0" project. Also you may change panel connector to standart EXP2 pinout.
 
 <img src="./Hardware/tft-glcd-add_SD.jpg" width="800" height="528">

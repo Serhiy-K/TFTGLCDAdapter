@@ -157,10 +157,11 @@ void TIM1_UP_IRQHandler(void)
   * @param  None
   * @retval None
   */
+/*
 void TIM4_IRQHandler(void)
 {
 }
-
+*/
 
 /**
   * @brief  This function handles I2C ERROR interrupt request.
@@ -247,10 +248,11 @@ void DMA1_Channel5_IRQHandler(void)
   * @param  None
   * @retval None
   */
+/*
 void EXTI9_5_IRQHandler(void)
 {
 }
-
+*/
 
 
 /***********************END OF FILE*******************************/

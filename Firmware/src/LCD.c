@@ -6,12 +6,15 @@
 #include "Pictures.h"
 #include "systick.h"
 
+#ifndef HW_VER_2
 volatile uint16_t TCH, TCL;
 volatile uint16_t BCH, BCL;
-volatile uint16_t TBack, TColor;
-uint16_t Back = BackColor;
 uint16_t BH = (BackColor >> 8);
 uint16_t BL = (BackColor & 0x00ff);
+#endif
+uint8_t orientation = 0;	//0 - LCD chip right, 1 - LCD chip left
+volatile uint16_t TBack, TColor;
+uint16_t Back = BackColor;
 
 uint16_t Xcour;
 //extern uint8_t	protocol;
@@ -24,21 +27,21 @@ uint16_t Xcour;
 static void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 {
 	RS_LCD_clr;
+#ifndef HW_VER_2
 	LCD_DATA_PORT->BRR = LCD_DATA_MASK;
-#ifdef LCD_16BIT_BUS
-	H_WR_Puls;
-#else
 	WR_Puls;
-#endif
 	LCD_DATA_PORT->BSRR = RegisterIndex; WR_Puls;
+#else
+	LCD_DATA(RegisterIndex);
+#endif
 	RS_LCD_set;
 
-#ifdef LCD_16BIT_BUS
-	H_LCD_DATA(Data >> 8);
-#else
+#ifndef HW_VER_2
 	LCD_DATA(Data >> 8);
-#endif
 	LCD_DATA(Data & 0x00ff);
+#else
+	LCD_DATA(Data);
+#endif
 }
 #endif
 
@@ -77,17 +80,20 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA(((LCDYMAX - 1) - Y0) >> 8);
 	LCD_DATA((LCDYMAX - 1) - Y0);
 	LCD_Write_Com(0x2B);
-#ifdef LANDSCAPE_L
-	LCD_DATA((X0 + 32) >> 8);
-	LCD_DATA(X0 + 32);
-	LCD_DATA((X1 + 32) >> 8);
-	LCD_DATA(X1 + 32);
-#else
-	LCD_DATA((X0) >> 8);
-	LCD_DATA(X0);
-	LCD_DATA((X1) >> 8);
-	LCD_DATA(X1);
-#endif
+	if (orientation)
+	{
+		LCD_DATA((X0 + 32) >> 8);
+		LCD_DATA(X0 + 32);
+		LCD_DATA((X1 + 32) >> 8);
+		LCD_DATA(X1 + 32);
+	}
+	else
+	{
+		LCD_DATA((X0) >> 8);
+		LCD_DATA(X0);
+		LCD_DATA((X1) >> 8);
+		LCD_DATA(X1);
+	}
 #endif	//ILI9327
 
 #ifdef ILI9341
@@ -106,13 +112,13 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	RS_LCD_clr;
 	//lcd_Draw_Start
 #ifdef ILI9325
+#ifndef HW_VER_2
 	LCD_DATA_PORT->BRR = LCD_DATA_MASK;
-#ifdef LCD_16BIT_BUS
-	H_WR_Puls;
-#else
 	WR_Puls;
-#endif
 	LCD_DATA_PORT->BSRR = 0x22; WR_Puls;
+#else
+	LCD_DATA(0x22);
+#endif
 #endif	//ILI9325
 
 #if defined(ILI9327) || defined(ILI9341)
@@ -128,24 +134,20 @@ void LCD_ClearScreen()
     uint32_t cntT = 0;
 
     LCD_SetArea(0, 0, LCDXMAX - 1, LCDYMAX - 1);
+#ifndef HW_VER_2
 	if (Back)
 	{
-#ifdef LCD_16BIT_BUS
-		do	{H_LCD_DATA(BH);	LCD_DATA(BL);} while (++cntT < (LCDXMAX * LCDYMAX));
-#else
 		do	{LCD_DATA(BH);	LCD_DATA(BL);} while (++cntT < (LCDXMAX * LCDYMAX));
-#endif
 	}
 	else
 	{
 		LCD_DATA_PORT->BRR = LCD_DATA_MASK; 
-#ifdef LCD_16BIT_BUS
-		H_WR_Puls;
-		do {WR_Puls;} while (++cntT < (LCDXMAX * LCDYMAX));
-#else
 		do {WR_Puls;	WR_Puls;} while (++cntT < (LCDXMAX * LCDYMAX));
-#endif
 	}
+#else
+	LCD_DATA_PORT->ODR = Back; 
+	do {WR_Puls;} while (++cntT < (LCDXMAX * LCDYMAX));
+#endif
     CS_LCD_set;
 }
 /******************************************************************************
@@ -155,39 +157,31 @@ void LCD_ClearScreen()
 void LCD_FillRect(uint16_t X0pos, uint16_t Y0pos, uint16_t X1pos, uint16_t Y1pos, uint16_t Color)
 {
 	uint32_t pntNum;
-	uint16_t CH = Color >> 8;
-	uint16_t CL = Color & 0x00ff;
 
 	pntNum = ((X1pos - X0pos) + 1) * ((Y1pos - Y0pos) + 1);	// calculate dots number
 	LCD_SetArea(X0pos, Y0pos, X1pos, Y1pos);
+#ifndef HW_VER_2
+	uint16_t CH = Color >> 8;
+	uint16_t CL = Color & 0x00ff;
+
 	if (Color == 0xffff)
 	{
 		LCD_DATA_PORT->BSRR = LCD_DATA_MASK;
-#ifdef LCD_16BIT_BUS
-		H_WR_Puls;
-		do {WR_Puls;} while (pntNum--);
-#else
 		do {WR_Puls; WR_Puls;} while (pntNum--);
-#endif
 	}
 	else if (Color == 0)
 	{
 		LCD_DATA_PORT->BRR = LCD_DATA_MASK; 
-#ifdef LCD_16BIT_BUS
-		H_WR_Puls;
-		do {WR_Puls;} while (pntNum--);
-#else
 		do {WR_Puls; WR_Puls;} while (pntNum--);
-#endif
 	}
 	else
 	{
-#ifdef LCD_16BIT_BUS
-		do {H_LCD_DATA(CH);	LCD_DATA(CL);}	while (pntNum--);
-#else
 		do {LCD_DATA(CH);	LCD_DATA(CL);}	while (pntNum--);
-#endif
 	}
+#else
+	LCD_DATA_PORT->ODR = Color; 
+	do {WR_Puls;} while (pntNum--);
+#endif
 	CS_LCD_set;
 }
 /******************************************************************************
@@ -203,12 +197,12 @@ void LCD_Draw_Picture(uint16_t X0pos, uint16_t Y0pos, const char *pic)
 	for (i = 0; i < 2304; i++)
 	{
 		c = *pic - 'A';
+#ifndef HW_VER_2
 		if		(colors[c] == 0xffff)	{LCD_DATA_FF;}
 		else if	(colors[c] == 0)		{LCD_DATA_00;}
-#ifdef LCD_16BIT_BUS
-		else							{H_LCD_DATA(colors[c] >> 8);	LCD_DATA(colors[c] & 0x00ff);}
-#else
 		else							{LCD_DATA(colors[c] >> 8);	LCD_DATA(colors[c] & 0x00ff);}
+#else
+		LCD_DATA(colors[c]);
 #endif
 		pic++;
 	}
@@ -224,24 +218,20 @@ void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos)
 
 	LCD_SetArea(X0pos, Y0pos, X0pos + 47, Y0pos + 47 );
 
+#ifndef HW_VER_2
 	if (Back)
 	{
-#ifdef LCD_16BIT_BUS
-		for (i = 0; i < 2304; i++)	{H_LCD_DATA(BH);	LCD_DATA(BL);}
-#else
 		for (i = 0; i < 2304; i++)	{LCD_DATA(BH);	LCD_DATA(BL);}
-#endif
 	}
 	else
 	{
 		LCD_DATA_PORT->BRR = LCD_DATA_MASK; 
-#ifdef LCD_16BIT_BUS
-		H_WR_Puls;
-		for (i = 0; i < 2304; i++) {WR_Puls;}
-#else
 		for (i = 0; i < 2304; i++) {WR_Puls;	WR_Puls;}
-#endif
 	}
+#else
+	LCD_DATA_PORT->ODR = Back; 
+	for (i = 0; i < 2304; i++)	{WR_Puls;}
+#endif
 	CS_LCD_set;
 }
 /******************************************************************************
@@ -249,12 +239,14 @@ void LCD_Clear_Picture(uint16_t X0pos, uint16_t Y0pos)
 ******************************************************************************/
 void LCD_Set_TextColor(uint16_t front, uint16_t back)
 {
+	TColor = front;
+	TBack = back;
+#ifndef HW_VER_2
 	TCH = front >> 8;
 	TCL = front & 0x00ff;
-	TColor = front;
 	BCH = back >> 8;
 	BCL = back & 0x00ff;
-	TBack = back;
+#endif
 }
 /******************************************************************************
  Description    : Set cursor for text
@@ -309,6 +301,7 @@ void LCD_DrawChar(char c)
 	for (i = 0; i < CHAR_BYTES; i++)
 	{
 		mask = 0b10000000;
+#ifndef HW_VER_2
 		if ((TColor == 0xffff) && (TBack == 0))	//standart text
 		{
 			for (j = 0; j < 8; j++)
@@ -331,16 +324,19 @@ void LCD_DrawChar(char c)
 		{
 			for (j = 0; j < 8; j++)
 			{
-#ifdef LCD_16BIT_BUS
-				if (*ptr & mask)	{H_LCD_DATA(TCH);	LCD_DATA(TCL);}
-				else				{H_LCD_DATA(BCH);	LCD_DATA(BCL);}
-#else
 				if (*ptr & mask)	{LCD_DATA(TCH);	LCD_DATA(TCL);}
 				else				{LCD_DATA(BCH);	LCD_DATA(BCL);}
-#endif
 				mask = mask >> 1;
 			}
 		}
+#else
+		for (j = 0; j < 8; j++)
+		{
+			if (*ptr & mask)	{LCD_DATA(TColor);}
+			else				{LCD_DATA(TBack);}
+			mask = mask >> 1;
+		}
+#endif
 		ptr++;
 	}
 	Xcour++;	//increment cursor position
@@ -421,8 +417,8 @@ void LCD_Reset()
    	delay_ms(100);	// Wait Stability
 	CS_LCD_clr;
 
+#ifndef HW_VER_2
    	//for 8-bit interface
-#ifndef LCD_16BIT_BUS
    	RS_LCD_clr;
    	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
@@ -438,13 +434,16 @@ void LCD_Init(void)
 	LCD_Reset();
 
    	Set_LCD_REG(0x02, 0x0200); // set 1 line inversion
-#ifdef	LANDSCAPE_L
-   	Set_LCD_REG(0x01, 0x0100); // set SS=1 and SM=0 bit
-   	Set_LCD_REG(0x60, 0x2700); // set GS=0 bit
-#else
-   	Set_LCD_REG(0x01, 0x0000); // set SS=0 and SM=0 bit
-   	Set_LCD_REG(0x60, 0xA700); // set GS bit
-#endif
+	if (orientation)
+	{
+   		Set_LCD_REG(0x01, 0x0100); // set SS=1 and SM=0 bit
+   		Set_LCD_REG(0x60, 0x2700); // set GS=0 bit
+	}
+	else
+	{
+   		Set_LCD_REG(0x01, 0x0000); // set SS=0 and SM=0 bit
+   		Set_LCD_REG(0x60, 0xA700); // set GS bit
+	}
    	//xx0 BGR 0000 ORG 0 ID1 ID0 AM 000
    	Set_LCD_REG(0x03, 0x1020); // set BGR=1, GRAM write direction ID=2.
    	Set_LCD_REG(0x04, 0x0000); // Resize register
@@ -530,11 +529,10 @@ void LCD_Init(void)
 */
 	LCD_DATA(0b01001000);	//B6=1, BGR=1
 	LCD_Write_Com(0xC0);	//Panel Driving Setting
-#ifdef	LANDSCAPE_L
-	LCD_DATA(0b00000101);	//0,0,0, REV, SM, GS=1, BGR, SS = 1
-#else
-	LCD_DATA(0b00000000);	//0,0,0, REV, SM, GS = 0, BGR, SS=0
-#endif
+	if (orientation)
+		LCD_DATA(0b00000101);	//0,0,0, REV, SM, GS=1, BGR, SS = 1
+	else
+		LCD_DATA(0b00000000);	//0,0,0, REV, SM, GS = 0, BGR, SS=0
 	LCD_DATA(0x35);	LCD_DATA(0x00);
 	LCD_DATA(0x00);	LCD_DATA(0x01);	LCD_DATA(0x02);
 	LCD_Write_Com(0xC5);	//Set frame rate
@@ -592,11 +590,10 @@ void LCD_Init(void)
 
    	LCD_Write_Com(0xB6);	//DISPLAY FUNCTION CONTROL
    	LCD_DATA(0x08);
-#ifdef	LANDSCAPE_L
-   	LCD_DATA(0b11000010);	//REV=1!, GS=1, SS=0, SM = 0, ISC=2
-#else
-   	LCD_DATA(0b10100010);	//REV=1, GS=0, SS=1, SM = 0, ISC=2
-#endif
+	if (orientation)
+   		LCD_DATA(0b11000010);	//REV=1!, GS=1, SS=0, SM = 0, ISC=2
+	else
+   		LCD_DATA(0b10100010);	//REV=1, GS=0, SS=1, SM = 0, ISC=2
    	LCD_DATA(0x27);
 
    	LCD_Write_Com(0xF2);   	//3GAMMA FUNCTION DISABLE
