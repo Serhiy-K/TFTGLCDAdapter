@@ -530,9 +530,9 @@ void LCD_Init(void)
 	LCD_DATA(0b01001000);	//B6=1, BGR=1
 	LCD_Write_Com(0xC0);	//Panel Driving Setting
 	if (orientation)
-		LCD_DATA(0b00000101);	//0,0,0, REV, SM, GS=1, BGR, SS = 1
+		{LCD_DATA(0b00000101);}	//0,0,0, REV, SM, GS=1, BGR, SS = 1
 	else
-		LCD_DATA(0b00000000);	//0,0,0, REV, SM, GS = 0, BGR, SS=0
+		{LCD_DATA(0b00000000);}	//0,0,0, REV, SM, GS = 0, BGR, SS=0
 	LCD_DATA(0x35);	LCD_DATA(0x00);
 	LCD_DATA(0x00);	LCD_DATA(0x01);	LCD_DATA(0x02);
 	LCD_Write_Com(0xC5);	//Set frame rate
@@ -591,9 +591,9 @@ void LCD_Init(void)
    	LCD_Write_Com(0xB6);	//DISPLAY FUNCTION CONTROL
    	LCD_DATA(0x08);
 	if (orientation)
-   		LCD_DATA(0b11000010);	//REV=1!, GS=1, SS=0, SM = 0, ISC=2
+   		{LCD_DATA(0b11000010);}	//REV=1!, GS=1, SS=0, SM = 0, ISC=2
 	else
-   		LCD_DATA(0b10100010);	//REV=1, GS=0, SS=1, SM = 0, ISC=2
+   		{LCD_DATA(0b10100010);}	//REV=1, GS=0, SS=1, SM = 0, ISC=2
    	LCD_DATA(0x27);
 
    	LCD_Write_Com(0xF2);   	//3GAMMA FUNCTION DISABLE
