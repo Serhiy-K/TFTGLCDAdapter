@@ -19,7 +19,82 @@ uint16_t Back = BackColor;
 uint16_t Xcour;
 //extern uint8_t	protocol;
 
-#ifdef ILI9325
+/*
+// For read LCD ID
+
+uint16_t LCD_reg_data[8] = {0};
+char LCD_REG_HEX[8][4];
+char LCD_REG[2];
+char HEX[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+uint8_t nz;
+void LCD_Read_Reg(uint8_t RegisterIndex)
+{
+	GPIO_InitTypeDef	GPIO_InitStructure;
+
+	uint8_t i, t;
+	uint16_t j;
+
+	nz = 0;
+
+	RS_LCD_clr;
+#ifndef HW_VER_2
+	LCD_DATA_PORT->BRR = LCD_DATA_MASK;
+	WR_Puls;
+	LCD_DATA_PORT->BSRR = RegisterIndex;
+	WR_Puls;
+#else
+	LCD_DATA(RegisterIndex);
+#endif
+	RS_LCD_set;
+
+	LCD_REG[1] = HEX[RegisterIndex & 0x0f];
+	LCD_REG[0] = HEX[RegisterIndex >> 4];
+
+	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Pin	 = LCD_DATA_MASK;
+	GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
+
+	for (i = 0; i < 8; i++)
+	{
+		RD_LCD_clr;
+#ifndef HW_VER_2
+		LCD_reg_data[i] = LCD_DATA_PORT->IDR & 0xff;
+		LCD_reg_data[i] <<= 8;
+		RD_LCD_set;
+		RD_LCD_clr;
+		LCD_reg_data[i] |= LCD_DATA_PORT->IDR & 0xff;
+
+		if (LCD_reg_data[i])
+			nz = 1;
+#else
+		LCD_reg_data[i] = LCD_DATA_PORT->IDR;
+#endif
+		RD_LCD_set;
+		j = LCD_reg_data[i];
+		t = j;	t &= 0x0f;	LCD_REG_HEX[i][3] = HEX[t];	j >>= 4;
+		t = j;	t &= 0x0f;	LCD_REG_HEX[i][2] = HEX[t];	j >>= 4;
+		t = j;	t &= 0x0f;	LCD_REG_HEX[i][1] = HEX[t];	j >>= 4;
+		t = j;	t &= 0x0f;	LCD_REG_HEX[i][0] = HEX[t];
+	}
+
+	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
+	GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
+}
+void LCD_Read_Regs()
+{
+	uint8_t i;
+	for (i = 0; i < 255; i++)
+	{
+		LCD_Read_Reg(i);
+		if (nz)
+		{
+				LCD_reg_data[8] = 0;
+		}
+	}
+}
+*/
+#if defined(ILI9325)
 /******************************************************************************
  Description    : Write data to LCD reg
  Input          : RegisterIndex, data
@@ -28,8 +103,7 @@ static void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 {
 	RS_LCD_clr;
 #ifndef HW_VER_2
-	LCD_DATA_PORT->BRR = LCD_DATA_MASK;
-	WR_Puls;
+	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	 WR_Puls;
 	LCD_DATA_PORT->BSRR = RegisterIndex; WR_Puls;
 #else
 	LCD_DATA(RegisterIndex);
@@ -45,7 +119,7 @@ static void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
 }
 #endif
 
-#if defined(ILI9327) || defined(ILI9341)
+#if defined(ILI9327) || defined(ILI9341) || defined(ST7789)
 /******************************************************************************
  Description    : Write data to LCD reg
  Input          : RegisterIndex
@@ -64,6 +138,7 @@ static void LCD_Write_Com(uint8_t RegisterIndex)
 void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 {
 	CS_LCD_clr;
+
 #ifdef ILI9325
 	Set_LCD_REG(0x52, X0);
 	Set_LCD_REG(0x53, X1);
@@ -95,8 +170,7 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 		LCD_DATA(X1);
 	}
 #endif	//ILI9327
-
-#ifdef ILI9341
+#if defined(ILI9341) || defined(ST7789)
 	LCD_Write_Com(0x2A);
 	LCD_DATA(((LCDYMAX - 1) - Y1) >> 8);
 	LCD_DATA((LCDYMAX - 1) - Y1);
@@ -111,17 +185,16 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 
 	RS_LCD_clr;
 	//lcd_Draw_Start
-#ifdef ILI9325
+#if defined(ILI9325)
 #ifndef HW_VER_2
-	LCD_DATA_PORT->BRR = LCD_DATA_MASK;
-	WR_Puls;
+	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;
 	LCD_DATA_PORT->BSRR = 0x22; WR_Puls;
 #else
 	LCD_DATA(0x22);
 #endif
 #endif	//ILI9325
 
-#if defined(ILI9327) || defined(ILI9341)
+#if defined(ILI9327) || defined(ILI9341) || defined(ST7789)
 	LCD_DATA(0x2C);
 #endif
 	RS_LCD_set;
@@ -424,6 +497,66 @@ void LCD_Reset()
    	RS_LCD_set
 #endif
 }
+
+#ifdef ST7789
+/******************************************************************************
+* Function Name  : LCD_Init
+* Description    : Init ST7789 compatible chip
+******************************************************************************/
+void LCD_Init(void)
+{
+	LCD_Reset();
+
+	LCD_Write_Com(0x01);	// Software reset
+
+	delay_ms(10);
+
+	LCD_Write_Com(0xb2);	// Porch Control
+	LCD_DATA(0x0c);	LCD_DATA(0x0c);	LCD_DATA(0x00);
+	LCD_DATA(0x33);	LCD_DATA(0x33);
+	LCD_Write_Com(0x3a);	LCD_DATA(0x55);	// Interface Pixel Format
+	LCD_Write_Com(0xbb);	LCD_DATA(0x2A);	// VCOM Setting
+	LCD_Write_Com(0xc3);	LCD_DATA(0x0a);	// VRH Setting
+	LCD_Write_Com(0xc4);	LCD_DATA(0x20);	// VDV Setting
+	LCD_Write_Com(0xc6);	LCD_DATA(0x0f);	// Frame Rate Control in Normal Mode
+	LCD_Write_Com(0x0d);	// Power Control 1
+	LCD_DATA(0xa4);	LCD_DATA(0xa2);
+	LCD_Write_Com(0xd0);	// Power Control 2
+	LCD_DATA(0xa4);	LCD_DATA(0xa2);
+	LCD_Write_Com(0x53);	LCD_DATA(0x24); // CTRL Display
+	LCD_Write_Com(0xb7);	LCD_DATA(0x35);	// Gate Control
+	LCD_Write_Com(0xe0);	// Positive Voltage Gamma Control
+	LCD_DATA(0xd0);	LCD_DATA(0x00);	LCD_DATA(0x02);
+	LCD_DATA(0x07);	LCD_DATA(0x0a);	LCD_DATA(0x28);
+	LCD_DATA(0x32);	LCD_DATA(0x44);	LCD_DATA(0x42);
+	LCD_DATA(0x06);	LCD_DATA(0x0e);	LCD_DATA(0x12);
+	LCD_DATA(0x14);	LCD_DATA(0x17);
+	LCD_Write_Com(0xe1);	// Negative Voltage Gamma Control
+	LCD_DATA(0xd0);	LCD_DATA(0x00);	LCD_DATA(0x02);
+	LCD_DATA(0x07);	LCD_DATA(0x0a);	LCD_DATA(0x28);
+	LCD_DATA(0x31);	LCD_DATA(0x54);	LCD_DATA(0x47);
+	LCD_DATA(0x0e);	LCD_DATA(0x1c);	LCD_DATA(0x17);
+	LCD_DATA(0x1b);	LCD_DATA(0x1e);
+	LCD_Write_Com(0xe4);	// Gate Control
+	LCD_DATA(0x27);	//320 lines
+	LCD_DATA(0x00);	//from 0 line
+	LCD_DATA(0x00);	//SM = 0, GS = 0
+	LCD_Write_Com(0x36);	// Memory Data Access Control
+	if (orientation)
+		{LCD_DATA(0x88);}	// BGR
+	else
+		{LCD_DATA(0x48);}	// BGR
+	LCD_Write_Com(0x21);	// Display Inversion On
+	LCD_Write_Com(0x13);	// Normal Display Mode On
+	LCD_Write_Com(0x11);	// Exit Sleep Mode
+
+	delay_ms(120);
+
+	LCD_Write_Com(0x29);	// Display ON
+
+	LCD_Draw_StartScreen();
+}
+#endif
 #ifdef ILI9325
 /******************************************************************************
 * Function Name  : LCD_Init
@@ -433,7 +566,7 @@ void LCD_Init(void)
 {
 	LCD_Reset();
 
-   	Set_LCD_REG(0x02, 0x0200); // set 1 line inversion
+	Set_LCD_REG(0x02, 0x0200); // set 1 line inversion
 	if (orientation)
 	{
    		Set_LCD_REG(0x01, 0x0100); // set SS=1 and SM=0 bit
@@ -530,9 +663,9 @@ void LCD_Init(void)
 	LCD_DATA(0b01001000);	//B6=1, BGR=1
 	LCD_Write_Com(0xC0);	//Panel Driving Setting
 	if (orientation)
-		LCD_DATA(0b00000101);	//0,0,0, REV, SM, GS=1, BGR, SS = 1
+		{LCD_DATA(0b00000101);}	//0,0,0, REV, SM, GS=1, BGR, SS = 1
 	else
-		LCD_DATA(0b00000000);	//0,0,0, REV, SM, GS = 0, BGR, SS=0
+		{LCD_DATA(0b00000000);}	//0,0,0, REV, SM, GS = 0, BGR, SS=0
 	LCD_DATA(0x35);	LCD_DATA(0x00);
 	LCD_DATA(0x00);	LCD_DATA(0x01);	LCD_DATA(0x02);
 	LCD_Write_Com(0xC5);	//Set frame rate
@@ -591,9 +724,9 @@ void LCD_Init(void)
    	LCD_Write_Com(0xB6);	//DISPLAY FUNCTION CONTROL
    	LCD_DATA(0x08);
 	if (orientation)
-   		LCD_DATA(0b11000010);	//REV=1!, GS=1, SS=0, SM = 0, ISC=2
+   		{LCD_DATA(0b11000010);}	//REV=1!, GS=1, SS=0, SM = 0, ISC=2
 	else
-   		LCD_DATA(0b10100010);	//REV=1, GS=0, SS=1, SM = 0, ISC=2
+   		{LCD_DATA(0b10100010);}	//REV=1, GS=0, SS=1, SM = 0, ISC=2
    	LCD_DATA(0x27);
 
    	LCD_Write_Com(0xF2);   	//3GAMMA FUNCTION DISABLE

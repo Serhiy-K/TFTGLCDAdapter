@@ -10,22 +10,23 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 //                                Main parameters
 //============================================================================================
 //For LCD and controller with 16 bit data bus.
-#define HW_VER_2
+//#define HW_VER_2
 //#define HW_VER_2_SWD_DEBUG
 
-#define	INVERT_ENCODER_DIR
+//#define	INVERT_ENCODER_DIR
 
 // WARNING !!!!!
 //to hardware select proper display orientations you need pull LCD_ORIENT_PIN by resistor
 //with about 10k to GND (for right) or to +3.3V (for left) or use one of SET_ORIENT_ parameter
 //for software select orientation.
 //#define SET_ORIENT_RIGHT
-//#define SET_ORIENT_LEFT
+#define SET_ORIENT_LEFT
 
 //select only one LCD type
-#define ILI9325
+//#define ILI9325   //ILI9325==ILI9328
 //#define ILI9327
 //#define ILI9341
+#define ST7789
 
 #define	LCD_BRIGHTNES	200
 
@@ -44,7 +45,7 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 
 //============================================================================================
 
-#if defined(ILI9325) || defined(ILI9341)
+#if defined(ILI9325) || defined(ILI9341) || defined(ST7789)
 #define	LCDMIN	240
 #define	LCDMAX	320
 #define LCD320x240
@@ -70,7 +71,7 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 //LCD interface
 #define LCD_DATA_PORT	GPIOA
 #define	LCD_DATA_MASK	0x00ff
-#define LCD_ORIENT_PORT GPIOA
+#define LCD_ORIENT_PORT GPIOB
 #define LCD_ORIENT_PIN  GPIO_Pin_5
 #define LCD_CTRL_PORT	GPIOB
 #define	LCD_RD			GPIO_Pin_5
