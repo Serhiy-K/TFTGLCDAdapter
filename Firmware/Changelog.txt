@@ -2,6 +2,10 @@
 
 1. Add ST7789 LCD chip support.
 
+06/25/2020
+
+1. Fix init for ILI9341 and ILI9327.
+
 06/20/2020
 
 1. Add new hardware version for support real 16 bit LCD data bus.
