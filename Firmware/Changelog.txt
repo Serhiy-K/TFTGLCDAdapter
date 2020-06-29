@@ -1,6 +1,7 @@
 29/06/2020
 
 1. Add ST7789 LCD chip support.
+2. Add dots to grid for Marlin UBL.
 
 06/25/2020
 

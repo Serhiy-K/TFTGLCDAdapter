@@ -73,13 +73,15 @@ uint8_t toread = 0;
 uint8_t	new_command = 0;
 uint8_t	temps = 0;
 uint8_t	cour_row = 0;
-uint16_t row_offset = 0;
+uint16_t row_offset[2] = {0};
 uint8_t progress_cleared = 0;
 uint8_t	protocol = Smoothie;
 uint8_t buzcnt = 0;
 uint8_t buzcntcur = 0;
 uint16_t freq[MAX_FREQS] = {0}, duration[MAX_FREQS] = {0};	//different tones
 uint8_t pics = 0;
+uint8_t grid_size_x, grid_size_y;
+uint16_t grid_x[10], grid_y[10];
 uint16_t dot_pos_x = CHAR_WIDTH;
 uint16_t dot_pos_y = 7 * CHAR_HEIGTH;
 uint8_t c_p = 0;
@@ -286,8 +288,15 @@ void UBL_Draw_Frame()
 	uint8_t pos_x, pos_y;	//pos_y - inverted
 	uint8_t step_x, step_y;
 
-	step_x = (CHAR_WIDTH * 9) / ((data[out_buf][1] >> 4) - 1);
-	step_y = (CHAR_HEIGTH * 6) / ((data[out_buf][1] & 0x0f) - 1);
+	grid_size_x = data[out_buf][1] >> 4;
+	grid_size_y = data[out_buf][1] & 0x0f;
+
+	step_x = (CHAR_WIDTH * 9) / (grid_size_x - 1);
+	step_y = (CHAR_HEIGTH * 6) / (grid_size_y - 1);
+
+	//calculate grid
+	for (i = 0; i < grid_size_x; i++)	{grid_x[i] = CHAR_WIDTH + step_x * i;}
+	for (i = 0; i < grid_size_y; i++)	{grid_y[i] = CHAR_HEIGTH + step_y * i;}
 
 	i = 10;
 	while (data[out_buf][++i] != ',');	//scan first line for point position
@@ -324,9 +333,27 @@ void UBL_Draw_Frame()
 	data[out_buf][CHARS_PER_LINE * 7 + 10] = 217;
 }
 //----------------------------------------------------------------------------
-void UBL_Draw_Dot()
+void UBL_Draw_Dots(uint8_t y)
 {
-	LCD_FillRect(dot_pos_x - 3, dot_pos_y - 3, dot_pos_x + 3, dot_pos_y + 3, White);
+	uint8_t i;
+	uint8_t ymin = y * CHAR_HEIGTH;
+	uint8_t ymax = ymin + CHAR_HEIGTH;
+
+	for (i = 0; i < grid_size_y; i++)
+	{
+		if ((grid_y[i] >= ymin) && (grid_y[i] <= ymax))
+		{
+			y = grid_y[i];
+			for (i = 0; i < grid_size_x; i++)
+			{
+				if ((dot_pos_x == grid_x[i]) && (dot_pos_y == y))
+					LCD_FillRect(dot_pos_x - 4, dot_pos_y - 4, dot_pos_x + 3, dot_pos_y + 3, White);
+				else
+					LCD_FillRect(grid_x[i] - 1, y - 1, grid_x[i] + 1, y + 1, White);
+			}
+			return;
+		}
+	}
 }
 //----------------------------------------------------------------------------
 // Common
@@ -630,18 +657,19 @@ void Print_Line(uint8_t row)
 		}
 		else
 			x = 2;
-		while (x < CHARS_PER_LINE)	{LCD_DrawChar(data[out_buf][i++]);	x++;}
 	}
 	else
-#else
-	if (marker)
-	{
-		LCD_DrawChar(' ');	i++;	x = 1;
-	}
-	else
-		x = 0;
-	while (x < CHARS_PER_LINE)	{LCD_DrawChar(data[out_buf][i++]);	x++;}
 #endif
+	{
+		if (marker)
+		{
+			LCD_DrawChar(' ');	i++;	x = 1;
+		}
+		else
+			x = 0;
+	}
+	while (x < CHARS_PER_LINE)	{LCD_DrawChar(data[out_buf][i++]);	x++;}
+	
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
@@ -756,9 +784,9 @@ void out_buffer()
 				UBL_Draw_Frame();
 			for (y = 0; y < TEXT_LINES; y++)
 			{
-				row_offset = y * CHARS_PER_LINE;
-				if (data[out_buf][row_offset] == '%')
-					Draw_Progress_Bar(y, data[out_buf][row_offset + 1]);
+				row_offset[out_buf] = y * CHARS_PER_LINE;
+				if (data[out_buf][row_offset[out_buf]] == '%')
+					Draw_Progress_Bar(y, data[out_buf][row_offset[out_buf] + 1]);
 				else if ((y == 5) && (data[out_buf][0] == 'X'))
 				{//main screen
 					Print_Temps();
@@ -769,7 +797,7 @@ void out_buffer()
 				{
 					Print_Line(y);
 					if (data[out_buf][0] == 218)
-						UBL_Draw_Dot();
+						UBL_Draw_Dots(y);
 				}
 			}
 		}
@@ -852,14 +880,14 @@ void I2C2_EV_IRQHandler(void)
 	    			if (pos == -1)
 	    			{ //write to text buffer by line
 	    				cour_row = b;
-	    				row_offset = b * CHARS_PER_LINE;
+	    				row_offset[in_buf] = b * CHARS_PER_LINE;
 	    				pos = 0;
 						if (cmd == LCD_PUT)	screen_transfer = 1;
 	    			}
 	    			else
 					{
-						if (cmd == LCD_WRITE)	data[out_buf][row_offset + (uint16_t)pos++] = b;
-						else					data[in_buf][row_offset + (uint16_t)pos++] = b;
+						if (cmd == LCD_WRITE)	data[out_buf][row_offset[out_buf] + (uint16_t)pos++] = b;
+						else					data[in_buf][row_offset[in_buf] + (uint16_t)pos++] = b;
 					}
 	    		}
 	    		else
@@ -939,8 +967,8 @@ void SPI_IRQHandler(void)
 		if (pos == -1)
 		{
 			cour_row = b;
-			row_offset = b * CHARS_PER_LINE;
-			pos = row_offset;
+			row_offset[in_buf] = b * CHARS_PER_LINE;
+			pos = row_offset[in_buf];
 		}
 		else
 		{
