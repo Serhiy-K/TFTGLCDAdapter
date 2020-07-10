@@ -3,7 +3,7 @@ TFT GLCD Adapter was developed as low cost replacement for monochrome LCDs with 
 
 <img src="./Hardware/Photos/Smoothie-progressbar.jpg"  width="265" height="200">
 
-TFT GLCD Adapter "Version 1.0" based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325 or ILI9341 chip with 320x240 resolution or ILI9327 chip  with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
+TFT GLCD Adapter "Version 1.0" based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325 or ILI9341 or ST7789 chip with 320x240 resolution or ILI9327 chip  with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
 
 TFT GLCD Adapter "Version 2.0" based on the same STM32F103C8T6 controller, but has own PCB. It desighned to connect LCD and controller by 16-bit data bus. Also this adapter has standart EXP2 connector for connect to printer's main board and integrated Micro-SD connector.
 
@@ -23,7 +23,8 @@ For use this adapter with Smoothieware you need:
 * Set proper parameters for SPI bus.
 
 For use this adapter with Marlin you need:
-* Add/replace your Marlin's files with files from suitable archive in "For-Marlin" directory.
+* For Marlin-1 add/replace your Marlin's files with files from archive in "For-Marlin" directory.
+* For Marlin-2 you need get latest code from https://github.com/Serhiy-K/Marlin/tree/TFT-GLCD-adapter.
 * Check `TFTGLCD_ADAPTER` section in **Conditionals_LCD.h** and recompile Marlin firmware.
 * Read **Readme.txt** in "For-Marlin" directory for more details.
 
