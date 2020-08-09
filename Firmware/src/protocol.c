@@ -81,14 +81,17 @@ uint8_t buzcntcur = 0;
 uint16_t freq[MAX_FREQS] = {0}, duration[MAX_FREQS] = {0};	//different tones
 uint8_t pics = 0;
 uint8_t grid_size_x, grid_size_y;
-uint16_t grid_x[10], grid_y[10];
-uint16_t dot_pos_x = CHAR_WIDTH;
-uint16_t dot_pos_y = 7 * CHAR_HEIGTH;
+uint16_t grid_x[20], grid_y[20];
+uint16_t dot_pos_x;
+uint16_t dot_pos_y;
+uint8_t first_UBL = 1;
 uint8_t c_p = 0;
 uint8_t next_tx = 0;
 int8_t encdiff = 0;
 uint8_t new_buf = 0;
 uint8_t screen_transfer = 0;
+
+void Print_Line(uint8_t row);
 
 //----------------------------------------------------------------------------
 uint8_t New_cmd()	{ return new_command; }
@@ -269,7 +272,50 @@ void Set_Leds()
 //----------------------------------------------------------------------------
 // For Marlin
 //----------------------------------------------------------------------------
-void UBL_Draw_Frame()
+void UBL_Draw_Dots(uint8_t y)
+{
+	uint8_t i, j;
+	uint8_t ymin = y * CHAR_HEIGTH;
+	uint8_t ymax = ymin + CHAR_HEIGTH;
+
+	for (i = 0; i < grid_size_y; i++)
+	{
+		if ((grid_y[i] >= ymin) && (grid_y[i] < ymax))
+		{
+			y = grid_y[i];
+			for (j = 0; j < grid_size_x; j++)
+			{
+				if ((dot_pos_x == j) && (dot_pos_y == i))
+					LCD_FillRect(grid_x[j] - 4, y - 4, grid_x[j] + 3, y + 3, Yellow);
+				else
+				{
+					LCD_FillRect(grid_x[j] - 4, y - 4, grid_x[j] + 3, y + 3, Black);
+					LCD_FillRect(grid_x[j] - 1, y - 1, grid_x[j] + 1, y + 1, White);
+				}
+			}
+		}
+	}
+}
+//----------------------------------------------------------------------------
+void Print_Line_UBL(uint8_t row)
+{
+	uint16_t i, j;
+
+	if ((row == 4) && (first_UBL))
+	{
+		LCD_SetCursor(1, row);
+		for (j = 1; j < 10; j++)	LCD_DrawChar(' ');
+		first_UBL = 0;
+	}
+
+	LCD_SetCursor(0, row);
+	// draw frame and grid
+	LCD_DrawChar(8);	UBL_Draw_Dots(row);		LCD_SetCursor(10, row);	LCD_DrawChar(8);
+	i = row * CHARS_PER_LINE + 11;
+	for (j = 11; j < CHARS_PER_LINE; j++)	LCD_DrawChar(data[out_buf][i++]);
+}
+//----------------------------------------------------------------------------
+void Draw_UBL_Screen()
 {
 /**
 * Map screen:
@@ -285,25 +331,25 @@ void UBL_Draw_Frame()
 * |____________________|
 */
 	uint8_t i;
-	uint8_t pos_x, pos_y;	//pos_y - inverted
+	uint8_t pos_y;	//pos_y - inverted
 	uint8_t step_x, step_y;
 
 	grid_size_x = data[out_buf][1] >> 4;
 	grid_size_y = data[out_buf][1] & 0x0f;
 
-	step_x = (CHAR_WIDTH * 9) / (grid_size_x - 1);
-	step_y = (CHAR_HEIGTH * 6) / (grid_size_y - 1);
+	step_x = ((CHAR_WIDTH * 9) - 8) / (grid_size_x - 1);
+	step_y = ((CHAR_HEIGTH * 6) - 8) / (grid_size_y - 1);
 
 	//calculate grid
-	for (i = 0; i < grid_size_x; i++)	{grid_x[i] = CHAR_WIDTH + step_x * i;}
-	for (i = 0; i < grid_size_y; i++)	{grid_y[i] = CHAR_HEIGTH + step_y * i;}
+	for (i = 0; i < grid_size_x; i++)	{grid_x[i] = CHAR_WIDTH + 4 + step_x * i;}
+	for (i = 0; i < grid_size_y; i++)	{grid_y[i] = CHAR_HEIGTH + 4 + step_y * i;}
 
 	i = 10;
 	while (data[out_buf][++i] != ',');	//scan first line for point position
 
-	pos_x = data[out_buf][i - 1] - '0';
-	if (data[out_buf][i - 2] != '(')	//pos_x >= 10
-		pos_x += (data[out_buf][i - 2] - '0') * 10;
+	dot_pos_x = data[out_buf][i - 1] - '0';
+	if (data[out_buf][i - 2] != '(')	//dot_pos_x >= 10
+		dot_pos_x += (data[out_buf][i - 2] - '0') * 10;
 
 	if (data[out_buf][i + 2] != ')')
 	{	//pos_y >= 10
@@ -313,47 +359,23 @@ void UBL_Draw_Frame()
 	else
 		pos_y = data[out_buf][i + 1] - '0';
 
-	dot_pos_x = CHAR_WIDTH + pos_x * step_x;
-	dot_pos_y = 7 * CHAR_HEIGTH - pos_y * step_y;
+	dot_pos_y = grid_size_y - pos_y - 1;
 
-	//Draw frame
-	//top line
-	for (i = 1; i < 10; i++)	data[out_buf][i] = 11;
-	//top right corner
-	data[out_buf][i] = 9;
-	//left line
-	for (i = CHARS_PER_LINE; i < (CHARS_PER_LINE * 7); i += CHARS_PER_LINE) data[out_buf][i] = 8;
-	//right line
-	for (i = CHARS_PER_LINE + 10; i < (CHARS_PER_LINE * 7 + 10); i += CHARS_PER_LINE) data[out_buf][i] = 8;
-	//bottom left corner
-	data[out_buf][CHARS_PER_LINE * 7] = '+';
-	//bottom line
-	for (i = CHARS_PER_LINE * 7 + 1; i < (CHARS_PER_LINE * 7 + 10); i++) data[out_buf][i] = 11;
-	//bottom right corner
-	data[out_buf][CHARS_PER_LINE * 7 + 10] = 217;
-}
-//----------------------------------------------------------------------------
-void UBL_Draw_Dots(uint8_t y)
-{
-	uint8_t i;
-	uint8_t ymin = y * CHAR_HEIGTH;
-	uint8_t ymax = ymin + CHAR_HEIGTH;
-
-	for (i = 0; i < grid_size_y; i++)
-	{
-		if ((grid_y[i] >= ymin) && (grid_y[i] <= ymax))
-		{
-			y = grid_y[i];
-			for (i = 0; i < grid_size_x; i++)
-			{
-				if ((dot_pos_x == grid_x[i]) && (dot_pos_y == y))
-					LCD_FillRect(dot_pos_x - 4, dot_pos_y - 4, dot_pos_x + 3, dot_pos_y + 3, White);
-				else
-					LCD_FillRect(grid_x[i] - 1, y - 1, grid_x[i] + 1, y + 1, White);
-			}
-			return;
-		}
-	}
+	LCD_SetCursor(0, 0);
+	
+	//first line
+	LCD_DrawChar(218);								//top left corner
+	for (i = 1; i < 10; i++)	LCD_DrawChar(11);	//top line
+	LCD_DrawChar(9);								//top right corner
+	for (i = 11; i < CHARS_PER_LINE; i++)	LCD_DrawChar(data[out_buf][i]);
+	//2...6 lines
+	for (i = 1; i < 7; i++)	Print_Line_UBL(i);
+	
+	LCD_SetCursor(0, 7);	LCD_DrawChar('+');		//bottom left corner
+	for (i = 1; i < 10; i++)	LCD_DrawChar(11);	//bottom line
+	LCD_DrawChar(217);								//bottom right corner
+	Print_Line(8);
+	Print_Line(9);
 }
 //----------------------------------------------------------------------------
 // Common
@@ -781,23 +803,23 @@ void out_buffer()
 			LCD_Set_TextColor(White, Black);
 			//print all screen
 			if ((data[out_buf][0] == 218) && (data[out_buf][1] != 11))
-				UBL_Draw_Frame();
-			for (y = 0; y < TEXT_LINES; y++)
+				Draw_UBL_Screen();
+			else
 			{
-				row_offset[out_buf] = y * CHARS_PER_LINE;
-				if (data[out_buf][row_offset[out_buf]] == '%')
-					Draw_Progress_Bar(y, data[out_buf][row_offset[out_buf] + 1]);
-				else if ((y == 5) && (data[out_buf][0] == 'X'))
-				{//main screen
-					Print_Temps();
-					Draw_Icons();
-					y = TEXT_LINES;
-				}
-				else
+				first_UBL = 1;
+				for (y = 0; y < TEXT_LINES; y++)
 				{
-					Print_Line(y);
-					if (data[out_buf][0] == 218)
-						UBL_Draw_Dots(y);
+					row_offset[out_buf] = y * CHARS_PER_LINE;
+					if (data[out_buf][row_offset[out_buf]] == '%')
+						Draw_Progress_Bar(y, data[out_buf][row_offset[out_buf] + 1]);
+					else if ((y == 5) && (data[out_buf][0] == 'X'))
+					{//main screen
+						Print_Temps();
+						Draw_Icons();
+						y = TEXT_LINES;
+					}
+					else
+						Print_Line(y);
 				}
 			}
 		}
@@ -910,15 +932,13 @@ void I2C2_EV_IRQHandler(void)
 	    	switch (cmd)
 	    	{
 	    		case READ_BUTTONS:
-					I2C->DR = Read_Buttons();
-					next_tx = encdiff;	encdiff = 0;
-					break;
+					I2C->DR = Read_Buttons();	next_tx = encdiff;	encdiff = 0;	break;
 	    		case READ_ENCODER:
-					I2C->DR = encdiff;	encdiff = 0;	break;
-	    			next_tx = Read_Buttons();
-	    			break;
-	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	break;
-	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	break;
+					I2C->DR = encdiff;	encdiff = 0;	next_tx = Read_Buttons();	break;
+	    		case GET_LCD_ROW:
+					I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	break;
+	    		case GET_LCD_COL:
+					I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	break;
 	    	}
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTING:	//EV3
