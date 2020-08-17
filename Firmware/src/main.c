@@ -11,8 +11,7 @@ int main(void)
 
 	while (1)
 	{
-		if (New_cmd() == INIT)
-			Command_Handler();
+		if (New_cmd())	Command_Handler();
 		out_buffer();
 	}
 }

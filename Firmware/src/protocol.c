@@ -82,7 +82,7 @@ uint8_t  pics = 0;
 uint8_t  grid_size_x, grid_size_y;
 uint16_t grid_x[20], grid_y[20];
 uint16_t dot_pos_x, dot_pos_y;
-uint8_t  first_UBL = 1;
+uint8_t  UBL_first_time = 1;
 uint8_t  c_p = 0;
 uint8_t  next_tx = 0;
 int8_t   encdiff = 0;
@@ -298,13 +298,6 @@ void Print_Line_UBL(uint8_t row)
 {
 	uint16_t i, j;
 
-	if ((row == 4) && (first_UBL))
-	{
-		LCD_SetCursor(1, row);
-		for (j = 1; j < 10; j++)	LCD_DrawChar(' ');
-		first_UBL = 0;
-	}
-
 	LCD_SetCursor(0, row);
 	// draw frame and grid
 	LCD_DrawChar(8);	UBL_Draw_Dots(row);		LCD_SetCursor(10, row);	LCD_DrawChar(8);
@@ -360,6 +353,8 @@ void Draw_UBL_Screen()
 
 	LCD_SetCursor(0, 0);
 	
+	if (UBL_first_time)	{LCD_ClearScreen();	UBL_first_time = 0;}
+
 	//first line
 	LCD_DrawChar(218);								//top left corner
 	for (i = 1; i < 10; i++)	LCD_DrawChar(11);	//top line
@@ -699,17 +694,6 @@ void Command_Handler()
 	{
 		case INIT:
 			protocol = data[in_buf][0];
-			if ((protocol == Smoothie) || (protocol == MarlinSPI))
-			{
-			    NVIC_DisableIRQ(I2C_IRQ);
-			    NVIC_DisableIRQ(I2C_ERR_IRQ);
-			    I2C_Cmd(I2C, DISABLE);
-			}
-			else if (protocol == MarlinI2C)
-			{
-				NVIC_DisableIRQ(SPI_IRQ);
-				SPI_Cmd(SPI, DISABLE);
-			}
 			in_buf = 1;
 			out_buf = 0;
 			progress_cleared = 0;
@@ -733,10 +717,6 @@ void Command_Handler()
 			if (duration[buzcnt] < 50)	duration[buzcnt] = 50;
 			Buzzer();
 			buzcnt++;
-			break;
-
-		case BRIGHTNES:
-			Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];
 			break;
 	}
 	new_command = 0;
@@ -800,7 +780,7 @@ void out_buffer()
 				Draw_UBL_Screen();
 			else
 			{
-				first_UBL = 1;
+				UBL_first_time = 1;
 				for (y = 0; y < TEXT_LINES; y++)
 				{
 					row_offset[out_buf] = y * CHARS_PER_LINE;
@@ -875,7 +855,6 @@ void I2C2_EV_IRQHandler(void)
 {
 	uint32_t event;
 	uint8_t b;
-	uint16_t cour_row_offset;
 
 	event = I2C_GetLastEvent(I2C);
 
@@ -896,15 +875,19 @@ void I2C2_EV_IRQHandler(void)
 	    		if ((cmd == LCD_WRITE) || (cmd == LCD_PUT))
 	    		{
 	    			if (pos == -1)
-	    			{ //write to text buffer by line
-	    				pos = 0;
-						cour_row_offset = b * CHARS_PER_LINE;	// for LCD_WRITE
-						if (cmd == LCD_PUT)	data[in_buf][(uint16_t)pos++] = b;
+	    			{ //write to text buffer by one line
+						if (cmd == LCD_WRITE)
+						{
+	    					pos = 0;
+							data[in_buf][pos++] = b;
+						}
+						else
+							pos = b * CHARS_PER_LINE;
 	    			}
 	    			else
 					{
-						if (cmd == LCD_PUT)	data[in_buf][(uint16_t)pos++] = b;
-						else				data[out_buf][cour_row_offset + (uint16_t)pos++] = b;
+						if (cmd == LCD_WRITE)	data[in_buf][pos++] = b;
+						else					data[out_buf][pos++] = b;
 					}
 	    		}
 	    		else
@@ -916,22 +899,22 @@ void I2C2_EV_IRQHandler(void)
 	    	while ((I2C->SR1 & I2C_SR1_STOPF) == I2C_SR1_STOPF) { I2C->SR1; I2C->CR1 |= 0x1; }	// STOPF Flag clear
 			switch (cmd)
 			{
-				case INIT:		toread = 0;	new_command = cmd;	return;
-				case BUZZER:
-				case BRIGHTNES:	toread = 0;	Command_Handler();	return;
-				case LCD_PUT:	if (pos < FB_SIZE) return;
+				case INIT:		SPI_Cmd(SPI, DISABLE);
+				case BUZZER:	toread = 0;	new_command = cmd;	return;
+				case BRIGHTNES:	toread = 0;	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
+				case LCD_WRITE:	if (pos < FB_SIZE) return;
 								new_buf = 1;
-				case LCD_WRITE:	toread = 0;	return;
+				case LCD_PUT:	toread = 0;	return;
 			}
 	    	break;
 	    // Slave TRANSMITTER mode
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_BUTTONS:	I2C->DR = Read_Buttons();	next_tx = encdiff;	encdiff = 0;	break;
-	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;	next_tx = Read_Buttons();	break;
-	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	break;
-	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	break;
+	    		case READ_BUTTONS:	I2C->DR = Read_Buttons();	next_tx = encdiff;	encdiff = 0;	return;
+	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;	next_tx = Read_Buttons();	return;
+	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	return;
+	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	return;
 	    	}
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTING:	//EV3
@@ -956,18 +939,10 @@ void SPI_IRQHandler(void)
 		switch(b)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
-			case READ_BUTTONS:	SPI->DR = Read_Buttons();	break;
-			case READ_ENCODER:	SPI->DR = encdiff;	encdiff = 0;	break;
-			case LCD_WRITE:		cmd = b;
-				if (protocol == Smoothie)
-				{
-			case LCD_PUT:
-					toread = FB_SIZE;	pos = 0;	return;
-				}
-				else
-				{
-					toread = CHARS_PER_LINE;	pos = -1;	return;
-				}
+			case READ_BUTTONS:	SPI->DR = Read_Buttons();	return;
+			case READ_ENCODER:	SPI->DR = encdiff;	encdiff = 0;	return;
+			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
+			case LCD_PUT:		cmd = b;	toread = CHARS_PER_LINE;	pos = -1;	return;
 			case BUZZER:		cmd = b;	toread = 4;	pos = 0;	return;
 			case BRIGHTNES:		cmd = b;	toread = 1;	pos = 0;	return;
 			case GET_LCD_ROW:	SPI->DR = TEXT_LINES;	return;
@@ -978,23 +953,20 @@ void SPI_IRQHandler(void)
 	else
 	{
 		if (pos == -1)
-		{
-			row_offset[in_buf] = b * CHARS_PER_LINE;
-			pos = row_offset[in_buf];
-		}
+			pos = b * CHARS_PER_LINE;
 		else
 		{
-			if ((protocol != Smoothie) && (cmd == LCD_WRITE))
-				data[out_buf][pos++] = b;
-			else
-				data[in_buf][pos++] = b;
+			if (cmd == LCD_PUT)	data[out_buf][pos++] = b;
+			else				data[in_buf][pos++] = b;
 			toread--;
 			if (toread == 0)
-			{
-				if (cmd == INIT)	{new_command = cmd;	return;}
-				if ((cmd == BUZZER) || (cmd == BRIGHTNES)) {Command_Handler(); return;}
-				if (((protocol == Smoothie) && (cmd == LCD_WRITE)) || (cmd == LCD_PUT)) new_buf = 1;
-			}
+				switch(cmd)
+				{
+					case INIT:		I2C_Cmd(I2C, DISABLE);
+					case BUZZER:	new_command = cmd; return;
+					case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
+					case LCD_WRITE:	new_buf = 1;	//update all screen
+				}
 		}
 	}
 }
