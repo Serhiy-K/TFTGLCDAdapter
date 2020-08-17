@@ -1,3 +1,8 @@
+17/08/2020
+
+1. Fix protocol for Marlin.
+2. Fix UBL screen for Marlin.
+
 29/06/2020
 
 1. Add ST7789 LCD chip support.
