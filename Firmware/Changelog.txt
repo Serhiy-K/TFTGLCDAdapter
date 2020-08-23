@@ -1,4 +1,8 @@
-17/08/2020
+08/23/2020
+
+1. Small change in font
+
+08/17/2020
 
 1. Fix protocol for Marlin.
 2. Fix UBL screen for Marlin.
