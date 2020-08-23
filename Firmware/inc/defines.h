@@ -4,29 +4,29 @@
 #include <stdint.h>
 #include "stm32f10x_gpio.h"
 
-enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
+enum protocols {Smoothie = 0, Marlin = 1};
 
 //============================================================================================
 //                                Main parameters
 //============================================================================================
 //For LCD and controller with 16 bit data bus.
-//#define HW_VER_2
+#define HW_VER_2
 //#define HW_VER_2_SWD_DEBUG
 
-//#define	INVERT_ENCODER_DIR
+#define	INVERT_ENCODER_DIR
 
 // WARNING !!!!!
 //to hardware select proper display orientations you need pull LCD_ORIENT_PIN by resistor
 //with about 10k to GND (for right) or to +3.3V (for left) or use one of SET_ORIENT_ parameter
 //for software select orientation.
 //#define SET_ORIENT_RIGHT
-#define SET_ORIENT_LEFT
+//#define SET_ORIENT_LEFT
 
 //select only one LCD type
-//#define ILI9325   //ILI9325==ILI9328
+#define ILI9325   //ILI9325==ILI9328
 //#define ILI9327
 //#define ILI9341
-#define ST7789
+//#define ST7789
 
 #define	LCD_BRIGHTNES	200
 
@@ -42,6 +42,8 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 
 #define	CHAR_WIDTH	16  //depend on FONT resolution
 #define	CHAR_HEIGTH	24
+
+#define I2C_Addr		0x27 << 1		//0x27 as equal to PCA8574 and PCF8575
 
 //============================================================================================
 
@@ -98,7 +100,6 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define I2C_RCC			RCC_APB1Periph_I2C2
 #define	I2C_IRQ			I2C2_EV_IRQn
 #define	I2C_ERR_IRQ		I2C2_ER_IRQn
-#define I2C_Addr		0x20 << 1		//as PCA8574 and PCF8575
 //encoder
 #define	ENC_PORT        GPIOA
 #define	ENC_A           GPIO_Pin_9
@@ -170,7 +171,6 @@ enum protocols {Smoothie = 0, MarlinI2C = 1, MarlinSPI = 2};
 #define I2C_RCC			RCC_APB1Periph_I2C2
 #define	I2C_IRQ			I2C2_EV_IRQn
 #define	I2C_ERR_IRQ		I2C2_ER_IRQn
-#define I2C_Addr		0x20 << 1		//as PCA8574 and PCF8575
 //encoder
 #define	ENC_PORT        GPIOB
 #define	ENC_A           GPIO_Pin_0
