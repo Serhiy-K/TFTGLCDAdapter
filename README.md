@@ -24,9 +24,10 @@ For use this adapter with Smoothieware you need:
 
 For use this adapter with Marlin you need:
 * For Marlin-1 add/replace your Marlin's files with files from archive in "For-Marlin" directory.
-* For Marlin-2 you need get latest code from https://github.com/Serhiy-K/Marlin/tree/TFT-GLCD-adapter.
-* Check `TFTGLCD_ADAPTER` section in **Conditionals_LCD.h** and recompile Marlin firmware.
+* For Marlin-2 you need get latest code from https://github.com/Serhiy-K/Marlin/tree/TFTGLCD-Panel.
 * Read **Readme.txt** in "For-Marlin" directory for more details.
+* Edit Configuration.h.
+* Check `TFTGLCD_PANEL` section in **Conditionals_LCD.h** and recompile Marlin firmware.
 
 ## Connect to 5V boards
 TFT GLCD Adapter "Version 1.0" developed to connect with main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) you need add level converter for SPI input signals. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. For use I2C bus you need remove pull-up resistors betwin I2C lines and +5V on main board if they present. TFT GLCD Adapter "Version 2.0" already has level converter for SPI input signals.
