@@ -220,7 +220,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define EN_A  0x01	// enc_a - reserved
 #define EN_B  0x02	// enc_b - reserved
 #define EN_C  0x04	// enc_but
-#define EN_D  0x08	// back ??
+#define EN_D  0x08	// back
 #define KILL  0x10
 
 //led bits
