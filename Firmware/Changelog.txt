@@ -1,3 +1,7 @@
+08/29/2020
+
+1. Add centring for status line on main screen.
+
 08/23/2020
 
 1. Small change in font

@@ -685,6 +685,37 @@ void Print_Line(uint8_t row)
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
+void Center_Status_Line()
+{
+	int8_t i, newpos;
+
+	if (protocol == Smoothie)
+	{
+		i = 0;
+		while ((i < CHARS_PER_LINE) && (data[out_buf][CHARS_PER_LINE * 3 + i] == ' '))	i++;
+		if (i > 1)
+		{
+			newpos = i / 2 + 1;
+			while (i < CHARS_PER_LINE)
+				data[out_buf][CHARS_PER_LINE * 3 + newpos++] = data[out_buf][CHARS_PER_LINE * 3 + i++];
+			while (newpos < CHARS_PER_LINE)
+				data[out_buf][CHARS_PER_LINE * 3 + newpos++] = ' ';
+		}
+	}
+	else
+	{
+		i = CHARS_PER_LINE - 1;
+		while ((i > 0) && (data[out_buf][CHARS_PER_LINE * 3 + i] == ' '))	i--;
+		{
+			newpos = ((CHARS_PER_LINE - 1) - i) / 2 + i;
+			while (i >= 0)
+				data[out_buf][CHARS_PER_LINE * 3 + newpos--] = data[out_buf][CHARS_PER_LINE * 3 + i--];
+			while (newpos >= 0)
+				data[out_buf][CHARS_PER_LINE * 3 + newpos--] = ' ';
+		}
+	}
+}
+//----------------------------------------------------------------------------
 void Command_Handler()
 {
 	uint16_t i;
@@ -735,6 +766,7 @@ void out_buffer()
 		{//for main screen
 			if ((data[out_buf][CHARS_PER_LINE] == 'X') && (data[out_buf][CHARS_PER_LINE + 6] == 'Y'))	Move_Text();
 		}
+		if (data[out_buf][0] == 'X')	Center_Status_Line();	//Main screen
 	}
 
 	if (protocol == Smoothie)

@@ -16,9 +16,9 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define	INVERT_ENCODER_DIR
 
 // WARNING !!!!!
-//to hardware select proper display orientations you need pull LCD_ORIENT_PIN by resistor
-//with about 10k to GND (for right) or to +3.3V (for left) or use one of SET_ORIENT_ parameter
-//for software select orientation.
+//To hardware select proper display orientations (side of the LCD connecting cable) you need
+//pull LCD_ORIENT_PIN by resistor with about 10k to GND for right side or to +3.3V for left
+//or use one of SET_ORIENT_ parameter for software select orientation.
 //#define SET_ORIENT_RIGHT
 //#define SET_ORIENT_LEFT
 
@@ -28,7 +28,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //#define ILI9341
 //#define ST7789
 
-#define	LCD_BRIGHTNES	200
+#define	LCD_BRIGHTNES	250
 
 #define	WITHOUT_HEAT_ICO	//if you want see "FAN %" text insted heat icon on 320x240 screen
 
