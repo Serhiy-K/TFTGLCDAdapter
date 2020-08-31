@@ -165,15 +165,9 @@ void Move_Text()
 	//fan percent present
 	if (data[out_buf][CHARS_PER_LINE * 4] == '%')
 	{
-		data[out_buf][CHARS_PER_LINE * 4] = ' ';	//clear percent symbol
-		
 		if (data[out_buf][CHARS_PER_LINE * 4 + 1] == 0)	//in fact FAN is in off state, so FAN icon depend on fan percent
 			data[out_buf][FB_SIZE - 2] &= ~PIC_FAN;
 
-/*		i = data[out_buf][FB_SIZE - 2];
-		if ((i & PIC_FAN) == 0)
-			data[out_buf][CHARS_PER_LINE * 4 + 1] = 0;
-*/
 		if (temps == 1)
 		{
 			to = TTO + F1O;	datat[to++] = 'F';	datat[to++] = 'A';	datat[to] = 'N';
@@ -211,6 +205,8 @@ FAN_P:
 				}
 			}
 		}
+		data[out_buf][CHARS_PER_LINE * 4] = ' ';		//clear percent symbol
+		data[out_buf][CHARS_PER_LINE * 4 + 1] = ' ';	//clear percent data
 	}
 }
 //----------------------------------------------------------------------------
