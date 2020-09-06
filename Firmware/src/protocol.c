@@ -410,9 +410,9 @@ uint8_t Read_Buttons()
 	else
 	{
 		if (!(BTN_PORTA->IDR & ENC_BUT))	return EN_C;
-		b = BTN_PORT2->IDR;
-		if (!(b & BUTTON_PIN1))	return EN_D;
-		if (!(b & BUTTON_PIN2))	return KILL;	//for I2C connection
+		b = BTN_PORT2->IDR & BUTTONS2_MSK;
+		if (b == (BUTTONS2_MSK & ~BUTTON_PIN1))	return EN_D;
+		if (b == (BUTTONS2_MSK & ~BUTTON_PIN2))	return KILL;	//for I2C connection ??
 	}
 #endif
 	return 0;
