@@ -1,4 +1,4 @@
-# TFTGLCDAdapter
+# TFT GLCD Panel
 TFT GLCD Panel was developed as low cost replacement for monochrome LCDs with low resolution fonts. It works with Smoothieware, Marlin 1.1.9 and Marlin 2.0.x.
 
 <img src="./Hardware/Photos/Smoothie-progressbar.jpg"  width="265" height="200">
