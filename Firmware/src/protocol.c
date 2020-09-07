@@ -358,7 +358,6 @@ void Draw_UBL_Screen()
 	for (i = 11; i < CHARS_PER_LINE; i++)	LCD_DrawChar(data[out_buf][i]);
 	//2...6 lines
 	for (i = 1; i < 7; i++)	Print_Line_UBL(i);
-	
 	LCD_SetCursor(0, 7);	LCD_DrawChar('+');		//bottom left corner
 	for (i = 1; i < 10; i++)	LCD_DrawChar(11);	//bottom line
 	LCD_DrawChar(217);								//bottom right corner
@@ -411,9 +410,9 @@ uint8_t Read_Buttons()
 	else
 	{
 		if (!(BTN_PORTA->IDR & ENC_BUT))	return EN_C;
-		b = BTN_PORT2->IDR;
-		if (!(b & BUTTON_PIN1))	return EN_D;
-		if (!(b & BUTTON_PIN2))	return KILL;	//for I2C connection
+		b = BTN_PORT2->IDR & BUTTONS2_MSK;
+		if (b == (BUTTONS2_MSK & ~BUTTON_PIN1))	return EN_D;
+		if (b == (BUTTONS2_MSK & ~BUTTON_PIN2))	return KILL;	//for I2C connection ??
 	}
 #endif
 	return 0;
@@ -804,7 +803,7 @@ void out_buffer()
 		{
 			LCD_Set_TextColor(White, Black);
 			//print all screen
-			if ((data[out_buf][0] == 218) && (data[out_buf][1] != 11))
+			if (((data[out_buf][0] == 218) || (data[out_buf][0] == 13)) && (data[out_buf][12] == '('))
 				Draw_UBL_Screen();
 			else
 			{

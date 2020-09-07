@@ -1,3 +1,11 @@
+09/06/2020
+
+1. Fix buttons for Marlin.
+
+09/05/2020
+
+1. Improvement for detect UBL screen.
+
 08/31/2020
 
 1. Remove "symbol" for FAN percent data in line 4 for Smoothieware.
