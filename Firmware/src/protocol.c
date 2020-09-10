@@ -55,6 +55,13 @@
 #define	ERROR_TEXT_COLOR	Yellow
 #define ERROR_BACK_COLOR	Red
 
+//ASCII pseudographic symbols
+#define TLC		218	//top left corner
+#define TRC		191	//top right corner
+#define BRC		217	//bottom right corner
+#define GL		196	//gorizontal line
+#define VL		179	//vertical line
+
 #define FB_SIZE	(CHARS_PER_LINE * TEXT_LINES + 2)	//text area + leds + pics
 
 #define	MAX_FREQS	5
@@ -296,7 +303,7 @@ void Print_Line_UBL(uint8_t row)
 
 	LCD_SetCursor(0, row);
 	// draw frame and grid
-	LCD_DrawChar(8);	UBL_Draw_Dots(row);		LCD_SetCursor(10, row);	LCD_DrawChar(8);
+	LCD_DrawChar(VL);	UBL_Draw_Dots(row);		LCD_SetCursor(10, row);	LCD_DrawChar(VL);
 	i = row * CHARS_PER_LINE + 11;
 	for (j = 11; j < CHARS_PER_LINE; j++)	LCD_DrawChar(data[out_buf][i++]);
 }
@@ -306,12 +313,12 @@ void Draw_UBL_Screen()
 /**
 * Map screen:
 * |/---------\ (00,00) |
-* ||         | X:000.00|
-* ||         | Y:000.00|
-* ||         | Z:00.000|
-* ||         |         |
-* ||         |         |
-* ||         |         |
+* || . . . . | X:000.00|
+* || . . . . | Y:000.00|
+* || . . . . | Z:00.000|
+* || . . . . |         |
+* || . . . . |         |
+* || . . . . |         |
 * |+---------/         |
 * |                    |
 * |____________________|
@@ -331,7 +338,7 @@ void Draw_UBL_Screen()
 	for (i = 0; i < grid_size_y; i++)	{grid_y[i] = CHAR_HEIGTH + 4 + step_y * i;}
 
 	i = 10;
-	while (data[out_buf][++i] != ',');	//scan first line for point position
+	while (data[out_buf][++i] != ',');
 
 	dot_pos_x = data[out_buf][i - 1] - '0';
 	if (data[out_buf][i - 2] != '(')	//dot_pos_x >= 10
@@ -347,20 +354,16 @@ void Draw_UBL_Screen()
 
 	dot_pos_y = grid_size_y - pos_y - 1;
 
-	LCD_SetCursor(0, 0);
-	
 	if (UBL_first_time)	{LCD_ClearScreen();	UBL_first_time = 0;}
 
-	//first line
-	LCD_DrawChar(218);								//top left corner
-	for (i = 1; i < 10; i++)	LCD_DrawChar(11);	//top line
-	LCD_DrawChar(9);								//top right corner
+	LCD_SetCursor(0, 0);		LCD_DrawChar(TLC);
+	for (i = 1; i < 10; i++)	LCD_DrawChar(GL);
+	LCD_DrawChar(TRC);
 	for (i = 11; i < CHARS_PER_LINE; i++)	LCD_DrawChar(data[out_buf][i]);
-	//2...6 lines
-	for (i = 1; i < 7; i++)	Print_Line_UBL(i);
-	LCD_SetCursor(0, 7);	LCD_DrawChar('+');		//bottom left corner
-	for (i = 1; i < 10; i++)	LCD_DrawChar(11);	//bottom line
-	LCD_DrawChar(217);								//bottom right corner
+	for (i = 1; i < 7; i++)		Print_Line_UBL(i);
+	LCD_SetCursor(0, 7);		LCD_DrawChar('+');
+	for (i = 1; i < 10; i++)	LCD_DrawChar(GL);
+	LCD_DrawChar(BRC);
 	Print_Line(8);
 	Print_Line(9);
 }
@@ -631,27 +634,27 @@ void Print_Line(uint8_t row)
 	uint16_t i = row * CHARS_PER_LINE;
 	uint8_t x, marker;
 
-	marker = 0;
+	marker = 1;
 	//change colors for different lines
 	if ((data[out_buf][i] == '>') || (data[out_buf][i] == 0x03))
 	{//menu cursor
 		progress_cleared = 0;
-		marker = 1;
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
 	}
 	else if (data[out_buf][i] == '#')
 	{//edit line
 		progress_cleared = 0;
-		marker = 1;
 		LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR);
 	}
 	else if (data[out_buf][i] == '!')
 	{//errors line
-		marker = 1;
 		LCD_Set_TextColor(ERROR_TEXT_COLOR, ERROR_BACK_COLOR);
 	}
 	else
+	{
+		marker = 0;
 		LCD_Set_TextColor(White, Black);	//default colors for text
+	}
 
 	LCD_SetCursor(0, row);
 #ifdef LCD400x240
