@@ -90,7 +90,6 @@ uint8_t  grid_size_x, grid_size_y;
 uint16_t grid_x[20], grid_y[20];
 uint16_t dot_pos_x, dot_pos_y;
 uint8_t  UBL_first_time = 1;
-uint8_t  c_p = 0;
 uint8_t  next_tx = 0;
 int8_t   encdiff = 0;
 uint8_t  new_buf = 0;
@@ -616,17 +615,15 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 		progress_cleared = 1;
 	}
 
-	if (c_p != percent)
-	{//change progress bar
-		if (percent > c_p) //draw progress bar
-		{
-			i = percent / 10;
-			LCD_FillRect(XMIN + 3, ymin + 2, XMIN + 3 + percent * 3, ymax - 2, pb_colors[i]);
-		}
-		else
-			LCD_FillRect(XMIN + 3, ymin + 2, XMAX - 3, ymax - 2, Black);
-		c_p = percent;
+	if (percent) //draw progress bar
+	{
+		i = percent / 10;
+		LCD_FillRect(XMIN + 3, ymin + 2, XMIN + 3 + percent * 3, ymax - 2, pb_colors[i]);
+		if (percent < 100)
+			LCD_FillRect(XMIN + 4 + percent * 3, ymin + 2, XMAX - 3, ymax - 2, Black);
 	}
+	else
+		LCD_FillRect(XMIN + 3, ymin + 2, XMAX - 3, ymax - 2, Black);
 }
 //----------------------------------------------------------------------------
 void Print_Line(uint8_t row)
