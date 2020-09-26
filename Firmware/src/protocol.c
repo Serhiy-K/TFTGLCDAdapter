@@ -588,7 +588,7 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 {
 	uint8_t i, ymin, ymax;
 
-	const uint16_t pb_colors[] = {0xfc00, 0xfcc0, 0xfd80, 0xfe40, 0xff20, 0xffe0, 0xcfe0, 0x97e0, 0x67e0, 0x37e0, 0x07e0};
+	const uint16_t pb_colors[] = {0xf816, 0xf80a, 0xf800, 0xfa80, 0xfc00, 0xfda0, 0xef60, 0x57e0, 0x07f6, 0x07ff, 0x05bf};
 
 #define XMIN	(LCDXMAX - 306) / 2	//center progress bar to text line
 #define XMAX	XMIN + 306			//100% * 3 + 6 for frame

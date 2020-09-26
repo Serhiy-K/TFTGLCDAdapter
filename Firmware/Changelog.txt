@@ -1,6 +1,7 @@
 09/25/2020
 
 1. Fix progress bar for Marlin.
+2. Change progress bar colors.
 
 09/10/2020
 
