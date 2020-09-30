@@ -1,12 +1,14 @@
 For use TFTGLCD Panel with Marlin-1 you need:
 1. ADD/replace files into your Marlin directory with new files from this directiry excluding Configuration.h - it for example only.
-2. Comment line with current selected panel in your Configuration.h file and place new line with `#define TFTGLCD_ADAPTER` insted.
-3. You need check section with `#elif ENABLED(TFTGLCD_ADAPTER)` in **Conditionals_LCD.h** for panel's parameters.
+2. Comment line with current selected panel in your Configuration.h file and place new line with "#define TFTGLCD_ADAPTER" insted.
+3. You need check section with "#elif ENABLED(TFTGLCD_ADAPTER)" in Conditionals_LCD.h for panel's parameters.
 
-##Common for Marlin-1 and Marlin-2:
+Common for Marlin-1 and Marlin-2:
 
-If you are planning connect TFTGLCD Panel by SPI bus you need add some new lines to file **pins_YOURS_BOARD_NAME.h**.
-   Simplest way to do this - change section with `#if HAS_SPI_LCD`. For examle, old section:
+If you are planning connect TFTGLCD Panel by SPI bus you need add some new lines to file pins_YOURS_BOARD_NAME.h.
+Simplest way to do this - change section with "#if HAS_SPI_LCD".
+
+For examle, old section:
 
 #if HAS_SPI_LCD
   #if ENABLED(CR10_STOCKDISPLAY)
@@ -38,9 +40,9 @@ new section:
 .......
 #endif // HAS_SPI_LCD
 
-For Marlin-2 text `TFTGLCD_ADAPTER` above must be replaced with `IS_TFTGLCD_PANEL` and text `DOGLCD_CS` with `TFTGLCD_CS`.
+For Marlin-2 text "TFTGLCD_ADAPTER" above must be replaced with "IS_TFTGLCD_PANEL" and text "DOGLCD_CS" with "TFTGLCD_CS".
 Also, Marlin's source code already has TFTGLCD PANEL support for some boards.
-In new section main description is `DOGLCD_CS` (`TFTGLCD_CS`) for SPI connection.
+In new section main description is "DOGLCD_CS" ("TFTGLCD_CS") for SPI connection.
 
 You may use disabled beeper and encoder pins for other tasks.
 
