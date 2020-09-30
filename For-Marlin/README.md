@@ -8,35 +8,35 @@ For use TFTGLCD Panel with Marlin-1 you need:
 If you are planning connect TFTGLCD Panel by SPI bus you need add some new lines to file **pins_YOURS_BOARD_NAME.h**.
    Simplest way to do this - change section with `#if HAS_SPI_LCD`. For examle, old section:
 
-`#if HAS_SPI_LCD`
-`  #if ENABLED(CR10_STOCKDISPLAY)`
-`    #define LCD_PINS_RS    P1_22`
-`    #define BEEPER_PIN     P1_30   // (37) not 5V tolerant`
-`    #define BTN_ENC        P0_28   // (58) open-drain`
-`    #define BTN_EN1        P1_18`
-`    #define BTN_EN2        P1_20`
-`.......`
-`.......`
-`#endif // HAS_SPI_LCD``
+#if HAS_SPI_LCD
+  #if ENABLED(CR10_STOCKDISPLAY)
+    #define LCD_PINS_RS    P1_22
+    #define BEEPER_PIN     P1_30   // (37) not 5V tolerant
+    #define BTN_ENC        P0_28   // (58) open-drain
+    #define BTN_EN1        P1_18
+    #define BTN_EN2        P1_20
+.......
+.......
+#endif // HAS_SPI_LCD
 
 new section:
 
-`#if HAS_SPI_LCD`
-`  #if ENABLED(TFTGLCD_ADAPTER)`
-`    #define BEEPER_PIN     -1     //disable board beeper`
-`    #define BTN_ENC        -1     //disable board encoder`
-`    #define BTN_EN1        -1`
-`    #define BTN_EN2        -1`
-`    #define DOGLCD_CS      P3_26  //on EXPn connector with SPI bus`
-`  #elif ENABLED(CR10_STOCKDISPLAY)`
-`    #define LCD_PINS_RS    P1_22`
-`    #define BEEPER_PIN     P1_30   // (37) not 5V tolerant`
-`    #define BTN_ENC        P0_28   // (58) open-drain`
-`    #define BTN_EN1        P1_18`
-`    #define BTN_EN2        P1_20`
-`.......`
-`.......`
-`#endif // HAS_SPI_LCD`
+#if HAS_SPI_LCD
+  #if ENABLED(TFTGLCD_ADAPTER)
+    #define BEEPER_PIN     -1     //disable board beeper
+    #define BTN_ENC        -1     //disable board encoder
+    #define BTN_EN1        -1
+    #define BTN_EN2        -1
+    #define DOGLCD_CS      P3_26  //on EXPn connector with SPI bus
+  #elif ENABLED(CR10_STOCKDISPLAY)
+    #define LCD_PINS_RS    P1_22
+    #define BEEPER_PIN     P1_30   // (37) not 5V tolerant
+    #define BTN_ENC        P0_28   // (58) open-drain
+    #define BTN_EN1        P1_18
+    #define BTN_EN2        P1_20
+.......
+.......
+#endif // HAS_SPI_LCD
 
 For Marlin-2 text `TFTGLCD_ADAPTER` above must be replaced with `IS_TFTGLCD_PANEL` and text `DOGLCD_CS` with `TFTGLCD_CS`.
 Also, Marlin's source code already has TFTGLCD PANEL support for some boards.
