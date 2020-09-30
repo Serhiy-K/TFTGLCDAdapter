@@ -1,3 +1,8 @@
+09/30/2020
+
+1. Add CLR_SCREEN command for Marlin to protocol - optimize bus transfer.
+2. Update Readme.
+
 09/25/2020
 
 1. Fix progress bar for Marlin.

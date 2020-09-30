@@ -93,6 +93,8 @@ uint8_t  UBL_first_time = 1;
 uint8_t  next_tx = 0;
 int8_t   encdiff = 0;
 uint8_t  new_buf = 0;
+uint8_t  editline = 0;	//used for Marlin to center edit line
+uint8_t  next_clr_scr = 0;
 
 void Print_Line(uint8_t row);
 
@@ -355,15 +357,19 @@ void Draw_UBL_Screen()
 
 	if (UBL_first_time)	{LCD_ClearScreen();	UBL_first_time = 0;}
 
+	editline = 0;
+
 	LCD_SetCursor(0, 0);		LCD_DrawChar(TLC);
-	for (i = 1; i < 10; i++)	LCD_DrawChar(GL);
+	for (i = 1; i < 10; i++)	{if (next_clr_scr)	return;	LCD_DrawChar(GL);}
+	if (next_clr_scr)	return;
 	LCD_DrawChar(TRC);
-	for (i = 11; i < CHARS_PER_LINE; i++)	LCD_DrawChar(data[out_buf][i]);
-	for (i = 1; i < 7; i++)		Print_Line_UBL(i);
+	for (i = 11; i < CHARS_PER_LINE; i++)	{if (next_clr_scr)	return;	LCD_DrawChar(data[out_buf][i]);}
+	for (i = 1; i < 7; i++)		{Print_Line_UBL(i);	if (next_clr_scr)	return;}
 	LCD_SetCursor(0, 7);		LCD_DrawChar('+');
-	for (i = 1; i < 10; i++)	LCD_DrawChar(GL);
+	for (i = 1; i < 10; i++)	{if (next_clr_scr)	return;	LCD_DrawChar(GL);}
+	if (next_clr_scr)	return;
 	LCD_DrawChar(BRC);
-	Print_Line(8);
+	Print_Line(8);	if (next_clr_scr)	return;
 	Print_Line(9);
 }
 //----------------------------------------------------------------------------
@@ -437,14 +443,24 @@ void Print_Temps()
 	}
 	else
 	{
-		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 5 + x]);
-		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 6 + x]);
-		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 7 + x]);
+		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)
+		{
+			LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 5 + x]);	if (next_clr_scr)	goto exit_temps;
+		}
+		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)
+		{
+			LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 6 + x]);	if (next_clr_scr)	goto exit_temps;
+		}
+		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)
+		{
+			LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 7 + x]);	if (next_clr_scr)	goto exit_temps;
+		}
 		if (data[out_buf][CHARS_PER_LINE * 5 + 2] == '1')
 			temps = 3;
 		else
 			temps = 1;
 	}
+exit_temps:
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
@@ -628,10 +644,16 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 //----------------------------------------------------------------------------
 void Print_Line(uint8_t row)
 {
-	uint16_t i = row * CHARS_PER_LINE;
+	uint16_t i;
 	uint8_t x, marker;
 
 	marker = 1;
+
+	if ((row == (TEXT_LINES - 1) / 2) && (editline))
+		i = (TEXT_LINES - 1) * CHARS_PER_LINE;	// output Marlin's edit line to center screen
+	else
+		i = row * CHARS_PER_LINE;
+
 	//change colors for different lines
 	if ((data[out_buf][i] == '>') || (data[out_buf][i] == 0x03))
 	{//menu cursor
@@ -654,6 +676,13 @@ void Print_Line(uint8_t row)
 	}
 
 	LCD_SetCursor(0, row);
+
+	if ((row == 9) && (editline))
+	{	// replace Marlin's edit line with blank line
+		LCD_Set_TextColor(White, Black);
+		i = 0;
+	}
+
 #ifdef LCD400x240
 	if (protocol == Smoothie)
 	{//shift text right for centering
@@ -675,8 +704,8 @@ void Print_Line(uint8_t row)
 		else
 			x = 0;
 	}
-	while (x < CHARS_PER_LINE)	{LCD_DrawChar(data[out_buf][i++]);	x++;}
-	
+	while (x++ < CHARS_PER_LINE)	{LCD_DrawChar(data[out_buf][i++]);	if (next_clr_scr)	break;}
+
 	CS_LCD_set;
 }
 //----------------------------------------------------------------------------
@@ -711,6 +740,16 @@ void Center_Status_Line()
 	}
 }
 //----------------------------------------------------------------------------
+void clear_screen()
+{	// clear only output buffer
+	uint16_t i;
+	for (i = 0; i < (FB_SIZE - 2); i++)	data[out_buf][i] = ' ';
+	data[out_buf][FB_SIZE - 1] = data[out_buf][FB_SIZE - 2] = 0;
+	for (i = 0; i < 60; i++)	datat[i] = ' ';
+	next_clr_scr = 0;
+	progress_cleared = 0;
+}
+//----------------------------------------------------------------------------
 void Command_Handler()
 {
 	uint16_t i;
@@ -722,14 +761,12 @@ void Command_Handler()
 			protocol = data[in_buf][0];
 			in_buf = 1;
 			out_buf = 0;
-			progress_cleared = 0;
 			temps = 0;
-			//clear buffers
-			for (i = 0; i < (FB_SIZE - 2); i++)	data[in_buf][i] = data[out_buf][i] = ' ';
-			data[in_buf][FB_SIZE - 2] = data[out_buf][FB_SIZE - 2] = 0;
-			data[in_buf][FB_SIZE - 1] = data[out_buf][FB_SIZE - 1] = 0;
-			for (i = 0; i < 60; i++)	datat[i] = ' ';
 			buzcnt = 1;
+			//clear buffers
+			clear_screen();
+			for (i = 0; i < (FB_SIZE - 2); i++)	data[in_buf][i] = ' ';
+			data[in_buf][FB_SIZE - 2] = data[in_buf][FB_SIZE - 1] = 0;
 			break;
 
 		case BUZZER:
@@ -804,20 +841,26 @@ void out_buffer()
 			LCD_Set_TextColor(White, Black);
 			//print all screen
 			if (((data[out_buf][0] == 218) || (data[out_buf][0] == 13)) && (data[out_buf][12] == '('))
+			{
 				Draw_UBL_Screen();
+				if (next_clr_scr)	{clear_screen();	return;}
+			}
 			else
 			{
 				UBL_first_time = 1;
 				for (y = 0; y < TEXT_LINES; y++)
 				{
+					if (next_clr_scr)	{clear_screen();	return;}
 					row_offset[out_buf] = y * CHARS_PER_LINE;
 					if (data[out_buf][row_offset[out_buf]] == '%')
 						Draw_Progress_Bar(y, data[out_buf][row_offset[out_buf] + 1]);
 					else if ((y == 5) && (data[out_buf][0] == 'X'))
 					{//main screen
 						Print_Temps();
+						if (next_clr_scr)	{clear_screen();	return;}
 						Draw_Icons();
-						y = TEXT_LINES;
+						if (next_clr_scr)	clear_screen();
+						return;
 					}
 					else
 						Print_Line(y);
@@ -896,7 +939,8 @@ void I2C2_EV_IRQHandler(void)
 	    	{// command
 	    		cmd = b;	pos = -1;
 		    	if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
-	    	}
+				if (b == CLR_SCREEN)	{next_clr_scr = 1;	editline = 1;}
+			}
 	    	else
 	    	{
 	    		if ((cmd == LCD_WRITE) || (cmd == LCD_PUT))
@@ -905,6 +949,7 @@ void I2C2_EV_IRQHandler(void)
 	    			{ //write to text buffer by one line
 						if (cmd == LCD_WRITE)
 						{
+							editline = 1;
 	    					pos = 0;
 							data[in_buf][pos++] = b;
 						}
@@ -913,6 +958,7 @@ void I2C2_EV_IRQHandler(void)
 	    			}
 	    			else
 					{
+						if ((pos < (CHARS_PER_LINE * (TEXT_LINES - 1)))&& (b != ' '))	editline = 0;
 						if (cmd == LCD_WRITE)	data[in_buf][pos++] = b;
 						else					data[out_buf][pos++] = b;
 					}
@@ -968,12 +1014,13 @@ void SPI_IRQHandler(void)
 			case GET_SPI_DATA:	return;	//for reading data
 			case READ_BUTTONS:	SPI->DR = Read_Buttons();	return;
 			case READ_ENCODER:	SPI->DR = encdiff;	encdiff = 0;	return;
-			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
+			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	editline = 1;	return;
 			case LCD_PUT:		cmd = b;	toread = CHARS_PER_LINE;	pos = -1;	return;
 			case BUZZER:		cmd = b;	toread = 4;	pos = 0;	return;
 			case BRIGHTNES:		cmd = b;	toread = 1;	pos = 0;	return;
 			case GET_LCD_ROW:	SPI->DR = TEXT_LINES;	return;
 			case GET_LCD_COL:	SPI->DR = CHARS_PER_LINE;	return;
+			case CLR_SCREEN:	next_clr_scr = 1;	editline = 1;	return;
 			case INIT:			cmd = b;	toread = 1;	pos = 0;	return;
 		}
 	}
@@ -983,6 +1030,10 @@ void SPI_IRQHandler(void)
 			pos = b * CHARS_PER_LINE;
 		else
 		{
+			if (pos < (CHARS_PER_LINE * (TEXT_LINES - 1)))
+			{
+				if (((cmd == LCD_WRITE) || (cmd == LCD_PUT)) && (b != ' '))	editline = 0;
+			}
 			if (cmd == LCD_PUT)	data[out_buf][pos++] = b;
 			else				data[in_buf][pos++] = b;
 			toread--;

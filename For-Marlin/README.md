@@ -7,7 +7,7 @@ Common for Marlin-1 and Marlin-2:
 If you are planning connect TFTGLCD Panel by SPI bus you need add some new lines to file "pins_YOURS_BOARD_NAME.h".
    Simplest way to do this - change section with "#if HAS_SPI_LCD". For examle, old section:
 
-#if HAS_SPI_LCD
+`#if HAS_SPI_LCD
   #if ENABLED(CR10_STOCKDISPLAY)
     #define LCD_PINS_RS    P1_22
     #define BEEPER_PIN     P1_30   // (37) not 5V tolerant
@@ -16,11 +16,11 @@ If you are planning connect TFTGLCD Panel by SPI bus you need add some new lines
     #define BTN_EN2        P1_20
 .......
 .......
-#endif // HAS_SPI_LCD
+#endif // HAS_SPI_LCD`
 
 new section:
 
-#if HAS_SPI_LCD
+`#if HAS_SPI_LCD
   #if ENABLED(TFTGLCD_ADAPTER)
     #define BEEPER_PIN     -1     //disable board beeper
     #define BTN_ENC        -1     //disable board encoder
@@ -35,12 +35,13 @@ new section:
     #define BTN_EN2        P1_20
 .......
 .......
-#endif // HAS_SPI_LCD
+#endif // HAS_SPI_LCD`
 
-For Marlin-2 text TFTGLCD_ADAPTER above must be replaced with TFTGLCD_PANEL.
-In new section main description is DOGLCD_CS.
+For Marlin-2 text `TFTGLCD_ADAPTER` above must be replaced with `IS_TFTGLCD_PANEL` and text `DOGLCD_CS` with `TFTGLCD_CS`.
+Also, Marlin's source code already has TFTGLCD PANEL support for some boards.
+In new section main description is `DOGLCD_CS` (`TFTGLCD_CS`) for SPI connection.
 
 You may use disabled beeper and encoder pins for other tasks.
 
 This time TFTGLCD Panel tested on Marlin-1 with Mega2560 MCU and Marlin-2 with Mega2560, LPC1768, STM32F103CB and STM32F411CU MCUs.
-TFTGLCD Panel connected to mentioned boards by SPI and I2C buses.
+TFTGLCD Panel connected to boards with mentioned MCUs by SPI and I2C buses.

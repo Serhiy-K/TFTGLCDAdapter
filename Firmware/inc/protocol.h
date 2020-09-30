@@ -14,6 +14,7 @@ enum Commands {
 	GET_LCD_ROW = 0xE0,
 	GET_LCD_COL,
 	LCD_PUT,			// write one line to screen
+	CLR_SCREEN,			// for Marlin
 	INIT = 0xFE			// Initialize
 };
 
