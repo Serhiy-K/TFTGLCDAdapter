@@ -2,19 +2,6 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "J-Link Debug",
-			"cwd": "${workspaceRoot}",
-			"executable": "3D-GLCD/Debug/bin/3D-GLCD.elf",
-			"svdFile": ".vscode/STM32F103xx.svd",
-			"request": "launch",
-			"type": "cortex-debug",
-			"servertype": "jlink",
-			"device": "Cortex-M3",
-			"interface": "swd",
-			"ipAddress": null,
-            "serialNumber": null
-		},
-		{
 			"name": "BMP Debug",
 			"cwd": "${workspaceRoot}",
 			"executable": "3D-GLCD/Debug/bin/3D-GLCD.elf",
