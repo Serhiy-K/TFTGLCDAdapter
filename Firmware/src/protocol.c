@@ -174,7 +174,7 @@ void Move_Text()
 	//fan percent present
 	if (data[out_buf][CHARS_PER_LINE * 4] == '%')
 	{
-		if (data[out_buf][CHARS_PER_LINE * 4 + 1] == 0)	//in fact FAN is in off state, so FAN icon depend on fan percent
+		if (!data[out_buf][CHARS_PER_LINE * 4 + 1])	//in fact FAN is in off state, so FAN icon depend on fan percent
 			data[out_buf][FB_SIZE - 2] &= ~PIC_FAN;
 
 		if (temps == 1)
@@ -194,7 +194,7 @@ FAN_P:
 			{
 				datat[to++] = '1';	datat[to++] = '0';	datat[to] = '0';
 			}
-			else if (data[out_buf][CHARS_PER_LINE * 4 + 1] == 0)
+			else if (!data[out_buf][CHARS_PER_LINE * 4 + 1])
 			{
 				datat[to++] = ' ';	datat[to++] = '0';	datat[to] = ' ';
 			}
@@ -202,7 +202,7 @@ FAN_P:
 			{
 				datat[to++] = ' ';
 				i = data[out_buf][CHARS_PER_LINE * 4 + 1] / 10;
-				if (i == 0)
+				if (!i)
 				{
 					datat[to++] = data[out_buf][CHARS_PER_LINE * 4 + 1] + '0';
 					datat[to] = ' ';
@@ -523,7 +523,7 @@ void Draw_Icons()
 		return;
 	}
 
-	if (temps == 0)	return;
+	if (!temps)	return;
 
 	if (temps == 1)
 	{
@@ -558,13 +558,13 @@ void Draw_Icons()
 	}
 	else
 	{
-		if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude1_48x48[0]);
+		if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude_48x48[0]);
 		else				LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude_off_48x48[0]);
 
-		if (pics & PIC_HE2)	LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude2_48x48[0]);
+		if (pics & PIC_HE2)	LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude_48x48[0]);
 		else				LCD_Draw_Picture (pic2_Xmin, pic_Ymin, &extrude_off_48x48[0]);
 
-		if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude3_48x48[0]);
+		if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude_48x48[0]);
 		else
 		{
 			if (((protocol == Smoothie) && (datat[TTO + HE3O] == 'H')) ||
@@ -616,8 +616,8 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 	ymin = y * CHAR_HEIGTH + 1;
 	ymax = ymin + CHAR_HEIGTH - 2;
 
-	if (progress_cleared == 0)
-	{ // after return from long menu
+	if ((!progress_cleared) && (y == 2))
+	{
 		//clear Progress Bar line
 		LCD_SetCursor(0, y);	for (i = 0; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
 		// clear icons positions
@@ -626,14 +626,14 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 		LCD_SetCursor(16, 7);	for (i = 16; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
 		LCD_SetCursor(0, 8);	for (i = 0; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
 		LCD_SetCursor(0, 9);	for (i = 0; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
-
-		//draw progress bar frame
-		LCD_FillRect(XMIN, ymin, XMIN, ymax, PROGRESS_COLOR);			// left |
-		LCD_FillRect(XMIN + 1, ymin, XMAX, ymin, PROGRESS_COLOR);		// top -
-		LCD_FillRect(XMIN + 1, ymax, XMAX, ymax, PROGRESS_COLOR);		// bot -
-		LCD_FillRect(XMAX, ymin + 1, XMAX, ymax - 1, PROGRESS_COLOR);	// right |
 		progress_cleared = 1;
 	}
+
+	//draw progress bar frame
+	LCD_FillRect(XMIN, ymin, XMIN, ymax, PROGRESS_COLOR);			// left |
+	LCD_FillRect(XMIN + 1, ymin, XMAX, ymin, PROGRESS_COLOR);		// top -
+	LCD_FillRect(XMIN + 1, ymax, XMAX, ymax, PROGRESS_COLOR);		// bot -
+	LCD_FillRect(XMAX, ymin + 1, XMAX, ymax - 1, PROGRESS_COLOR);	// right |
 
 	if (percent) //draw progress bar
 	{
@@ -660,19 +660,11 @@ void Print_Line(uint8_t row)
 
 	//change colors for different lines
 	if ((data[out_buf][i] == '>') || (data[out_buf][i] == 0x03))
-	{//menu cursor
-		progress_cleared = 0;
-		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
-	}
+		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);	//menu cursor
 	else if (data[out_buf][i] == '#')
-	{//edit line
-		progress_cleared = 0;
-		LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR);
-	}
+		LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR);		//edit line
 	else if (data[out_buf][i] == '!')
-	{//errors line
-		LCD_Set_TextColor(ERROR_TEXT_COLOR, ERROR_BACK_COLOR);
-	}
+		LCD_Set_TextColor(ERROR_TEXT_COLOR, ERROR_BACK_COLOR);		//errors line
 	else
 	{
 		marker = 0;
@@ -773,12 +765,11 @@ void Command_Handler()
 			in_buf = 1;
 			out_buf = 0;
 			temps = 0;
-			//clear buffers
+			buzcntcur = buzcnt = 0;
+			init = 1;
 			clear_screen();
 			for (i = 0; i < (FB_SIZE - 2); i++)	data[in_buf][i] = ' ';
 			data[in_buf][FB_SIZE - 2] = data[in_buf][FB_SIZE - 1] = 0;
-			buzcntcur = buzcnt = 0;
-			init = 1;
 			break;
 
 		case BUZZER:
@@ -815,7 +806,7 @@ void out_buffer()
 			}
 			Print_Temps();
 			Draw_Icons();
-			if (temps == 0) return;	//first cycle
+			if (!temps) return;	//first cycle
 			Set_Leds();
 		}
 		else
@@ -938,7 +929,7 @@ void I2C2_EV_IRQHandler(void)
 	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_RECEIVED:	//EV2
 	    	b = I2C->DR;
-	    	if (toread == 0)
+	    	if (!toread)
 	    	{// command
 	    		cmd = b;	pos = -1;
 		    	if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
@@ -1009,7 +1000,7 @@ void SPI_IRQHandler(void)
 {
 	uint8_t b = SPI->DR;  // grab byte from SPI Data Register, reset Interrupt flag
 
-	if (toread == 0)
+	if (!toread)
 	{// command
 		switch(b)
 		{
@@ -1035,7 +1026,7 @@ void SPI_IRQHandler(void)
 			if (cmd == LCD_PUT)	data[out_buf][pos++] = b;
 			else				data[in_buf][pos++] = b;
 			toread--;
-			if (toread == 0)
+			if (!toread)
 				switch(cmd)
 				{
 					case INIT:		I2C_Cmd(I2C, DISABLE);

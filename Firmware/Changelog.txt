@@ -1,3 +1,10 @@
+10/04/2020
+
+1. Small code clean up.
+2. Change output for icons for extrude1..extrude3 for multiextruder config to icon for single extrude to free ROM.
+   Icons for extrude1..extrude3 not deleted from sources and may be used.
+3. Small change for progress bar output.
+
 10/03/2020
 
 1. Fix Buzzer for Marlin.
