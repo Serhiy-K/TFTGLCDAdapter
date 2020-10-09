@@ -96,6 +96,7 @@ uint8_t  new_buf = 0;
 uint8_t  UBL_editline = 0;	//used for Marlin
 uint8_t  next_clr_scr = 0;
 uint8_t  init = 0;
+uint8_t  buttons = 0;
 
 void Print_Line(uint8_t row);
 
@@ -783,6 +784,8 @@ void out_buffer()
 {
 	uint16_t y;
 
+	buttons = Read_Buttons();
+
 	if (new_buf == 1)
 	{	//switch buffers only betwin buffer transfers
 		new_buf = 0;
@@ -977,7 +980,7 @@ void I2C2_EV_IRQHandler(void)
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_BUTTONS:	I2C->DR = Read_Buttons();	next_tx = encdiff;	encdiff = 0;	return;
+	    		case READ_BUTTONS:	I2C->DR = buttons;	next_tx = encdiff;	encdiff = 0;	return;
 	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;	next_tx = Read_Buttons();	return;
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	return;
 	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	return;
@@ -1005,7 +1008,7 @@ void SPI_IRQHandler(void)
 		switch(b)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
-			case READ_BUTTONS:	SPI->DR = Read_Buttons();	return;
+			case READ_BUTTONS:	SPI->DR = buttons;	return;
 			case READ_ENCODER:	SPI->DR = encdiff;	encdiff = 0;	return;
 			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
 			case LCD_PUT:		cmd = b;	toread = CHARS_PER_LINE;	pos = -1;	return;
