@@ -7,11 +7,14 @@ int main(void)
 	Global_Init();
 	__enable_irq();
 
-	while (New_cmd() != INIT) {}
-
 	while (1)
 	{
-		if (New_cmd())	Command_Handler();
-		out_buffer();
+		switch (New_cmd())
+		{
+			case INIT:			Init();		break;
+			case CLR_SCREEN:	Clear_Screen();	break;
+			case LCD_PUT:		Print_1_Line();	break;
+			case LCD_WRITE:		Out_Buffer();
+		}
 	}
 }

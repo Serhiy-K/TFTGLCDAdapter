@@ -9,8 +9,13 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //============================================================================================
 //                                Main parameters
 //============================================================================================
-//For LCD and controller with 16 bit data bus.
+//For LCD and controller with 8 bit data bus and encoder
+//#define HW_VER_1
+//For LCD and controller with 16 bit data bus and encoder
 #define HW_VER_2
+//For LCD and controller with 8 bit data bus and touchscreen
+//#define HW_VER_3  //Not tested in hardware yet.
+
 //#define HW_VER_2_SWD_DEBUG
 
 #define INVERT_ENCODER_DIR
@@ -66,8 +71,9 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define CHAR_BYTES      (CHAR_WIDTH * CHAR_HEIGTH / 8)
 #define CHARS_PER_LINE  LCDXMAX/CHAR_WIDTH
 #define TEXT_LINES      LCDYMAX/CHAR_HEIGTH
+#define MIDDLE_Y        ((TEXT_LINES - 1) / 2)
 
-#ifndef HW_VER_2
+#if defined(HW_VER_1)
 
 #define TEST_PORT       GPIOC
 #define TEST_PIN        GPIO_Pin_13
@@ -136,7 +142,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define Delay_IRQ       TIM4_IRQn
 #define Del_IRQHandler  TIM4_IRQHandler
 
-#else   //HW_VER_2
+#elif defined(HW_VER_2)
 
 //LCD interface
 #define LCD_DATA_PORT   GPIOA
@@ -207,7 +213,85 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define Delay_IRQ       TIM3_IRQn
 #define Del_IRQHandler  TIM3_IRQHandler
 
-#endif   //HW_VER_2
+#elif defined(HW_VER_3)
+
+#undef  SET_ORIENT_RIGHT
+#ifndef SET_ORIENT_LEFT
+#define SET_ORIENT_LEFT
+#endif
+
+#define TEST_PORT       GPIOA
+#define TEST_PIN        GPIO_Pin_15
+
+//LCD interface
+#define LCD_DATA_PORT   GPIOB
+#define LCD_DATA_MASK   0x00ff
+#define LCD_ORIENT_PORT GPIOB
+#define LCD_ORIENT_PIN  GPIO_Pin_9
+#define LCD_CTRL_PORT   GPIOB
+#define LCD_WR          GPIO_Pin_8
+#define LCD_RD          GPIO_Pin_9
+#define LCD_CTRL_PORT2  GPIOC
+#define LCD_RST         GPIO_Pin_13
+#define LCD_CS          GPIO_Pin_14
+#define LCD_RS          GPIO_Pin_15
+//SPI
+#define SPI             SPI2
+#define SPI_PORT        GPIOB
+#define SPI_CS          GPIO_Pin_12
+#define SPI_SCK         GPIO_Pin_13
+#define SPI_MISO        GPIO_Pin_14
+#define SPI_MOSI        GPIO_Pin_15
+#define SPI_RCC         RCC_APB1Periph_SPI2
+#define SPI_GPIO_RCC    RCC_APB2Periph_GPIOB
+#define SPI_IRQ         SPI2_IRQn
+#define SPI_IRQHandler  SPI2_IRQHandler
+//I2C
+#define I2C             I2C2
+#define I2C_PORT        GPIOB
+#define I2C_SCL         GPIO_Pin_10
+#define I2C_SDA         GPIO_Pin_11
+#define I2C_RCC         RCC_APB1Periph_I2C2
+#define I2C_IRQ         I2C2_EV_IRQn
+#define I2C_ERR_IRQ     I2C2_ER_IRQn
+//touchscreen
+#define TS_PORT         GPIOA
+#define TS_XP           GPIO_Pin_0
+#define TS_YP           GPIO_Pin_1
+#define TS_XN           GPIO_Pin_2
+#define TS_YN           GPIO_Pin_3
+#define ADC_RCC         RCC_APB2Periph_ADC1
+//buttons
+#define BTN_PORTA       GPIOA
+#define BUTTON_PIN1     GPIO_Pin_4
+#define BUTTON_PIN2     GPIO_Pin_5
+#define BUTTON_PIN3     GPIO_Pin_8
+#define BUTTON_PIN4     GPIO_Pin_9
+#define BUTTONS_A_MSK   (BUTTON_PIN4 | BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1)
+//PWM outputs
+#define BRIGHTNES_PORT  GPIOA
+#define BRIGHTNES_PIN   GPIO_Pin_7
+#define BRIGHTNES_CCR   CCR2
+#define BUZZER_PIN      GPIO_Pin_6
+#define BUZZER_CCR      CCR1
+//Timers
+#define Timer_D         TIM2    //Duration
+#define Dur_RCC_ENR     RCC_APB1ENR_TIM2EN
+#define Duration_IRQ    TIM2_IRQn
+#define Dur_IRQHandler  TIM2_IRQHandler
+#define Timer_P         TIM3    //PWM
+#define PWM_RCC_ENR     RCC_APB1Periph_TIM3
+#define Timer_Del       TIM4    //delay
+#define Delay_RCC_ENR   RCC_APB1ENR_TIM4EN
+#define Delay_IRQ       TIM4_IRQn
+#define Del_IRQHandler  TIM4_IRQHandler
+
+#endif
+
+#define Timer_Btn       TIM1
+#define Btn_RCC_ENR     RCC_APB2ENR_TIM1EN
+#define Btn_IRQ         TIM1_IRQn
+#define Btn_IRQHandler  TIM1_IRQHandler
 
 //button bits for Smoothie
 #define BUTTON_SELECT   0x01    //encoder button

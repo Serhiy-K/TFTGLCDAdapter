@@ -1,4 +1,7 @@
 #include "stm32f10x.h"
+#ifdef HW_VER_3
+#include "stm32f10x_adc.h"
+#endif
 #include "stm32f10x_exti.h"
 #include "stm32f10x_i2c.h"
 #include "stm32f10x_rcc.h"
@@ -35,22 +38,47 @@ static void GPIO_init(void)
 #endif
 #endif
 	// Init LCD control bus and LCD Data bus
+	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
+#ifndef HW_VER_3
 	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
 	GPIO_InitStructure.GPIO_Pin	= LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
-	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
-	GPIO_Init(LCD_CTRL_PORT, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin	= LCD_DATA_MASK;
-	GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
+#else
+	LCD_CTRL_PORT2->BSRR = LCD_RST | LCD_RS | LCD_CS;
+	GPIO_InitStructure.GPIO_Pin	= LCD_RST | LCD_RS | LCD_CS;
+	GPIO_Init(LCD_CTRL_PORT2, &GPIO_InitStructure);
+	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_WR;
+	GPIO_InitStructure.GPIO_Pin = LCD_RD | LCD_WR;
+#endif
+GPIO_Init(LCD_CTRL_PORT, &GPIO_InitStructure);
+GPIO_InitStructure.GPIO_Pin	= LCD_DATA_MASK;
+GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 
+#ifndef HW_VER_3
 	// Init Encoder lines
 	GPIO_InitStructure.GPIO_Pin	= ENC_A | ENC_B;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_IPU;
 	GPIO_Init(ENC_PORT, &GPIO_InitStructure);
+#else
+	// Init touchscreen lines
+	GPIO_InitStructure.GPIO_Pin	= TS_YN;
+	TS_PORT->BRR = TS_YN;
+	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
+	GPIO_Init(TS_PORT, &GPIO_InitStructure);
 
-#ifndef HW_VER_2
+	GPIO_InitStructure.GPIO_Pin	= TS_XN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_Init(TS_PORT, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin	= TS_XP | TS_YP;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(TS_PORT, &GPIO_InitStructure);
+#endif
+
+#ifndef HW_VER_3
+#if defined(HW_VER_1)
 	AFIO->EXTICR[2] &= ~(AFIO_EXTICR3_EXTI9);
 	AFIO->EXTICR[2] |= AFIO_EXTICR3_EXTI9_PA; //channel 9 EXTI connected to PA9
-#else
+#elif defined(HW_VER_2)
 	AFIO->EXTICR[0] &= ~(AFIO_EXTICR1_EXTI0);
 	AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB; //channel 0 EXTI connected to PB0
 #endif
@@ -58,18 +86,23 @@ static void GPIO_init(void)
 	EXTI->PR = ENC_A;		//clear flag
 	EXTI->IMR |= ENC_A;		//enable interrupt from channel 0
 	NVIC_EnableIRQ(ENC_IRQn);
-
+#endif	//HW_VER_3
 	// Init Button
-#ifndef HW_VER_2
+	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_IPU;
+#if defined(HW_VER_1)
 	GPIO_InitStructure.GPIO_Pin	= BUTTONS_A_MSK;
 	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin	= BUTTON_PIN5 | BUTTON_PIN4;
-#else
+	GPIO_Init(BTN_PORT2, &GPIO_InitStructure);
+#elif defined(HW_VER_2)
 	GPIO_InitStructure.GPIO_Pin	= ENC_BUT;
 	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin	= BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1;
-#endif
 	GPIO_Init(BTN_PORT2, &GPIO_InitStructure);
+#elif defined(HW_VER_3)
+	GPIO_InitStructure.GPIO_Pin	= BUTTONS_A_MSK;
+	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
+#endif
 
 	// PWM signals init
 	GPIO_InitStructure.GPIO_Pin	= BRIGHTNES_PIN | BUZZER_PIN;
@@ -93,13 +126,32 @@ static void GPIO_init(void)
 #endif
 }
 /***********************************************************
- Timer for encoder anti-bounce input
+ Timer for buttons and touchscreen reading
+***********************************************************/
+static void Timer_Btn_init(void)
+{
+	RCC->APB2ENR |= Btn_RCC_ENR;	// up counter, only update interrupt
+	Timer_Btn->CNT = 0;
+	Timer_Btn->PSC = 720;	// Fclk = 100kHz
+	Timer_Btn->ARR = 2000;	// 20 ms
+	Timer_Btn->DIER = TIM_DIER_UIE;
+	NVIC_SetPriority(Btn_IRQ, 1);
+	NVIC_EnableIRQ(Btn_IRQ);
+	Timer_Btn->CR1 |= TIM_CR1_CEN;	//timer on
+}
+/***********************************************************
+ Timer for encoder anti-bounce input and for touchscreen
 ***********************************************************/
 static void Timer_Delay_init(void)
 {
 	RCC->APB1ENR |= Delay_RCC_ENR;	// up counter, only update interrupt
+#ifndef HW_VER_3
 	Timer_Del->PSC = 72;	// Fclk = 1MHz
-	Timer_Del->ARR = 1000;	//delay, us
+	Timer_Del->ARR = 1000;	// delay, us
+#else
+	Timer_Del->PSC = 7200;	// Fclk = 10kHz
+	Timer_Del->ARR = 1000;	// delay, 100 ms
+#endif
 	Timer_Del->DIER = TIM_DIER_UIE;
 	Timer_Del->EGR = TIM_EGR_UG;
 	NVIC_SetPriority(Delay_IRQ, 1);
@@ -111,7 +163,7 @@ static void Timer_Delay_init(void)
 static void Timer_Duration_init(void)
 {
 	RCC->APB1ENR |= Dur_RCC_ENR;	// up counter, only update interrupt
-	Timer_D->PSC = 72;	// Fclk = 1MHz
+	Timer_D->PSC = 72;		// Fclk = 1MHz
 	Timer_D->CNT = 0;
 	Timer_D->ARR = 1000;	// 1ms period
 	Timer_D->DIER = TIM_DIER_UIE;
@@ -187,6 +239,7 @@ static void SPI_init()
 	SPI_Cmd(SPI, ENABLE);
 
 	SPI_I2S_ITConfig(SPI, SPI_I2S_IT_RXNE, ENABLE);
+	NVIC_SetPriority(SPI_IRQ, 0);
 	NVIC_EnableIRQ(SPI_IRQ);
 }
 /***********************************************************
@@ -219,6 +272,28 @@ static void I2C_init()
 }
 /***********************************************************
 ***********************************************************/
+#ifdef HW_VER_3
+void ADC_init()
+{
+	ADC_InitTypeDef ADC_InitStructure;
+
+	// Configure the clocks
+	RCC_APB2PeriphClockCmd(ADC_RCC, ENABLE);
+
+	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+	ADC_InitStructure.ADC_NbrOfChannel = 1;
+	ADC_Init(ADC1, &ADC_InitStructure);
+	ADC_Cmd(ADC1, ENABLE);
+	ADC_StartCalibration(ADC1);
+	while (ADC_GetCalibrationStatus(ADC1)){};
+}
+#endif
+/***********************************************************
+***********************************************************/
 void Global_Init(void)
 {
 	SystemInit();
@@ -229,5 +304,9 @@ void Global_Init(void)
 	Timer_PWM_init();
 	SPI_init();
 	I2C_init();
+#ifdef HW_VER_3
+	ADC_init();
+#endif
 	LCD_Init();
+	Timer_Btn_init();
 }

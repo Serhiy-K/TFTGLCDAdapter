@@ -1,3 +1,9 @@
+11/08/2020
+
+1. Change output algorithm - remove screen autorefresh.
+2. Ad new hardware version for touchscreen for future. Not tested in hardware yet.
+3. Add separate timer for buttons and touchscreen.
+
 10/09/2020
 
 1. Change for buttons.
