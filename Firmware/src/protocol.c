@@ -315,7 +315,7 @@ void Clear_Screen()
 	uint16_t i;
 	new_command = 0;
 	for (i = 0; i < (FB_SIZE - 2); i++)	data[out_buf][i] = ' ';
-	for (i = 0; i <= TEXT_LINES; i++)	lines[i] = 0;
+	for (i = 0; i < TEXT_LINES; i++)	lines[i] = 0;
 	progress_cleared = 0;
 #ifdef HW_VER_3
 	screen_mode = MAIN_SCREEN;
@@ -914,8 +914,13 @@ void Print_Line(uint8_t row)
 	else	line = &data[out_buf][i];
 #endif
 
+	if (*line == '%')
+	{
+		Draw_Progress_Bar(row, *(line + 1));
+		return;
+	}
 	//change colors for different lines
-	if ((*line == '>') || (*line == 0x03))
+	else if ((*line == '>') || (*line == 0x03))
 	{
 		USE_UBL = 0;
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);	//menu cursor
@@ -1130,16 +1135,13 @@ void Out_Buffer()
 		else
 		{
 			LCD_Set_TextColor(White, Black);
-			if (((data[out_buf][0] == TLC) || (data[out_buf][0] == 13)) && (data[out_buf][12] == '('))
+			if (data[out_buf][12] == '(')
 				Draw_UBL_Screen();
 			else
 			{
 				for (y = 0; y < TEXT_LINES; y++)
 				{
-					row_offset[out_buf] = y * CHARS_PER_LINE;
-					if (data[out_buf][row_offset[out_buf]] == '%')
-						Draw_Progress_Bar(y, data[out_buf][row_offset[out_buf] + 1]);
-					else if ((y == 5) && (data[out_buf][0] == 'X'))
+					if ((y == 5) && (data[out_buf][0] == 'X'))
 					{//main screen
 						USE_UBL = 0;
 						Print_Temps();

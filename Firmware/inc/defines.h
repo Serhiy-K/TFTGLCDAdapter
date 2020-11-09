@@ -290,7 +290,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 
 #define Timer_Btn       TIM1
 #define Btn_RCC_ENR     RCC_APB2ENR_TIM1EN
-#define Btn_IRQ         TIM1_IRQn
+#define Btn_IRQ         TIM1_UP_IRQn
 #define Btn_IRQHandler  TIM1_IRQHandler
 
 //button bits for Smoothie
