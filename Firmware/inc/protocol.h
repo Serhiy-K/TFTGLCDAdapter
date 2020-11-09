@@ -22,6 +22,6 @@ uint8_t New_cmd();
 void Clear_Screen();
 void Init();
 void Out_Buffer();
-void Print_1_Line();
+void Print_Lines();
 
 #endif

@@ -13,7 +13,7 @@ int main(void)
 		{
 			case INIT:			Init();		break;
 			case CLR_SCREEN:	Clear_Screen();	break;
-			case LCD_PUT:		Print_1_Line();	break;
+			case LCD_PUT:		Print_Lines();	break;
 			case LCD_WRITE:		Out_Buffer();
 		}
 	}

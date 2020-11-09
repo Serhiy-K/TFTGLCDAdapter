@@ -14,7 +14,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //For LCD and controller with 16 bit data bus and encoder
 #define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
-//#define HW_VER_3  //Not tested in hardware yet.
+//#define HW_VER_3  //Not tested in hardware yet !!!
 
 //#define HW_VER_2_SWD_DEBUG
 
@@ -291,7 +291,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define Timer_Btn       TIM1
 #define Btn_RCC_ENR     RCC_APB2ENR_TIM1EN
 #define Btn_IRQ         TIM1_UP_IRQn
-#define Btn_IRQHandler  TIM1_IRQHandler
+#define Btn_IRQHandler  TIM1_UP_IRQHandler
 
 //button bits for Smoothie
 #define BUTTON_SELECT   0x01    //encoder button

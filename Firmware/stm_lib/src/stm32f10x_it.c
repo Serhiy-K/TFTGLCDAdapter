@@ -137,9 +137,9 @@ void RTC_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void TIM1_UP_IRQHandler(void)
-{
-}
+//void TIM1_UP_IRQHandler(void)
+//{
+//}
 
 
 /**

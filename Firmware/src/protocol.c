@@ -199,6 +199,16 @@ void Move_Text()
 	//move up lines 2 and 3
 	for (i = 0; i < CHARS_PER_LINE * 2; i++)	data[out_buf][i] = data[out_buf][i + CHARS_PER_LINE];
 
+	//progressbar
+	data[out_buf][CHARS_PER_LINE * 2] = '%';
+	i = data[out_buf][CHARS_PER_LINE + 18] - '0';	//fixed position
+	if (data[out_buf][CHARS_PER_LINE + 17] != ' ')
+	{
+		i += (data[out_buf][CHARS_PER_LINE + 17] - '0') * 10;
+		if (data[out_buf][CHARS_PER_LINE + 16] == '1')	i = 100;
+	}
+	data[out_buf][CHARS_PER_LINE * 2 + 1] = i;
+
 	//fan percent present
 	if (data[out_buf][CHARS_PER_LINE * 4] == '%')
 	{
@@ -244,15 +254,6 @@ FAN_P:
 		}
 		data[out_buf][CHARS_PER_LINE * 4] = data[out_buf][CHARS_PER_LINE * 4 + 1] = ' ';	//clear percent symbol and data
 	}
-}
-//----------------------------------------------------------------------------
-uint8_t Get_Progress()
-{
-	uint8_t percent;
-	percent = data[out_buf][CHARS_PER_LINE + 18] - '0';	//fixed position
-	if (data[out_buf][CHARS_PER_LINE + 17] != ' ')	percent += (data[out_buf][CHARS_PER_LINE + 17] - '0') * 10;
-	if (data[out_buf][CHARS_PER_LINE + 16] == '1')	percent = 100;
-	return percent;
 }
 //----------------------------------------------------------------------------
 void Check_for_edit_mode()
@@ -469,11 +470,10 @@ void Draw_UBL_Screen()
 	UBL_editline = 0;
 }
 //----------------------------------------------------------------------------
-void Print_1_Line()
+void Print_Lines()
 {
 	uint8_t i;
 	new_command = 0;
-//	LCD_Set_TextColor(White, Black);
 	if (data[out_buf][12] == '(')
 		Draw_UBL_Screen();
 	else
@@ -1100,11 +1100,7 @@ void Out_Buffer()
 	{
 		if ((data[out_buf][0] == 'X') && (data[out_buf][6] == 'Y'))
 		{//main screen
-			for (y = 0; y < 5; y++)
-			{
-				if (y == 2)	Draw_Progress_Bar(y, Get_Progress());
-				else		Print_Line(y);
-			}
+			for (y = 0; y < 5; y++)		Print_Line(y);
 			Print_Temps();
 			Draw_Icons();
 			if (!temps) return;	//first cycle
