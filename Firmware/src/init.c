@@ -1,3 +1,4 @@
+#include "defines.h"
 #include "stm32f10x.h"
 #ifdef HW_VER_3
 #include "stm32f10x_adc.h"
@@ -7,7 +8,6 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_spi.h"
 #include "stm32f10x_tim.h"
-#include "defines.h"
 #include "init.h"
 #include "systick.h"
 #include "system_stm32f10x.h"
@@ -43,9 +43,11 @@ static void GPIO_init(void)
 	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
 	GPIO_InitStructure.GPIO_Pin	= LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
 #else
+//	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_2MHz;
 	LCD_CTRL_PORT2->BSRR = LCD_RST | LCD_RS | LCD_CS;
 	GPIO_InitStructure.GPIO_Pin	= LCD_RST | LCD_RS | LCD_CS;
 	GPIO_Init(LCD_CTRL_PORT2, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_50MHz;
 	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_WR;
 	GPIO_InitStructure.GPIO_Pin = LCD_RD | LCD_WR;
 #endif
@@ -107,7 +109,7 @@ GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 	// PWM signals init
 	GPIO_InitStructure.GPIO_Pin	= BRIGHTNES_PIN | BUZZER_PIN;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_AF_PP;
-	GPIO_Init(BRIGHTNES_PORT, &GPIO_InitStructure);
+	GPIO_Init(PWM_PORT, &GPIO_InitStructure);
 
 	// Configure pins for SPI
 	GPIO_InitStructure.GPIO_Pin = SPI_MOSI | SPI_MISO | SPI_SCK | SPI_CS;
@@ -184,8 +186,8 @@ static void Timer_PWM_init(void)
 	// TIM clock enable
   	RCC_APB1PeriphClockCmd(PWM_RCC_ENR, ENABLE);
 
-#ifndef HW_VER_2
-	AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_1;
+#ifdef HW_VER_1
+	AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_PARTIALREMAP;
 #endif
 
 	// Compute the prescaler value
@@ -203,13 +205,23 @@ static void Timer_PWM_init(void)
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_Pulse = 0;
+#ifndef HW_VER_3
 	TIM_OC4Init(Timer_P, &TIM_OCInitStructure);
 	TIM_OC4PreloadConfig(Timer_P, TIM_OCPreload_Enable);
+#else
+	TIM_OC1Init(Timer_P, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(Timer_P, TIM_OCPreload_Enable);
+#endif
 
 	// PWM1 Mode configuration for LCD BRIGHTNES
 	TIM_OCInitStructure.TIM_Pulse = LCD_BRIGHTNES;
+#ifndef HW_VER_3
 	TIM_OC3Init(Timer_P, &TIM_OCInitStructure);
 	TIM_OC3PreloadConfig(Timer_P, TIM_OCPreload_Enable);
+#else
+	TIM_OC2Init(Timer_P, &TIM_OCInitStructure);
+	TIM_OC2PreloadConfig(Timer_P, TIM_OCPreload_Enable);
+#endif
 
 	TIM_ARRPreloadConfig(Timer_P, ENABLE);
 

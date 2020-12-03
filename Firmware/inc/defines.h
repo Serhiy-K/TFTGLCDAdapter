@@ -12,9 +12,10 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //For LCD and controller with 8 bit data bus and encoder
 //#define HW_VER_1
 //For LCD and controller with 16 bit data bus and encoder
-#define HW_VER_2
+//#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
-//#define HW_VER_3  //Not tested in hardware yet !!!
+#define HW_VER_3      //Not tested in hardware yet !!!
+#define TEST_TOUCH    //for test touchscreen
 
 //#define HW_VER_2_SWD_DEBUG
 
@@ -25,13 +26,13 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //pull LCD_ORIENT_PIN by resistor with about 10k to GND for right side or to +3.3V for left
 //or use one of SET_ORIENT_ parameter for software select orientation.
 //#define SET_ORIENT_RIGHT
-//#define SET_ORIENT_LEFT
+#define SET_ORIENT_LEFT
 
 //select only one LCD type
 #define ILI9325   //ILI9325==ILI9328
-//#define ILI9327
 //#define ILI9341
 //#define ST7789
+//#define ILI9327
 
 #define LCD_BRIGHTNES   250
 
@@ -125,7 +126,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define BUTTON_PIN5     GPIO_Pin_4
 #define BUTTONS_A_MSK   (BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1 | ENC_BUT)
 //PWM outputs
-#define BRIGHTNES_PORT  GPIOB
+#define PWM_PORT        GPIOB
 #define BRIGHTNES_PIN   GPIO_Pin_0
 #define BRIGHTNES_CCR   CCR3
 #define BUZZER_PIN      GPIO_Pin_1
@@ -196,7 +197,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define BUTTON_PIN5     (GPIO_Pin_14 | GPIO_Pin_15)
 #define BUTTONS2_MSK    (GPIO_Pin_15 | GPIO_Pin_14 | GPIO_Pin_13)
 //PWM outputs
-#define BRIGHTNES_PORT  GPIOB
+#define PWM_PORT        GPIOB
 #define BRIGHTNES_PIN   GPIO_Pin_8
 #define BRIGHTNES_CCR   CCR3
 #define BUZZER_PIN      GPIO_Pin_9
@@ -269,7 +270,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define BUTTON_PIN4     GPIO_Pin_9
 #define BUTTONS_A_MSK   (BUTTON_PIN4 | BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1)
 //PWM outputs
-#define BRIGHTNES_PORT  GPIOA
+#define PWM_PORT        GPIOA
 #define BRIGHTNES_PIN   GPIO_Pin_7
 #define BRIGHTNES_CCR   CCR2
 #define BUZZER_PIN      GPIO_Pin_6

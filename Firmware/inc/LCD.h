@@ -5,11 +5,25 @@
 #include "defines.h"
 
 
+#ifndef HW_VER_3
 #define RES_LCD_set     LCD_CTRL_PORT->BSRR = LCD_RST;
 #define RES_LCD_clr     LCD_CTRL_PORT->BRR = LCD_RST;
 
 #define RS_LCD_set      LCD_CTRL_PORT->BSRR = LCD_RS;
 #define RS_LCD_clr      LCD_CTRL_PORT->BRR = LCD_RS;
+
+#define CS_LCD_set      LCD_CTRL_PORT->BSRR = LCD_CS;
+#define CS_LCD_clr      LCD_CTRL_PORT->BRR = LCD_CS;
+#else
+#define RES_LCD_set     LCD_CTRL_PORT2->BSRR = LCD_RST;
+#define RES_LCD_clr     LCD_CTRL_PORT2->BRR = LCD_RST;
+
+#define RS_LCD_set      LCD_CTRL_PORT2->BSRR = LCD_RS;
+#define RS_LCD_clr      LCD_CTRL_PORT2->BRR = LCD_RS;
+
+#define CS_LCD_set      LCD_CTRL_PORT2->BSRR = LCD_CS;
+#define CS_LCD_clr      LCD_CTRL_PORT2->BRR = LCD_CS;
+#endif
 
 #define RD_LCD_set      LCD_CTRL_PORT->BSRR = LCD_RD;
 #define RD_LCD_clr      LCD_CTRL_PORT->BRR = LCD_RD;
@@ -19,9 +33,6 @@
 
 #define H_WR_LCD_set	LCD_H_PORT->BSRR = LCD_H_WR;
 #define H_WR_LCD_clr	LCD_H_PORT->BRR = LCD_H_WR;
-
-#define CS_LCD_set      LCD_CTRL_PORT->BSRR = LCD_CS;
-#define CS_LCD_clr      LCD_CTRL_PORT->BRR = LCD_CS;
 
 #define WR_Puls         WR_LCD_clr; WR_LCD_set;
 #define H_WR_Puls       H_WR_LCD_set; H_WR_LCD_clr;

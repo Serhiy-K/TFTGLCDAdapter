@@ -1,6 +1,3 @@
-#ifdef HW_VER_3
-#include "stm32f10x_adc.h"
-#endif
 #include "stm32f10x_i2c.h"
 #include "stm32f10x_spi.h"
 #include "stm32f10x_tim.h"
@@ -8,6 +5,9 @@
 #include "Pictures.h"
 #include "protocol.h"
 #include "systick.h"
+#ifdef HW_VER_3
+#include "stm32f10x_adc.h"
+#endif
 
 #define	TTO		0	// offset for text termo
 #define	TMO		20	// offset for measured termo
@@ -66,7 +66,7 @@
 #define VL		179	//vertical line
 
 #ifdef HW_VER_3
-enum screen_modes {	MAIN_SCREEN = 0, MENU_SCREEN, EDIT_SCREEN, SELECT_SCREEN, EDIT_UBL };
+enum screen_modes {	MAIN_SCREEN = 0, MENU_SCREEN, EDIT_SCREEN, SELECT_SCREEN, EDIT_UBL, START_SCREEN };
 #define ADC_1LINE	(0x0fff / TEXT_LINES)
 enum ADC_lines
 {
@@ -121,7 +121,7 @@ uint8_t delay_cnt = 0;
 uint8_t line_3[CHARS_PER_LINE] = {' ',' ',' ','[',0x1a,0x1a,0x1a,']',' ',' ',' ',' ',' ','[',0x16,0x16,0x16,']',' ',' '};
 uint8_t line_2[CHARS_PER_LINE] = {' ',' ',' ','[',0x17,0x18,0x19,']',' ',' ',' ',' ',' ','[',0x13,0x14,0x15,']',' ',' '};
 uint8_t line_1[CHARS_PER_LINE] = {' ',' ',' ','[',0x12,0x1a,0x12,']',' ',' ',' ',' ',' ','[',0x12,0x16,0x12,']',' ',' '};
-uint8_t screen_mode = 0;
+uint8_t screen_mode = START_SCREEN;
 uint8_t cur_line = 0; //for menu
 #endif
 
@@ -563,6 +563,38 @@ uint8_t Read_Buttons()
 }
 //----------------------------------------------------------------------------
 #ifdef HW_VER_3
+#ifdef TEST_TOUCH
+void output_test_touch()
+{
+	uint8_t i, j;
+
+	Timer_Btn->CR1 &= ~TIM_CR1_CEN;	//timer off
+	for (i = 0; i < TEXT_LINES; i++)
+	{
+		LCD_Set_TextColor(White, BackColor);
+		if (ts_y == i)
+		{
+			if (!ts_x)
+			{
+				LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
+				for (j = 0; j < CHARS_PER_LINE / 2 ; j++)	LCD_DrawChar(' ');
+				LCD_Set_TextColor(White, BackColor);
+				for (j = CHARS_PER_LINE / 2; j < CHARS_PER_LINE; j++)	LCD_DrawChar(' ');
+			}
+			else
+			{
+				for (j = 0; j < CHARS_PER_LINE / 2 ; j++)	LCD_DrawChar(' ');
+				LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
+				for (j = CHARS_PER_LINE / 2; j < CHARS_PER_LINE; j++)	LCD_DrawChar(' ');
+			}
+		}
+		else
+			for (j = 0; j < CHARS_PER_LINE; j++)	LCD_DrawChar(' ');
+	}
+	Timer_Btn->CR1 |= TIM_CR1_CEN;	//timer on
+}
+#endif
+//----------------------------------------------------------------------------
 void Emulate_Encoder()
 {
 	int8_t ed = 0;
@@ -588,6 +620,11 @@ void Emulate_Encoder()
 			else if (ts_y == 7)	encdiff = -2;
 			if (delay_cnt == 10)	delay_cnt = 7;
 			break;
+#ifdef TEST_TOUCH
+		case START_SCREEN:
+			output_test_touch();
+			break;
+#endif
 	}
 }
 //----------------------------------------------------------------------------
@@ -614,7 +651,7 @@ void Read_Touch()
 					GPIO_Init(TS_PORT, &GPIO_InitStructure);
 					TS_PORT->BSRR = TS_YP;
 					adc = Timer_Del->CR1;
-					if (!(adc & TIM_CR1_CEN) && ((screen_mode == EDIT_SCREEN) || (screen_mode == EDIT_UBL)))
+					if (!(adc & TIM_CR1_CEN) &&	((screen_mode == EDIT_SCREEN) || (screen_mode > SELECT_SCREEN)))
 					{	//start delay for autorepeat
 						delay_cnt = 0;
 						Timer_Del->CNT = 0;
@@ -660,7 +697,6 @@ void Read_Touch()
 			TS_PORT->BRR = TS_XN;
 			break;
 		case 2:	//measure X
-			//ts_x = ADC read X
 			ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 			while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)){};
 			adc = ADC1->DR;
@@ -1157,10 +1193,13 @@ void Out_Buffer()
 void Btn_IRQHandler(void)
 {
 	Timer_Btn->SR = 0;				//clear IRQ flag
-	if (!new_command)	buttons = Read_Buttons();
+	if (!new_command)
+	{
+		buttons = Read_Buttons();
 #ifdef HW_VER_3
-	Read_Touch();
+		Read_Touch();
 #endif
+	}
 }
 //----------------------------------------------------------------------------
 void Dur_IRQHandler(void)
@@ -1212,8 +1251,7 @@ void Del_IRQHandler(void)
 	}
 	EXTI->IMR |= ENC_A;	//enable EXTI IRQ for next front
 #else
-	if (++delay_cnt > 10)
-		delay_cnt = 10;
+	if (++delay_cnt > 10)	delay_cnt = 10;
 #endif
 }
 //----------------------------------------------------------------------------

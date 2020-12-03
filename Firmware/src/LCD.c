@@ -504,6 +504,7 @@ void LCD_Reset()
    	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;	WR_Puls;	WR_Puls;	WR_Puls;
    	RS_LCD_set
 #endif
+//	LCD_Read_Regs();
 }
 
 #ifdef ST7789

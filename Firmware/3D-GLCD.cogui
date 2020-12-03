@@ -408,11 +408,6 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
-<file factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor" name="" tooltip="">
-<persistable>
-<org.coocox.builder.ui.editors.ConfigEditor/>
-</persistable>
-</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
 <persistable path="/3D-GLCD/main.c"/>
 </file>
@@ -451,6 +446,9 @@
 </file>
 <file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="math.h" tooltip="D:\Devel\ARM\gcc-5\arm-none-eabi\include\math.h">
 <persistable path="D:\Devel\ARM\gcc-5\arm-none-eabi\include\math.h" project="Soldering_iron"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
+<persistable path="/3D-GLCD/main.c"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
 <persistable path="/3D-GLCD/main.c"/>
