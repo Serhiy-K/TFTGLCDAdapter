@@ -1,3 +1,8 @@
+12/06/2020
+
+1. Touchscreen support works fine.
+2. Change some pins for LCD for HW_VER_3.
+
 11/08/2020
 
 1. Change output algorithm - remove screen autorefresh.

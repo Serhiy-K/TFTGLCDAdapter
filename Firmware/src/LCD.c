@@ -462,10 +462,12 @@ void LCD_Draw_StartScreen()
 	LCD_Set_TextColor(Yellow, Blue);
 	LCD_PutStrig_XY(0, 0, "    3-D Printer     ");
 	LCD_PutStrig_XY(0, 1, " 320x240 TFT Panel  ");
-#ifndef HW_VER_2
+#if	defined(HW_VER_1)
 	LCD_PutStrig_XY(0, 2, "      Ver.1.1       ");
-#else
+#elif	defined(HW_VER_2)
 	LCD_PutStrig_XY(0, 2, "      Ver.2.0       ");
+#elif	defined(HW_VER_3)
+	LCD_PutStrig_XY(0, 2, "      Ver.3.0       ");
 #endif
 	LCD_Set_TextColor(White, BackColor);
 	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
@@ -476,10 +478,12 @@ void LCD_Draw_StartScreen()
 	LCD_Set_TextColor(Yellow, Blue);
 	LCD_PutStrig_XY(0, 0, "      3-D Printer       ");
 	LCD_PutStrig_XY(0, 1, "   400x240 TFT Panel    ");
-#ifndef HW_VER_2
+#if	defined(HW_VER_1)
 	LCD_PutStrig_XY(0, 2, "        Ver.1.1         ");
-#else
+#elif	defined(HW_VER_2)
 	LCD_PutStrig_XY(0, 2, "        Ver.2.0         ");
+#elif	defined(HW_VER_3)
+	LCD_PutStrig_XY(0, 2, "        Ver.3.0         ");
 #endif
 	LCD_Set_TextColor(White, BackColor);
 	LCD_PutStrig_XY(0, 4, "   Waiting for printer  ");

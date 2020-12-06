@@ -43,11 +43,9 @@ static void GPIO_init(void)
 	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
 	GPIO_InitStructure.GPIO_Pin	= LCD_RD | LCD_RST | LCD_WR | LCD_RS | LCD_CS;
 #else
-//	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_2MHz;
 	LCD_CTRL_PORT2->BSRR = LCD_RST | LCD_RS | LCD_CS;
 	GPIO_InitStructure.GPIO_Pin	= LCD_RST | LCD_RS | LCD_CS;
 	GPIO_Init(LCD_CTRL_PORT2, &GPIO_InitStructure);
-//	GPIO_InitStructure.GPIO_Speed  = GPIO_Speed_50MHz;
 	LCD_CTRL_PORT->BSRR = LCD_RD | LCD_WR;
 	GPIO_InitStructure.GPIO_Pin = LCD_RD | LCD_WR;
 #endif
@@ -62,21 +60,15 @@ GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 	GPIO_Init(ENC_PORT, &GPIO_InitStructure);
 #else
 	// Init touchscreen lines
-	GPIO_InitStructure.GPIO_Pin	= TS_YN;
-	TS_PORT->BRR = TS_YN;
+	GPIO_InitStructure.GPIO_Pin	= TS_YU | TS_YD;
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
 	GPIO_Init(TS_PORT, &GPIO_InitStructure);
-
-	GPIO_InitStructure.GPIO_Pin	= TS_XN;
+	TS_PORT->BRR = TS_YU | TS_YD;
+	GPIO_InitStructure.GPIO_Pin	= TS_XL | TS_XR;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_Init(TS_PORT, &GPIO_InitStructure);
-
-	GPIO_InitStructure.GPIO_Pin	= TS_XP | TS_YP;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(TS_PORT, &GPIO_InitStructure);
 #endif
 
-#ifndef HW_VER_3
 #if defined(HW_VER_1)
 	AFIO->EXTICR[2] &= ~(AFIO_EXTICR3_EXTI9);
 	AFIO->EXTICR[2] |= AFIO_EXTICR3_EXTI9_PA; //channel 9 EXTI connected to PA9
@@ -84,11 +76,12 @@ GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 	AFIO->EXTICR[0] &= ~(AFIO_EXTICR1_EXTI0);
 	AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB; //channel 0 EXTI connected to PB0
 #endif
+#ifndef HW_VER_3
 	EXTI->FTSR |= ENC_A;	//falling
 	EXTI->PR = ENC_A;		//clear flag
 	EXTI->IMR |= ENC_A;		//enable interrupt from channel 0
 	NVIC_EnableIRQ(ENC_IRQn);
-#endif	//HW_VER_3
+#endif
 	// Init Button
 	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_IPU;
 #if defined(HW_VER_1)
@@ -290,18 +283,21 @@ void ADC_init()
 	ADC_InitTypeDef ADC_InitStructure;
 
 	// Configure the clocks
+	RCC_ADCCLKConfig (RCC_PCLK2_Div8);
 	RCC_APB2PeriphClockCmd(ADC_RCC, ENABLE);
 
 	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
 	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
-	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure.ADC_NbrOfChannel = 1;
 	ADC_Init(ADC1, &ADC_InitStructure);
 	ADC_Cmd(ADC1, ENABLE);
 	ADC_StartCalibration(ADC1);
-	while (ADC_GetCalibrationStatus(ADC1)){};
+	while (ADC_GetCalibrationStatus(ADC1));
+	ADC_Cmd(ADC1, ENABLE);
+	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
 #endif
 /***********************************************************

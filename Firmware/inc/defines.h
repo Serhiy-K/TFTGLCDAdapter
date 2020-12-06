@@ -12,10 +12,10 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //For LCD and controller with 8 bit data bus and encoder
 //#define HW_VER_1
 //For LCD and controller with 16 bit data bus and encoder
-//#define HW_VER_2
+#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
-#define HW_VER_3      //Not tested in hardware yet !!!
-#define TEST_TOUCH    //for test touchscreen
+//#define HW_VER_3
+//#define TEST_TOUCH    //for test and calibrate touchscreen
 
 //#define HW_VER_2_SWD_DEBUG
 
@@ -221,8 +221,8 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define SET_ORIENT_LEFT
 #endif
 
-#define TEST_PORT       GPIOA
-#define TEST_PIN        GPIO_Pin_15
+#define TEST_PORT       GPIOC
+#define TEST_PIN        GPIO_Pin_13
 
 //LCD interface
 #define LCD_DATA_PORT   GPIOB
@@ -232,10 +232,10 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCD_CTRL_PORT   GPIOB
 #define LCD_WR          GPIO_Pin_8
 #define LCD_RD          GPIO_Pin_9
-#define LCD_CTRL_PORT2  GPIOC
-#define LCD_RST         GPIO_Pin_13
-#define LCD_CS          GPIO_Pin_14
-#define LCD_RS          GPIO_Pin_15
+#define LCD_CTRL_PORT2  GPIOA
+#define LCD_RS          GPIO_Pin_10
+#define LCD_CS          GPIO_Pin_11
+#define LCD_RST         GPIO_Pin_12
 //SPI
 #define SPI             SPI2
 #define SPI_PORT        GPIOB
@@ -257,10 +257,10 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define I2C_ERR_IRQ     I2C2_ER_IRQn
 //touchscreen
 #define TS_PORT         GPIOA
-#define TS_XP           GPIO_Pin_0
-#define TS_YP           GPIO_Pin_1
-#define TS_XN           GPIO_Pin_2
-#define TS_YN           GPIO_Pin_3
+#define TS_XR           GPIO_Pin_0
+#define TS_YU           GPIO_Pin_1
+#define TS_XL           GPIO_Pin_2
+#define TS_YD           GPIO_Pin_3
 #define ADC_RCC         RCC_APB2Periph_ADC1
 //buttons
 #define BTN_PORTA       GPIOA

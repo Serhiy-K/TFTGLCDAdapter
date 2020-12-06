@@ -9,7 +9,8 @@
 		"pictures.h": "c",
 		"protocol.h": "c",
 		"stm32f10x_tim.h": "c",
-		"defines.h": "c"
+		"defines.h": "c",
+		"system_stm32f10x.h": "c"
 	}
 //	"cortex-debug.openocdPath": "D:/Devel/ARM/OpenOCD/bin"
 //	"cortex-debug.JLinkGDBServerPath": "C:/Program Files (x86)/SEGGER/JLink/JLinkGDBServerCL.exe"
