@@ -7,6 +7,8 @@ TFT GLCD Panel "Version 1.0" based on STM32F103C8T6 "Blue Pill" board and color 
 
 TFT GLCD Panel "Version 2.0" based on the same STM32F103C8T6 controller, but has own PCB. It desighned to connect LCD and controller by 16-bit data bus. Also this panel has standart EXP2 connector for connect to printer's main board and integrated Micro-SD connector.
 
+TFT GLCD Panel "Version 3.0" was designed to add resistive touchscreen support. Touchscreen is connected to controller directly. Controller connected to LCD by 8-bit data bus. This is wery simple realisation without SD support but SD support may be added as for "Version 2.0".
+
 Firmware for TFT GLCD Panel created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE.
 
 Hardware directory include pcb-projects for this panel created in Altium Designer, gerber files and real photos.
@@ -32,7 +34,7 @@ For use this panel with Marlin you need:
 ## Connect to 5V boards
 TFT GLCD Panel "Version 1.0" developed to connect with main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) you need add level converter for SPI input signals. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. For use I2C bus you need remove pull-up resistors betwin I2C lines and +5V on main board if they present. TFT GLCD Panel "Version 2.0" already has level converter for SPI input signals.
 
-## Add SD support to TFT GLCD Panel "Version 1.0"
-If you want add SD-card support you need add multiplexer for MISO signal between panel's and SD-card's MISO signals. This need because panel and SD-card share the same SPI bus. Two posible variants you may see on picture below and in TFT GLCD Panel "Version 2.0" project. Also you may change panel connector to standart EXP2 pinout.
+## Add SD support to TFT GLCD Panel "Version 1.0" and "Version 3.0"
+If you want add SD-card support you need add multiplexer for MISO signal between panel's and SD-card's MISO signals. This need because panel and SD-card share the same SPI bus. Two posible variants you may see on picture below and in TFT GLCD Panel "Version 2.0" project. Also you may change panel connector for "Version 1.0" to standart EXP2 pinout.
 
 <img src="./Hardware/tft-glcd-add_SD.jpg" width="800" height="528">

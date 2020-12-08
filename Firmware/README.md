@@ -5,7 +5,10 @@ Firmware for TFT GLCD Adapter created with CoIDE but may be built wiht simple Ma
 Read and change **inc/defines.h** to set proper parameters.
 
 ## Main parameters
+* `HW_VER_1`                - Hardware based on "BluePill" board, with encoder. Used for LCD with 8 bit data bus.
 * `HW_VER_2`                - HW VER.2 has different controller pinout !!!!! Used for LCD with 16 bit data bus.
+* `HW_VER_3`                - Panel with resistive touchscreen without encoder. Used for LCD with 8 bit data bus.
+* `TEST_TOUCH`              - for test touchscreen and get calibrate constants.
 * `INVERT_ENCODER_DIR`      - change direction for encoder
 * `SET_ORIENT_RIGHT (LEFT)` - set LCD orientation by software
 * `ILI9325`, `ILI9327`,
