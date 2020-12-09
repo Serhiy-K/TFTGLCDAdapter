@@ -1,3 +1,7 @@
+12/09/2020
+
+1. Add touchscreen rotation according to LCD.
+
 12/06/2020
 
 1. Touchscreen support works fine.

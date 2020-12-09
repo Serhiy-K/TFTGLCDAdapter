@@ -3,11 +3,11 @@ TFT GLCD Panel was developed as low cost replacement for monochrome LCDs with lo
 
 <img src="./Hardware/Photos/Smoothie-progressbar.jpg"  width="265" height="200">
 
-TFT GLCD Panel "Version 1.0" based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325 or ILI9341 or ST7789 chips with 320x240 resolution or ILI9327 chip  with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
+**TFT GLCD Panel "Version 1.0"** based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325, ILI9341 or ST7789 chips with 320x240 resolution or ILI9327 chip with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
 
-TFT GLCD Panel "Version 2.0" based on the same STM32F103C8T6 controller, but has own PCB. It desighned to connect LCD and controller by 16-bit data bus. Also this panel has standart EXP2 connector for connect to printer's main board and integrated Micro-SD connector.
+**TFT GLCD Panel "Version 2.0"** based on the same STM32F103C8T6 controller, but has own PCB. It desighned to connect LCD and controller by 16-bit data bus. Also this panel has standart EXP2 connector for connect to printer's main board and integrated Micro-SD connector.
 
-TFT GLCD Panel "Version 3.0" was designed to add resistive touchscreen support. Touchscreen is connected to controller directly. Controller connected to LCD by 8-bit data bus. This is wery simple realisation without SD support but SD support may be added as for "Version 2.0".
+**TFT GLCD Panel "Version 3.0"** was designed to add resistive touchscreen support. Touchscreen is connected to controller pinns directly. Controller connected to LCD by 8-bit data bus. This is wery simple realisation without SD support but SD support may be added as for "Version 2.0".
 
 Firmware for TFT GLCD Panel created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE.
 

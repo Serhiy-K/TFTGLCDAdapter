@@ -130,6 +130,8 @@ uint8_t line_1[CHARS_PER_LINE] = {' ',' ',' ',' ',' ','[',0x12,0x1a,0x12,']',' '
 uint8_t screen_mode = START_SCREEN;
 uint8_t cur_line = 0; //for menu
 uint8_t cur_x = 0;
+
+extern uint8_t orientation;
 #endif
 
 void Print_Line(uint8_t row);
@@ -744,7 +746,16 @@ void Read_Touch()
 					GPIO_InitStructure.GPIO_Pin	= TS_XL | TS_XR;
 					GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
 					GPIO_Init(TS_PORT, &GPIO_InitStructure);
+#if !defined(SET_ORIENT_RIGHT) && !defined(SET_ORIENT_LEFT)
+					if (!orientation)	TS_PORT->BSRR = TS_YU;
+					else				TS_PORT->BSRR = TS_YD;
+#else
+#ifdef SET_ORIENT_RIGHT
+					TS_PORT->BSRR = TS_YU;
+#else
 					TS_PORT->BSRR = TS_YD;
+#endif
+#endif
 					ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5);	//TS_XL
 					if (!(Timer_Del->CR1 & TIM_CR1_CEN) && (screen_mode > SELECT_SCREEN))
 					{	//start delay for autorepeat
@@ -785,8 +796,16 @@ void Read_Touch()
 			GPIO_InitStructure.GPIO_Pin	= TS_XR | TS_XL;
 			GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_Out_PP;
 			GPIO_Init(TS_PORT, &GPIO_InitStructure);
-			TS_PORT->BSRR = TS_XR;
-			TS_PORT->BRR = TS_XL;
+#if !defined(SET_ORIENT_RIGHT) && !defined(SET_ORIENT_LEFT)
+			if (!orientation)	{TS_PORT->BSRR = TS_XL;	TS_PORT->BRR = TS_XR;}
+			else				{TS_PORT->BSRR = TS_XR;	TS_PORT->BRR = TS_XL;}
+#else
+#ifdef SET_ORIENT_RIGHT
+			TS_PORT->BSRR = TS_XL;	TS_PORT->BRR = TS_XR;
+#else
+			TS_PORT->BSRR = TS_XR;	TS_PORT->BRR = TS_XL;
+#endif
+#endif
 			break;
 		case 2:	//measure X
 			adc = ADC_GetConversionValue(ADC1);

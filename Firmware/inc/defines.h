@@ -12,9 +12,9 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //For LCD and controller with 8 bit data bus and encoder
 //#define HW_VER_1
 //For LCD and controller with 16 bit data bus and encoder
-#define HW_VER_2
+//#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
-//#define HW_VER_3
+#define HW_VER_3
 //#define TEST_TOUCH    //for test and calibrate touchscreen
 
 //#define HW_VER_2_SWD_DEBUG
@@ -215,11 +215,6 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define Del_IRQHandler  TIM3_IRQHandler
 
 #elif defined(HW_VER_3)
-
-#undef  SET_ORIENT_RIGHT
-#ifndef SET_ORIENT_LEFT
-#define SET_ORIENT_LEFT
-#endif
 
 #define TEST_PORT       GPIOC
 #define TEST_PIN        GPIO_Pin_13
