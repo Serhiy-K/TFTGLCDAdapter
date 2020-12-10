@@ -10,7 +10,6 @@ uint8_t touchstate = 0;
 uint8_t ts_pressed = 0;
 uint8_t ts_x = 0, ts_y = 0;
 uint16_t adc;
-uint16_t adc_dY = 0;
 uint8_t adc_y_calibrate = 0;
 uint8_t delay_cnt = 0;
 #if defined(LCD320x240)
@@ -31,15 +30,6 @@ extern int8_t  encdiff;
 extern uint8_t buttons;
 extern uint8_t protocol;
 
-void print_dec(uint16_t dec)
-{
-	uint16_t t;
-	if (dec > 10000) {t = dec / 10000;	LCD_DrawChar('0' + t);	dec -= t * 10000;}
-	if (dec > 1000)	{t = dec / 1000;	LCD_DrawChar('0' + t);	dec -= t * 1000;}
-	if (dec > 100)	{t = dec / 100;		LCD_DrawChar('0' + t);	dec -= t * 100;}
-	if (dec > 10)	{t = dec / 10;		LCD_DrawChar('0' + t);	dec -= t * 10;}
-	LCD_DrawChar('0' + dec);
-}
 //----------------------------------------------------------------------------
 void Calibrate_touch()
 {
@@ -50,33 +40,28 @@ void Calibrate_touch()
 	{	//first press
 		LCD_ClearScreen();
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
-		LCD_SetCursor(0, 0);	LCD_PutStrig("Press =>");
-		LCD_Set_TextColor(White, BackColor);
-		LCD_SetCursor(9, 0);	LCD_DrawChar('+');
+		LCD_PutStrig_XY(0, 0, "Press =>");
+		LCD_FillRect(LCDXMAX / 2 - CHAR_HEIGTH, CHAR_HEIGTH - 1, LCDXMAX / 2 + CHAR_HEIGTH, CHAR_HEIGTH - 1, White);
+		LCD_FillRect(LCDXMAX / 2, 0, LCDXMAX / 2, CHAR_HEIGTH * 2, White);
 		adc_y_calibrate = 1;
 	}
 	else if (adc_y_calibrate == 2)
 	{
-		LCD_Set_TextColor(White, BackColor);
-		LCD_SetCursor(0, 0);
-		for (j = 0; j < 10; j++)	LCD_DrawChar(' ');
+		LCD_FillRect(0, 0, LCDXMAX / 2 + CHAR_HEIGTH, CHAR_HEIGTH * 2, BackColor);
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
-		LCD_SetCursor(0, 9);	LCD_PutStrig("Press =>");
+		LCD_PutStrig_XY(0, 9, "Press =>");
 		LCD_Set_TextColor(White, BackColor);
-		LCD_SetCursor(9, 9);	LCD_DrawChar('+');
+		LCD_FillRect(LCDXMAX / 2 - CHAR_HEIGTH, LCDYMAX - CHAR_HEIGTH + 1, LCDXMAX / 2 + CHAR_HEIGTH, LCDYMAX - CHAR_HEIGTH + 1, White);
+		LCD_FillRect(LCDXMAX / 2, LCDYMAX - CHAR_HEIGTH * 2, LCDXMAX / 2, LCDYMAX - 1, White);
 		adc_y_calibrate = 3;
 	}
 	else if (adc_y_calibrate == 4)
 	{
-		LCD_Set_TextColor(White, BackColor);
-		LCD_SetCursor(0, 9);
-		for (j = 0; j < 10; j++)	LCD_DrawChar(' ');
+		LCD_FillRect(0, LCDYMAX - 1 - CHAR_HEIGTH * 2, LCDXMAX / 2 + CHAR_HEIGTH, LCDYMAX - 1, BackColor);
 		adc_y_calibrate = 5;
-		adc_dY = Settings.adc_Ymax - Settings.adc_Ymin;
-		Settings.adc_1_line = adc_dY / (TEXT_LINES - 1);
-		LCD_SetCursor((CHARS_PER_LINE / 2) - 5, 4);	LCD_PutStrig("Ymin = ");	print_dec(Settings.adc_Ymin);
-		LCD_SetCursor((CHARS_PER_LINE / 2) - 5, 5);	LCD_PutStrig("Ymax = ");	print_dec(Settings.adc_Ymax);
+		Settings.adc_1_line = (Settings.adc_Ymax - Settings.adc_Ymin) / (TEXT_LINES - 2);
 		saveSettings();
+		LCD_PutStrig_XY((CHARS_PER_LINE - 13) / 2, MIDDLE_Y, "Press to test");
 	}
 	else if (adc_y_calibrate == 6)
 	{
@@ -214,7 +199,7 @@ void Read_Touch()
 			if		(adc_y_calibrate == 2) Settings.adc_Ymin = adc;
 			else if (adc_y_calibrate == 4) Settings.adc_Ymax = adc;
 			if		(adc < Settings.adc_Ymin)	ts_y = 0;
-			else if (adc < Settings.adc_Ymax)	ts_y = (uint8_t)((adc /*- Settings.adc_Ymin*/) / Settings.adc_1_line);
+			else if (adc < Settings.adc_Ymax)	ts_y = 1 + (uint8_t)((adc - Settings.adc_Ymin) / Settings.adc_1_line);
 			else								ts_y = TEXT_LINES - 1;
 			if (screen_mode == MENU_SCREEN)
 				goto no_tsx;
