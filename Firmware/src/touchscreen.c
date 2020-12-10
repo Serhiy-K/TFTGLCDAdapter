@@ -30,6 +30,17 @@ extern int8_t  encdiff;
 extern uint8_t buttons;
 extern uint8_t protocol;
 
+#ifdef CALIBR_DEBUG_INFO
+void print_dec(uint16_t dec)
+{
+	uint16_t t;
+	if (dec > 10000) {t = dec / 10000;	LCD_DrawChar('0' + t);	dec -= t * 10000;}
+	if (dec > 1000)	{t = dec / 1000;	LCD_DrawChar('0' + t);	dec -= t * 1000;}
+	if (dec > 100)	{t = dec / 100;		LCD_DrawChar('0' + t);	dec -= t * 100;}
+	if (dec > 10)	{t = dec / 10;		LCD_DrawChar('0' + t);	dec -= t * 10;}
+	LCD_DrawChar('0' + dec);
+}
+#endif
 //----------------------------------------------------------------------------
 void Calibrate_touch()
 {
@@ -43,12 +54,20 @@ void Calibrate_touch()
 		LCD_PutStrig_XY(0, 0, "Press =>");
 		LCD_FillRect(LCDXMAX / 2 - CHAR_HEIGTH, CHAR_HEIGTH - 1, LCDXMAX / 2 + CHAR_HEIGTH, CHAR_HEIGTH - 1, White);
 		LCD_FillRect(LCDXMAX / 2, 0, LCDXMAX / 2, CHAR_HEIGTH * 2, White);
+#ifdef CALIBR_DEBUG_INFO
+		LCD_Set_TextColor(White, BackColor);
+		LCD_PutStrig_XY(1, 3, "Old Ymin =");	LCD_SetCursor(12, 3);	print_dec(Settings.adc_Ymin);
+#endif
 		adc_y_calibrate = 1;
 	}
 	else if (adc_y_calibrate == 2)
 	{
-		LCD_FillRect(0, 0, LCDXMAX / 2 + CHAR_HEIGTH, CHAR_HEIGTH * 2, BackColor);
+#ifdef CALIBR_DEBUG_INFO
+		LCD_PutStrig_XY(1, 4, "New Ymin = ");	LCD_SetCursor(12, 4);	print_dec(Settings.adc_Ymin);
+		LCD_PutStrig_XY(1, 5, "Old Ymax = ");	LCD_SetCursor(12, 5);	print_dec(Settings.adc_Ymax);
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
+#endif
+		LCD_FillRect(0, 0, LCDXMAX / 2 + CHAR_HEIGTH, CHAR_HEIGTH * 2, BackColor);
 		LCD_PutStrig_XY(0, 9, "Press =>");
 		LCD_Set_TextColor(White, BackColor);
 		LCD_FillRect(LCDXMAX / 2 - CHAR_HEIGTH, LCDYMAX - CHAR_HEIGTH + 1, LCDXMAX / 2 + CHAR_HEIGTH, LCDYMAX - CHAR_HEIGTH + 1, White);
@@ -60,8 +79,13 @@ void Calibrate_touch()
 		LCD_FillRect(0, LCDYMAX - 1 - CHAR_HEIGTH * 2, LCDXMAX / 2 + CHAR_HEIGTH, LCDYMAX - 1, BackColor);
 		adc_y_calibrate = 5;
 		Settings.adc_1_line = (Settings.adc_Ymax - Settings.adc_Ymin) / (TEXT_LINES - 2);
-		saveSettings();
+#ifdef CALIBR_DEBUG_INFO
+		LCD_PutStrig_XY(1, 6, "New Ymax = ");	LCD_SetCursor(12, 6);	print_dec(Settings.adc_Ymax);
+		LCD_PutStrig_XY((CHARS_PER_LINE - 13) / 2, 8, "Press to test");
+#else
 		LCD_PutStrig_XY((CHARS_PER_LINE - 13) / 2, MIDDLE_Y, "Press to test");
+#endif
+		saveSettings();
 	}
 	else if (adc_y_calibrate == 6)
 	{

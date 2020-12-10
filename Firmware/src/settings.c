@@ -4,7 +4,7 @@
 
 #include "stm32f10x_flash.h"
 
-#define FLASH_ADDR (0x8000000 | 64512)	//Flash start OR'ed with the maximum amount of flash - 256 bytes
+#define FLASH_ADDR (0x8000000 | 64512)	//Flash start OR'ed with the maximum amount of flash - 1024 bytes
 
 void saveSettings() {
 	FLASH_Unlock();
