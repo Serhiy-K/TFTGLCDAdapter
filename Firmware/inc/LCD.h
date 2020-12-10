@@ -78,6 +78,17 @@
 
 #define BackColor	Black
 
+#define PROGRESS_COLOR		Yellow	//color for progress bar frame
+
+#define CURSOR_TEXT_COLOR	Black
+#define CURSOR_BACK_COLOR	White
+
+#define EDIT_TEXT_COLOR		Yellow
+#define EDIT_BACK_COLOR		Auqa
+
+#define	ERROR_TEXT_COLOR	Yellow
+#define ERROR_BACK_COLOR	Red
+
 extern const char FONT[256][48];
 
 void LCD_ClearScreen();

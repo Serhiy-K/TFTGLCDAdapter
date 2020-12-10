@@ -2,6 +2,7 @@
 #include "stm32f10x.h"
 #ifdef HW_VER_3
 #include "stm32f10x_adc.h"
+#include "settings.h"
 #endif
 #include "stm32f10x_exti.h"
 #include "stm32f10x_i2c.h"
@@ -314,6 +315,7 @@ void Global_Init(void)
 	I2C_init();
 #ifdef HW_VER_3
 	ADC_init();
+	restoreSettings();
 #endif
 	LCD_Init();
 	Timer_Btn_init();

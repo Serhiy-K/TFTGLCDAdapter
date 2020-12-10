@@ -15,7 +15,6 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
 #define HW_VER_3
-//#define TEST_TOUCH    //for test and calibrate touchscreen
 
 //#define HW_VER_2_SWD_DEBUG
 
