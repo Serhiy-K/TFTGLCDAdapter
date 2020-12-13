@@ -15,7 +15,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
 #define HW_VER_3
-#define CALIBR_DEBUG_INFO
+#define CALIBR_DEBUG_INFO   //outputs old and new ADC values
 
 //#define HW_VER_2_SWD_DEBUG
 
@@ -69,10 +69,10 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCDXMAX         LCDMAX
 #define LCDYMAX         LCDMIN
 
-#define CHAR_BYTES      (CHAR_WIDTH * CHAR_HEIGTH / 8)
-#define CHARS_PER_LINE  LCDXMAX/CHAR_WIDTH
-#define TEXT_LINES      LCDYMAX/CHAR_HEIGTH
-#define MIDDLE_Y        ((TEXT_LINES - 1) / 2)
+#define CHAR_BYTES      CHAR_WIDTH * CHAR_HEIGTH / 8
+#define CHARS_PER_LINE  LCDXMAX / CHAR_WIDTH
+#define TEXT_LINES      LCDYMAX / CHAR_HEIGTH
+#define MIDDLE_Y        (TEXT_LINES - 1) / 2
 
 #if defined(HW_VER_1)
 

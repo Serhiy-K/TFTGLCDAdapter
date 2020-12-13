@@ -13,9 +13,7 @@ void saveSettings() {
 	uint16_t *data = (uint16_t *)&Settings;
 
 	for (uint16_t i = 0; i < (sizeof(Settings) / 2); i++)
-	{
 		FLASH_ProgramHalfWord(FLASH_ADDR + (i * 2), data[i]);
-	}
 	FLASH->CR |= FLASH_CR_LOCK;
 }
 //----------------------------------------------------------------------------
@@ -28,12 +26,11 @@ void resetSettings() {
 //----------------------------------------------------------------------------
 void restoreSettings() {
 	uint16_t *data = (uint16_t*) &Settings;
-	for (uint8_t i = 0; i < (sizeof(Settings) / 2); i++) {
+	for (uint8_t i = 0; i < (sizeof(Settings) / 2); i++)
 		data[i] = *(uint16_t *) (FLASH_ADDR + (i * 2));
-	}
-	if (Settings.version != SETTINGSVERSION) {
-		resetSettings();
-		saveSettings();
+	if (Settings.version != SETTINGSVERSION)
+	{
+		resetSettings();	saveSettings();
 	}
 
 }

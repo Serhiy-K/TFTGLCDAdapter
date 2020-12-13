@@ -98,9 +98,7 @@ void Calibrate_touch()
 				else		{char1 = 0x1b; char2 = 0xdb;}
 			}
 			else
-			{
 				char1 = char2 = 0x1b;
-			}
 			for (j = 0; j < CHARS_PER_LINE / 2 ; j++)	LCD_DrawChar(char1);
 			for (j = CHARS_PER_LINE / 2; j < CHARS_PER_LINE; j++)	LCD_DrawChar(char2);
 		}
