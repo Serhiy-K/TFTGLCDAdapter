@@ -12,5 +12,7 @@
 <img src="./UBL-select-V3.jpg">UBL: select point with touchscreen
 <img src="./UBL-edt-V3.jpg">UBL: edit point with touchscreen
 <img src="./Marlin-Error_Screen.jpg">Error screen, Marlin
-<img src="./TFTGLCD-V2.jpg">TFTGLCD panel V2 PCB
+<img src="./TFTGLCD-V2.jpg">
+TFTGLCD panel V2 PCB
+
 <img src="./TFTGLCD-V3.jpg">TFTGLCD panel V3 in case from chinese "mini Iphone"
