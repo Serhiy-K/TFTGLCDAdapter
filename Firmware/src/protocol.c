@@ -725,13 +725,10 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 	if ((!progress_cleared) && (y == 2))
 	{
 		//clear Progress Bar line
-		LCD_SetCursor(0, y);	for (i = 0; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
+		LCD_FillRect(0, CHAR_HEIGTH * 2, LCDXMAX, CHAR_HEIGTH * 3, BackColor);
 		// clear icons positions
-		LCD_SetCursor(16, 5);	for (i = 16; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
-		LCD_SetCursor(16, 6);	for (i = 16; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
-		LCD_SetCursor(16, 7);	for (i = 16; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
-		LCD_SetCursor(0, 8);	for (i = 0; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
-		LCD_SetCursor(0, 9);	for (i = 0; i < CHARS_PER_LINE; i++)	LCD_DrawChar(' ');
+		LCD_FillRect(CHAR_WIDTH * 16, CHAR_HEIGTH * 5, LCDXMAX - 1, CHAR_HEIGTH * 8, BackColor);
+		LCD_FillRect(0, CHAR_HEIGTH * 8, LCDXMAX, LCDYMAX - 1, BackColor);
 		progress_cleared = 1;
 	}
 
