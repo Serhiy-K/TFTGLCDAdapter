@@ -56,15 +56,15 @@ void Calibrate_touch()
 		LCD_FillRect(LCDXMAX / 2, 0, LCDXMAX / 2, CHAR_HEIGTH * 2, White);
 #ifdef CALIBR_DEBUG_INFO
 		LCD_Set_TextColor(White, BackColor);
-		LCD_PutStrig_XY(1, 3, "Old Ymin =");	LCD_SetCursor(12, 3);	print_dec(Settings.adc_Ymin);
+		LCD_PutStrig_XY(1, 2, "Old Ymin =");	LCD_SetCursor(12, 2);	print_dec(Settings.adc_Ymin);
 #endif
 		adc_y_calibrate = 1;
 	}
 	else if (adc_y_calibrate == 2)
 	{
 #ifdef CALIBR_DEBUG_INFO
-		LCD_PutStrig_XY(1, 4, "New Ymin = ");	LCD_SetCursor(12, 4);	print_dec(Settings.adc_Ymin);
-		LCD_PutStrig_XY(1, 5, "Old Ymax = ");	LCD_SetCursor(12, 5);	print_dec(Settings.adc_Ymax);
+		LCD_PutStrig_XY(1, 3, "New Ymin = ");	LCD_SetCursor(12, 3);	print_dec(Settings.adc_Ymin);
+		LCD_PutStrig_XY(1, 4, "Old Ymax = ");	LCD_SetCursor(12, 4);	print_dec(Settings.adc_Ymax);
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
 #endif
 		LCD_FillRect(0, 0, LCDXMAX / 2 + CHAR_HEIGTH, CHAR_HEIGTH * 2, BackColor);
@@ -77,15 +77,17 @@ void Calibrate_touch()
 	else if (adc_y_calibrate == 4)
 	{
 		LCD_FillRect(0, LCDYMAX - 1 - CHAR_HEIGTH * 2, LCDXMAX / 2 + CHAR_HEIGTH, LCDYMAX - 1, BackColor);
-		adc_y_calibrate = 5;
 		Settings.adc_1_line = (Settings.adc_Ymax - Settings.adc_Ymin) / (TEXT_LINES - 2);
 #ifdef CALIBR_DEBUG_INFO
-		LCD_PutStrig_XY(1, 6, "New Ymax = ");	LCD_SetCursor(12, 6);	print_dec(Settings.adc_Ymax);
-		LCD_PutStrig_XY((CHARS_PER_LINE - 13) / 2, 8, "Press to test");
+		LCD_PutStrig_XY(1, 5, "New Ymax = ");	LCD_SetCursor(12, 5);	print_dec(Settings.adc_Ymax);
+		LCD_PutStrig_XY((CHARS_PER_LINE - 13) / 2, 7, "Press to test");
+		LCD_PutStrig_XY((CHARS_PER_LINE - 17) / 2, 8, "Then reboot panel");
 #else
 		LCD_PutStrig_XY((CHARS_PER_LINE - 13) / 2, MIDDLE_Y, "Press to test");
+		LCD_PutStrig_XY((CHARS_PER_LINE - 17) / 2, MIDDLE_Y + 1, "Then reboot panel");
 #endif
 		saveSettings();
+		adc_y_calibrate = 5;
 	}
 	else if (adc_y_calibrate == 6)
 	{

@@ -1,3 +1,8 @@
+01/10/2021
+
+1. Optimize UBL output.
+2. Add comment to touchscreen calibration screen.
+
 12/10/2020
 
 1. Add save/load Y-calibration.

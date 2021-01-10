@@ -87,7 +87,6 @@ uint8_t UBL_first_time = 1;
 uint8_t next_tx = 0;
 int8_t  encdiff = 0;
 uint8_t new_buf = 0;
-uint8_t UBL_editline = 0; //used for Marlin
 uint8_t USE_UBL = 0;
 uint8_t init = 0;
 uint8_t buttons = 0;
@@ -342,30 +341,14 @@ void Print_Line_UBL(uint8_t row)
 		UBL_Draw_Dots(row);
 		LCD_SetCursor(10, row);	LCD_DrawChar(VL);
 	}
-	i = row * CHARS_PER_LINE + 11;
-	for (j = 11; j < CHARS_PER_LINE; j++)
+#ifdef HW_VER_3
+	if ((screen_mode == EDIT_UBL) && (row > 2))
+		return;
+	else
+#endif
 	{
-		if (row == MIDDLE_Y)
-			LCD_DrawChar(' ');	//insted output edit line from buffer 
-#ifdef HW_VER_3
-		else if ((row == 3) && (screen_mode == EDIT_UBL))
-		{
-			if (j == 12)	LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR);
-			if (j > 13)	LCD_DrawChar(data[out_buf][(CHARS_PER_LINE * MIDDLE_Y + (CHARS_PER_LINE - 7) - 14) + j]);
-			else LCD_DrawChar(data[out_buf][i++]);
-			if (j == (CHARS_PER_LINE - 1))	LCD_Set_TextColor(White, Black);
-		}
-#endif
-		else
-		{
-#ifdef HW_VER_3
-			if (data[out_buf][i] == '[')	LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
-#endif
-			LCD_DrawChar(data[out_buf][i++]);
-#ifdef HW_VER_3
-			if (data[out_buf][i-1] == ']')	LCD_Set_TextColor(White, Black);
-#endif
-		}
+		i = row * CHARS_PER_LINE + 11;
+		for (j = 11; j < CHARS_PER_LINE; j++)	LCD_DrawChar(data[out_buf][i++]);
 	}
 }
 //----------------------------------------------------------------------------
@@ -418,56 +401,22 @@ void Draw_UBL_Screen()
 	dot_pos_y = grid_size_y - pos_y - 1;
 
 	if (UBL_first_time)	{LCD_ClearScreen();	UBL_first_time = 0;}
-	
-#ifdef HW_VER_3
-	//Lines for "buttons" != MIDDLE_Y !!!
-	data[out_buf][CHARS_PER_LINE * 5 + 13] = data[out_buf][CHARS_PER_LINE * 7 + 13] = '[';
-	if (screen_mode == EDIT_UBL)
-	{
-		data[out_buf][CHARS_PER_LINE * 5 + 14] = data[out_buf][CHARS_PER_LINE * 7 + 14] = 'Z';
-		data[out_buf][CHARS_PER_LINE * 5 + 15] = '+';
-		data[out_buf][CHARS_PER_LINE * 7 + 15] = '-';
-		data[out_buf][CHARS_PER_LINE * 5 + 16] = data[out_buf][CHARS_PER_LINE * 7 + 16] = ']';
-		data[out_buf][CHARS_PER_LINE * 5 + 17] = data[out_buf][CHARS_PER_LINE * 7 + 17] = ' ';
-		data[out_buf][CHARS_PER_LINE * 5 + 18] = data[out_buf][CHARS_PER_LINE * 7 + 18] = ' ';
-	}
-	else
-	{
-		data[out_buf][CHARS_PER_LINE * 5 + 14] = 'N';
-		data[out_buf][CHARS_PER_LINE * 5 + 15] = 'E';
-		data[out_buf][CHARS_PER_LINE * 5 + 16] = 'X';
-		data[out_buf][CHARS_PER_LINE * 5 + 17] = 'T';
-		data[out_buf][CHARS_PER_LINE * 7 + 14] = 'P';
-		data[out_buf][CHARS_PER_LINE * 7 + 15] = 'R';
-		data[out_buf][CHARS_PER_LINE * 7 + 16] = 'E';
-		data[out_buf][CHARS_PER_LINE * 7 + 17] = 'V';
-		data[out_buf][CHARS_PER_LINE * 5 + 18] = data[out_buf][CHARS_PER_LINE * 7 + 18] = ']';
-	}
-
-#endif
 	LCD_Set_TextColor(White, Black);
 	for (i = 0; i < 8; i++)		Print_Line_UBL(i);
 	Print_Line(8);
-	UBL_editline = 1;
 	Print_Line(9);
-	UBL_editline = 0;
 }
 //----------------------------------------------------------------------------
 void Print_Lines()
 {
 	uint8_t i;
 	new_command = 0;
-	if (data[out_buf][12] == '(')
-		Draw_UBL_Screen();
-	else
+	for (i = 0; i < TEXT_LINES; i++)
 	{
-		for (i = 0; i < TEXT_LINES; i++)
+		if (lines[i])
 		{
-			if (lines[i])
-			{
-				Print_Line(i);
-				lines[i] = 0;
-			}
+			Print_Line(i);
+			lines[i] = 0;
 		}
 	}
 }
@@ -735,7 +684,7 @@ void Draw_Progress_Bar(uint8_t y, uint8_t percent)
 	//draw progress bar frame
 	LCD_FillRect(XMIN, ymin, XMIN, ymax, PROGRESS_COLOR);			// left |
 	LCD_FillRect(XMIN + 1, ymin, XMAX, ymin, PROGRESS_COLOR);		// top -
-	LCD_FillRect(XMIN + 1, ymax, XMAX, ymax, PROGRESS_COLOR);		// bot -
+	LCD_FillRect(XMIN + 1, ymax, XMAX, ymax, PROGRESS_COLOR);		// bottom -
 	LCD_FillRect(XMAX, ymin + 1, XMAX, ymax - 1, PROGRESS_COLOR);	// right |
 
 	if (percent) //draw progress bar
@@ -757,8 +706,7 @@ void Print_Line(uint8_t row)
 
 	marker = 1;
 
-	if (UBL_editline)	i = MIDDLE_Y * CHARS_PER_LINE;	// move down Marlin's edit line for UBL plot screen
-	else				i = row * CHARS_PER_LINE;
+	i = row * CHARS_PER_LINE;
 
 	line = &data[out_buf][i];
 #ifdef HW_VER_3
@@ -794,12 +742,17 @@ void Print_Line(uint8_t row)
 	}
 	else if (*line == '#')
 	{
-#ifdef HW_VER_3
-		if (UBL_editline)
+		LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR); //edit line
+#ifndef HW_VER_3
+		if (USE_UBL && row != 9)	return;
+#else
+		if (USE_UBL || row == 9)
+		{
 			screen_mode = EDIT_UBL;
+			if (row != 9)	return;
+		}
 		else
 		{
-			LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR); //edit line
 			if ((*(line + 1) == '[') || (*(line + CHARS_PER_LINE - 2) == ']'))
 				screen_mode = SELECT_SCREEN;
 			else
@@ -808,8 +761,6 @@ void Print_Line(uint8_t row)
 				lines[MIDDLE_Y + 2] = lines[MIDDLE_Y + 4] = 1;
 			}
 		}
-#else
-		LCD_Set_TextColor(EDIT_TEXT_COLOR, EDIT_BACK_COLOR);		//edit line
 #endif
 	}
 	else if (*line == '!')
@@ -821,26 +772,34 @@ void Print_Line(uint8_t row)
 	}
 
 #ifdef HW_VER_3
-	if (USE_UBL)	//UBL screen
+	if (USE_UBL)
 	{
-		if (row == 8)
+		if (row == 9)
 		{
-			LCD_SetCursor(2, 8);
-			if (screen_mode != EDIT_UBL)
+			if (screen_mode == EDIT_UBL)
 			{
+				LCD_PutStrig_XY(12, 3, "Z:");
+				LCD_SetCursor(14, 3);
+				for (i = 14; i < 20; i++)	LCD_DrawChar(data[out_buf][(CHARS_PER_LINE * 10 - 7 - 14) + i]);
 				LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
-				LCD_PutStrig(" EXIT ");
+				LCD_PutStrig_XY(13, 5, "[ Z+ ]");
+				LCD_PutStrig_XY(13, 7, "[ Z- ]");
 				LCD_Set_TextColor(White, Black);
+				LCD_PutStrig_XY( 2, 8, "      ");
 			}
 			else
 			{
-				LCD_SetCursor(2, 8);
+				LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
+				LCD_PutStrig_XY(13, 5, "[NEXT]");
+				LCD_PutStrig_XY(13, 7, "[PREV]");
+				LCD_PutStrig_XY( 2, 8, "[EXIT]");
 				LCD_Set_TextColor(White, Black);
-				LCD_PutStrig("      ");
 			}
-			row = 9;
+			CS_LCD_set;
+			return;
 		}
-		if (UBL_editline)	return;
+		else if (row == 8)
+			row = 9;	//move text down to separate from buttons
 	}
 #endif
 
