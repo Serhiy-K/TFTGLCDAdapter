@@ -1,4 +1,8 @@
-01/10/2021
+28/02/2021
+
+1. Add support for R61509V LCD chip.
+2. Change I2C addres to 0x33 for STM32 main boards.
+3. Fix I2C bus interrupt for touchscreen.
 
 1. Optimize UBL output.
 2. Add comment to touchscreen calibration screen.

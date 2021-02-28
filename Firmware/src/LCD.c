@@ -99,7 +99,7 @@ void LCD_Read_Regs()
  Description    : Write data to LCD reg
  Input          : RegisterIndex, data
 ******************************************************************************/
-static void Set_LCD_REG(uint8_t RegisterIndex, uint16_t Data)
+static void LCD_Set_Reg(uint8_t RegisterIndex, uint16_t Data)
 {
 	RS_LCD_clr;
 #ifndef HW_VER_2
@@ -131,6 +131,28 @@ static void LCD_Write_Com(uint8_t RegisterIndex)
 	RS_LCD_set;
 }
 #endif
+#ifdef R61509V
+/******************************************************************************
+ Description    : Write data to LCD reg
+ Input          : RegisterIndex, data
+******************************************************************************/
+static void LCD_Set_Reg(uint16_t RegisterIndex, uint16_t Data)
+{
+	RS_LCD_clr;
+#ifndef HW_VER_2
+	LCD_DATA(RegisterIndex >> 8);	LCD_DATA(RegisterIndex & 0x00ff);
+#else
+	LCD_DATA(RegisterIndex);
+#endif
+	RS_LCD_set;
+
+#ifndef HW_VER_2
+	LCD_DATA(Data >> 8);	LCD_DATA(Data & 0x00ff);
+#else
+	LCD_DATA(Data);
+#endif
+}
+#endif
 /******************************************************************************
  Description    : Set output area
  Input          : X0pos, Y0pos, X1pos, Y1pos
@@ -140,13 +162,13 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	CS_LCD_clr;
 
 #ifdef ILI9325
-	Set_LCD_REG(0x52, X0);
-	Set_LCD_REG(0x53, X1);
-	Set_LCD_REG(0x50, Y0);
-	Set_LCD_REG(0x51, Y1);
+	LCD_Set_Reg(0x52, X0);
+	LCD_Set_Reg(0x53, X1);
+	LCD_Set_Reg(0x50, Y0);
+	LCD_Set_Reg(0x51, Y1);
 
-	Set_LCD_REG(0x21, X0);
-	Set_LCD_REG(0x20, Y1);
+	LCD_Set_Reg(0x21, X0);
+	LCD_Set_Reg(0x20, Y1);
 #endif	//ILI9325
 #ifdef ILI9327
 	LCD_Write_Com(0x2A);
@@ -182,6 +204,15 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA(X1 >> 8);
 	LCD_DATA(X1);
 #endif
+#ifdef R61509V
+   	LCD_Set_Reg(0x0212, X0);
+   	LCD_Set_Reg(0x0213, X1);
+   	LCD_Set_Reg(0x0210, Y0);
+   	LCD_Set_Reg(0x0211, Y1);
+
+	LCD_Set_Reg(0x0201, X0);
+	LCD_Set_Reg(0x0200, Y0);
+#endif
 
 	RS_LCD_clr;
 	//lcd_Draw_Start
@@ -196,6 +227,14 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 
 #if defined(ILI9327) || defined(ILI9341) || defined(ST7789)
 	LCD_DATA(0x2C);
+#endif
+
+#ifdef R61509V
+#ifndef HW_VER_2
+	LCD_DATA(0x02);	WR_Puls;	//send 0x0202
+#else
+	LCD_DATA(0x0202);
+#endif
 #endif
 	RS_LCD_set;
 }
@@ -579,62 +618,62 @@ void LCD_Init(void)
 {
 	LCD_Reset();
 
-	Set_LCD_REG(0x02, 0x0200); // set 1 line inversion
+	LCD_Set_Reg(0x02, 0x0200); // set 1 line inversion
 	if (orientation)
 	{
-   		Set_LCD_REG(0x01, 0x0100); // set SS=1 and SM=0 bit
-   		Set_LCD_REG(0x60, 0x2700); // set GS=0 bit
+   		LCD_Set_Reg(0x01, 0x0100); // set SS=1 and SM=0 bit
+   		LCD_Set_Reg(0x60, 0x2700); // set GS=0 bit
 	}
 	else
 	{
-   		Set_LCD_REG(0x01, 0x0000); // set SS=0 and SM=0 bit
-   		Set_LCD_REG(0x60, 0xA700); // set GS bit
+   		LCD_Set_Reg(0x01, 0x0000); // set SS=0 and SM=0 bit
+   		LCD_Set_Reg(0x60, 0xA700); // set GS bit
 	}
    	//xx0 BGR 0000 ORG 0 ID1 ID0 AM 000
-   	Set_LCD_REG(0x03, 0x1020); // set BGR=1, GRAM write direction ID=2.
-   	Set_LCD_REG(0x04, 0x0000); // Resize register
-   	Set_LCD_REG(0x08, 0x0207); // set the back porch and front porch
-   	Set_LCD_REG(0x09, 0x0000); // set non-display area refresh cycle ISC[3:0]
-   	Set_LCD_REG(0x0A, 0x0000); // FMARK function
-   	Set_LCD_REG(0x0C, 0x0000); // 16 bit RGB interface
-   	Set_LCD_REG(0x0D, 0x0000); // Frame marker Position
-   	Set_LCD_REG(0x0F, 0x0000); // RGB interface polarity
+   	LCD_Set_Reg(0x03, 0x1020); // set BGR=1, GRAM write direction ID=2.
+   	LCD_Set_Reg(0x04, 0x0000); // Resize register
+   	LCD_Set_Reg(0x08, 0x0207); // set the back porch and front porch
+   	LCD_Set_Reg(0x09, 0x0000); // set non-display area refresh cycle ISC[3:0]
+   	LCD_Set_Reg(0x0A, 0x0000); // FMARK function
+   	LCD_Set_Reg(0x0C, 0x0000); // 16 bit RGB interface
+   	LCD_Set_Reg(0x0D, 0x0000); // Frame marker Position
+   	LCD_Set_Reg(0x0F, 0x0000); // RGB interface polarity
 
    	// Power On sequence
-   	Set_LCD_REG(0x10, 0x0000); // SAP, BT[3:0], AP, DSTB, SLP, STB
-   	Set_LCD_REG(0x11, 0x0007); // DC1[2:0], DC0[2:0], VC[2:0]
-   	Set_LCD_REG(0x12, 0x0000); // VREG1OUT voltage
-   	Set_LCD_REG(0x13, 0x0000); // VDV[4:0] for VCOM amplitude
-   	Set_LCD_REG(0x07, 0x0001);
+   	LCD_Set_Reg(0x10, 0x0000); // SAP, BT[3:0], AP, DSTB, SLP, STB
+   	LCD_Set_Reg(0x11, 0x0007); // DC1[2:0], DC0[2:0], VC[2:0]
+   	LCD_Set_Reg(0x12, 0x0000); // VREG1OUT voltage
+   	LCD_Set_Reg(0x13, 0x0000); // VDV[4:0] for VCOM amplitude
+   	LCD_Set_Reg(0x07, 0x0001);
    	delay_ms(200); // Dis-charge capacitor power voltage
-   	Set_LCD_REG(0x10, 0x1690); // SAP, BT[3:0], AP, DSTB, SLP, STB
-   	Set_LCD_REG(0x11, 0x0227); // Set DC1[2:0], DC0[2:0], VC[2:0]
+   	LCD_Set_Reg(0x10, 0x1690); // SAP, BT[3:0], AP, DSTB, SLP, STB
+   	LCD_Set_Reg(0x11, 0x0227); // Set DC1[2:0], DC0[2:0], VC[2:0]
    	delay_ms(50); // Delay 50ms
-   	Set_LCD_REG(0x12, 0x000D); // 0012
+   	LCD_Set_Reg(0x12, 0x000D); // 0012
    	delay_ms(50); // Delay 50ms
-   	Set_LCD_REG(0x13, 0x1200); // VDV[4:0] for VCOM amplitude
-   	Set_LCD_REG(0x29, 0x000A); // 04  VCM[5:0] for VCOMH
-   	Set_LCD_REG(0x2B, 0x000D); // Set Frame Rate
+   	LCD_Set_Reg(0x13, 0x1200); // VDV[4:0] for VCOM amplitude
+   	LCD_Set_Reg(0x29, 0x000A); // 04  VCM[5:0] for VCOMH
+   	LCD_Set_Reg(0x2B, 0x000D); // Set Frame Rate
    	delay_ms(50); // Delay 50ms
-   	Set_LCD_REG(0x20, 0x0000); // GRAM horizontal Address
-   	Set_LCD_REG(0x21, 0x0000); // GRAM Vertical Address
+   	LCD_Set_Reg(0x20, 0x0000); // GRAM horizontal Address
+   	LCD_Set_Reg(0x21, 0x0000); // GRAM Vertical Address
    	// ----------- Adjust the Gamma Curve ----------//
-   	Set_LCD_REG(0x30, 0x0000); 	Set_LCD_REG(0x31, 0x0404);
-   	Set_LCD_REG(0x32, 0x0003); 	Set_LCD_REG(0x35, 0x0405);
-   	Set_LCD_REG(0x36, 0x0808); 	Set_LCD_REG(0x37, 0x0407);
-   	Set_LCD_REG(0x38, 0x0303); 	Set_LCD_REG(0x39, 0x0707);
-   	Set_LCD_REG(0x3C, 0x0504); 	Set_LCD_REG(0x3D, 0x0808);
+   	LCD_Set_Reg(0x30, 0x0000); 	LCD_Set_Reg(0x31, 0x0404);
+   	LCD_Set_Reg(0x32, 0x0003); 	LCD_Set_Reg(0x35, 0x0405);
+   	LCD_Set_Reg(0x36, 0x0808); 	LCD_Set_Reg(0x37, 0x0407);
+   	LCD_Set_Reg(0x38, 0x0303); 	LCD_Set_Reg(0x39, 0x0707);
+   	LCD_Set_Reg(0x3C, 0x0504); 	LCD_Set_Reg(0x3D, 0x0808);
    	//------------------ Set GRAM area ---------------//
-   	Set_LCD_REG(0x61, 0x0001); // NDL,VLE, REV
-   	Set_LCD_REG(0x6A, 0x0000); // set scrolling line
+   	LCD_Set_Reg(0x61, 0x0001); // NDL,VLE, REV
+   	LCD_Set_Reg(0x6A, 0x0000); // set scrolling line
 	//-------------- Partial Display Control ---------//
-	Set_LCD_REG(0x80, 0x0000);	Set_LCD_REG(0x81, 0x0000);
-	Set_LCD_REG(0x82, 0x0000);	Set_LCD_REG(0x83, 0x0000);
-	Set_LCD_REG(0x84, 0x0000);	Set_LCD_REG(0x85, 0x0000);
+	LCD_Set_Reg(0x80, 0x0000);	LCD_Set_Reg(0x81, 0x0000);
+	LCD_Set_Reg(0x82, 0x0000);	LCD_Set_Reg(0x83, 0x0000);
+	LCD_Set_Reg(0x84, 0x0000);	LCD_Set_Reg(0x85, 0x0000);
 	//-------------- Panel Control -------------------//
-	Set_LCD_REG(0x90, 0x0010);
-	Set_LCD_REG(0x92, 0x0000);
-	Set_LCD_REG(0x07, 0x0133); // 262K color and display ON
+	LCD_Set_Reg(0x90, 0x0010);
+	LCD_Set_Reg(0x92, 0x0000);
+	LCD_Set_Reg(0x07, 0x0133); // 262K color and display ON
 
 	LCD_Draw_StartScreen();
 }
@@ -757,6 +796,71 @@ void LCD_Init(void)
    	LCD_Write_Com(0x11);   	//EXIT SLEEP
    	delay_ms(100);
    	LCD_Write_Com(0x29);   	//TURN ON DISPLAY
+
+	LCD_Draw_StartScreen();
+}
+#endif
+#ifdef R61509V
+/******************************************************************************
+* Function Name  : LCD_Init
+* Description    : Init R61509V chip
+******************************************************************************/
+void LCD_Init(void)
+{
+	LCD_Reset();
+
+   	LCD_Set_Reg(0, 0);LCD_Set_Reg(0, 0);
+   	delay_ms(10);
+   	LCD_Set_Reg(0, 0);LCD_Set_Reg(0, 0);
+   	LCD_Set_Reg(0, 0);LCD_Set_Reg(0, 0);
+   	delay_ms(10);
+
+   	LCD_Set_Reg(0x0400, 0x6200);	//GS=0
+   	LCD_Set_Reg(0x0008, 0x0808);
+   	LCD_Set_Reg(0x0300, 0x0109);
+   	LCD_Set_Reg(0x0301, 0x7E0A);
+   	LCD_Set_Reg(0x0302, 0x0704);
+   	LCD_Set_Reg(0x0303, 0x0911);
+   	LCD_Set_Reg(0x0304, 0x2100);
+   	LCD_Set_Reg(0x0305, 0x1109);
+   	LCD_Set_Reg(0x0306, 0x7407);
+   	LCD_Set_Reg(0x0307, 0x0A0E);
+   	LCD_Set_Reg(0x0308, 0x0901);
+   	LCD_Set_Reg(0x0309, 0x0021);
+   	//Panel Interface Contro
+   	LCD_Set_Reg(0x0010, 0x0016);
+   	LCD_Set_Reg(0x0011, 0x0202);
+   	LCD_Set_Reg(0x0012, 0x0300);
+   	LCD_Set_Reg(0x0013, 0x0007);
+   	delay_ms(10);
+   	//Power control
+   	LCD_Set_Reg(0x0100, 0x0330);
+   	LCD_Set_Reg(0x0101, 0x0247);
+   	LCD_Set_Reg(0x0103, 0x1000);
+   	LCD_Set_Reg(0x0280, 0xBC00);
+   	LCD_Set_Reg(0x0102, 0xD1B0);	//power on
+   	delay_ms(10);
+   	LCD_Set_Reg(0x0001, 0x0100);	//Driver Output Control  SM, SS=0
+   	LCD_Set_Reg(0x0002, 0x0100);	//LCD Drive Wave Control  BC=1
+   	LCD_Set_Reg(0x0003, 0x5032);	//entry mode : 16bpp 2 transfers, BGR
+
+   	LCD_Set_Reg(0x0009, 0x0001);
+   	LCD_Set_Reg(0x000B, 0x0000);
+   	LCD_Set_Reg(0x000C, 0x0000);	//External Display Interface Control 1
+   	LCD_Set_Reg(0x0090, 0x8000);
+   	LCD_Set_Reg(0x000F, 0x0000);
+   	//Partial Display Control
+   	LCD_Set_Reg(0x0500, 0x0000);
+   	LCD_Set_Reg(0x0501, 0x0000);
+   	LCD_Set_Reg(0x0502, 0x005F);
+
+   	LCD_Set_Reg(0x0401, 0x0001);
+   	LCD_Set_Reg(0x0404, 0x0000);
+   	delay_ms(50);
+   	LCD_Set_Reg(0x0007, 0x0103);	//display on
+   	delay_ms(100);
+
+   	CS_LCD_set;
 
 	LCD_Draw_StartScreen();
 }

@@ -19,7 +19,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 
 //#define HW_VER_2_SWD_DEBUG
 
-#define INVERT_ENCODER_DIR
+//#define INVERT_ENCODER_DIR
 
 // WARNING !!!!!
 //To hardware select proper display orientations (side of the LCD connecting cable) you need
@@ -33,6 +33,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //#define ILI9341
 //#define ST7789
 //#define ILI9327
+//#define R61509V
 
 #define LCD_BRIGHTNES   250
 
@@ -51,7 +52,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define CHAR_WIDTH      16  //depend on FONT resolution
 #define CHAR_HEIGTH     24
 
-#define I2C_Addr        0x27 << 1   //0x27 as equal to PCA8574 and PCF8575
+#define I2C_Addr        0x33 << 1   //must be 0x33 for STM32 main boards
 
 //============================================================================================
 
@@ -60,7 +61,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCDMAX          320
 #define LCD320x240
 #endif
-#ifdef ILI9327
+#if defined(ILI9327) || defined(R61509V)
 #define LCDMIN          240
 #define LCDMAX          384	//for even number of symols in line
 #define LCD400x240
@@ -252,7 +253,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define I2C_ERR_IRQ     I2C2_ER_IRQn
 //touchscreen
 #define TS_PORT         GPIOA
-#define TS_XR           GPIO_Pin_0
+#define TS_XR           GPIO_Pin_0  //4 pins for LEFT ORIENTATION screen !!!
 #define TS_YU           GPIO_Pin_1
 #define TS_XL           GPIO_Pin_2
 #define TS_YD           GPIO_Pin_3

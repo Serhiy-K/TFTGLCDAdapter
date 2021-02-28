@@ -7,7 +7,7 @@ For this data bus use TFT GLCD Panel "Version 1.0" or "Version 3.0". You may bui
 For this data bus use TFT GLCD Panel "Version 2.0".
 
 ## Panel with touchscreen
-To use touchscreen use TFT GLCD Panel "Version 3.0".
+To use touchscreen select TFT GLCD Panel "Version 3.0". In **defines.h** file pins for touchscreen correspond to **LEFT** oriented screen.
 
 ## Connect to 5V boards
 TFT GLCD Panel "Version 1.0" developed to connect with printer's main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) you need add levels converter for SPI input signals. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. For use I2C bus you need remove pull-up resistors betwin I2C lines and +5V on main board if they present. TFT GLCD Panel "Version 2.0" already has level converter for SPI input signals.

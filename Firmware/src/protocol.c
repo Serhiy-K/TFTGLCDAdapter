@@ -1137,7 +1137,10 @@ void I2C2_EV_IRQHandler(void)
 	    	switch (cmd)
 	    	{
 	    		case READ_BUTTONS:	I2C->DR = buttons;	buttons = 0;	next_tx = encdiff;	encdiff = 0;	return;
-	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;	next_tx = Read_Buttons();	return;
+	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;
+									if (!buttons)	next_tx = Read_Buttons();
+									else			{next_tx = buttons;	buttons = 0;}
+									return;
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	return;
 	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	return;
 	    	}
