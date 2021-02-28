@@ -513,7 +513,7 @@ void LCD_Draw_StartScreen()
 	LCD_PutStrig_XY(4, 5,     "connection..");
 #else
 	//clear 400x240 dots
-	LCD_ClearArea(0, 0, 399, LCDYMAX - 1, BackColor);
+	LCD_FillRect(0, 0, 399, LCDYMAX - 1, BackColor);
 	LCD_Set_TextColor(Yellow, Blue);
 	LCD_PutStrig_XY(0, 0, "      3-D Printer       ");
 	LCD_PutStrig_XY(0, 1, "   400x240 TFT Panel    ");
