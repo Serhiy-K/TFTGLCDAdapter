@@ -90,6 +90,8 @@ uint8_t new_buf = 0;
 uint8_t USE_UBL = 0;
 uint8_t init = 0;
 uint8_t buttons = 0;
+uint8_t clr_screen = 0;
+uint8_t temp_cmd = 0;
 
 void Print_Line(uint8_t row);
 
@@ -281,6 +283,7 @@ void Clear_Screen()
 {	// clear only output buffer
 	uint16_t i;
 	new_command = 0;
+	clr_screen = 1;
 	for (i = 0; i < (FB_SIZE - 2); i++)	data[out_buf][i] = ' ';
 	for (i = 0; i < TEXT_LINES; i++)	lines[i] = 0;
 	progress_cleared = 0;
@@ -290,6 +293,8 @@ void Clear_Screen()
 	UBL_first_time = 1;
 	LCD_Set_TextColor(White, Black);
 	LCD_ClearScreen();
+	clr_screen = 0;
+	if (temp_cmd)	{new_command = temp_cmd;	temp_cmd = 0;}
 }
 //----------------------------------------------------------------------------
 void UBL_Draw_Dots(uint8_t y)
@@ -1088,7 +1093,7 @@ void I2C2_EV_IRQHandler(void)
 	    	if (!toread)
 	    	{// command
 	    		cmd = b;	pos = -1;
-				if (b == CLR_SCREEN)	/*Clear_Screen();*/{new_command = b;	return;}
+				if (b == CLR_SCREEN)	{new_command = b;	return;}
 		    	else if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
 			}
 	    	else
@@ -1129,7 +1134,9 @@ void I2C2_EV_IRQHandler(void)
 				case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 				case LCD_WRITE:	if (pos < FB_SIZE) {toread = 1;	return;}
 								new_buf = 1;
-				case LCD_PUT:	new_command = cmd;	return;
+				case LCD_PUT:	if (clr_screen)	temp_cmd = cmd;
+								else			new_command = cmd;
+								return;
 			}
 	    	break;
 	    // Slave TRANSMITTER mode
@@ -1200,7 +1207,8 @@ void SPI_IRQHandler(void)
 					case BUZZER:	set_new_buz();	if (buzcnt == 1)	Buzzer();	return;
 					case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 					case LCD_WRITE:	new_buf = 1;	//update all screen
-					case LCD_PUT:	new_command = cmd;
+					case LCD_PUT:	if (clr_screen)	temp_cmd = cmd;
+									else			new_command = cmd;
 				}
 		}
 	}
