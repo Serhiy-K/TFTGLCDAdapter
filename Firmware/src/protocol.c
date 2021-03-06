@@ -64,6 +64,7 @@
 uint8_t data[2][FB_SIZE];
 uint8_t datat[60] = {' '};
 uint8_t lines[TEXT_LINES] = {0};
+uint8_t clr_lines[TEXT_LINES] = {0};
 
 uint8_t in_buf = 0;
 uint8_t out_buf = 0;
@@ -90,8 +91,6 @@ uint8_t new_buf = 0;
 uint8_t USE_UBL = 0;
 uint8_t init = 0;
 uint8_t buttons = 0;
-uint8_t clr_screen = 0;
-uint8_t temp_cmd = 0;
 
 void Print_Line(uint8_t row);
 
@@ -283,18 +282,15 @@ void Clear_Screen()
 {	// clear only output buffer
 	uint16_t i;
 	new_command = 0;
-	clr_screen = 1;
 	for (i = 0; i < (FB_SIZE - 2); i++)	data[out_buf][i] = ' ';
 	for (i = 0; i < TEXT_LINES; i++)	lines[i] = 0;
+	for (i = 0; i < TEXT_LINES; i++)	clr_lines[i] = 1;
 	progress_cleared = 0;
 #ifdef HW_VER_3
 	screen_mode = MAIN_SCREEN;
 #endif
 	UBL_first_time = 1;
 	LCD_Set_TextColor(White, Black);
-	LCD_ClearScreen();
-	clr_screen = 0;
-	if (temp_cmd)	{new_command = temp_cmd;	temp_cmd = 0;}
 }
 //----------------------------------------------------------------------------
 void UBL_Draw_Dots(uint8_t y)
@@ -418,10 +414,13 @@ void Print_Lines()
 	new_command = 0;
 	for (i = 0; i < TEXT_LINES; i++)
 	{
-		if (lines[i])
+		if (lines[i])	{Print_Line(i);	lines[i] = clr_lines[i] = 0;}
+	}
+	if (!USE_UBL)
+	{
+		for (i = 0; i < TEXT_LINES; i++)
 		{
-			Print_Line(i);
-			lines[i] = 0;
+			if (clr_lines[i])	{Print_Line(i);	clr_lines[i] = 0;}
 		}
 	}
 }
@@ -730,6 +729,7 @@ void Print_Line(uint8_t row)
 			screen_mode = EDIT_SCREEN;
 			lines[MIDDLE_Y + 2] = lines[MIDDLE_Y + 4] = 1;
 			row = MIDDLE_Y - 1;	//move progress bar up to separate from buttons
+			clr_lines[MIDDLE_Y - 1] = clr_lines[MIDDLE_Y + 2] = clr_lines[MIDDLE_Y + 4] = 0;
 		}
 #endif
 		Draw_Progress_Bar(row, *(line + 1));
@@ -764,6 +764,7 @@ void Print_Line(uint8_t row)
 			{
 				screen_mode = EDIT_SCREEN;
 				lines[MIDDLE_Y + 2] = lines[MIDDLE_Y + 4] = 1;
+				clr_lines[MIDDLE_Y + 2] = clr_lines[MIDDLE_Y + 4] = 0;
 			}
 		}
 #endif
@@ -917,6 +918,7 @@ void Init()
 	for (i = 0; i < (FB_SIZE - 2); i++)	data[in_buf][i] = ' ';
 	data[in_buf][FB_SIZE - 2] = data[in_buf][FB_SIZE - 1] = 0;
 	Clear_Screen();
+	LCD_ClearScreen();
 #ifdef HW_VER_3
 	restoreSettings();
 #endif
@@ -1134,9 +1136,7 @@ void I2C2_EV_IRQHandler(void)
 				case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 				case LCD_WRITE:	if (pos < FB_SIZE) {toread = 1;	return;}
 								new_buf = 1;
-				case LCD_PUT:	if (clr_screen)	temp_cmd = cmd;
-								else			new_command = cmd;
-								return;
+				case LCD_PUT:	new_command = cmd;	return;
 			}
 	    	break;
 	    // Slave TRANSMITTER mode
@@ -1207,8 +1207,7 @@ void SPI_IRQHandler(void)
 					case BUZZER:	set_new_buz();	if (buzcnt == 1)	Buzzer();	return;
 					case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 					case LCD_WRITE:	new_buf = 1;	//update all screen
-					case LCD_PUT:	if (clr_screen)	temp_cmd = cmd;
-									else			new_command = cmd;
+					case LCD_PUT:	new_command = cmd;
 				}
 		}
 	}

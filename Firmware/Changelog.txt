@@ -1,3 +1,11 @@
+03/06/2021
+
+1. Cnange algorithm for Clear_Screen.
+
+03/01/2021
+
+1. Fix for return from edit contrast in Marlin.
+
 28/02/2021
 
 1. Add support for R61509V LCD chip.
