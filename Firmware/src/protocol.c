@@ -189,7 +189,7 @@ void Move_Text()
 			to = TSO + F1O;
 			goto FAN_P;
 		}
-		else
+		else if (temps == 3)
 		{
 			to = TTO + F3O;	datat[to++] = 'F';	datat[to++] = 'A';	datat[to] = 'N';
 			datat[TMO + F3O + 1] = '%';
@@ -1174,7 +1174,11 @@ void SPI_IRQHandler(void)
 		switch(b)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
-			case READ_BUTTONS:	SPI->DR = buttons;	buttons = 0;	return;
+			case READ_BUTTONS:	SPI->DR = buttons;
+#ifndef HW_VER_3
+			buttons = 0;
+#endif
+			return;
 			case READ_ENCODER:	SPI->DR = encdiff;	encdiff = 0;	return;
 			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
 			case LCD_PUT:		cmd = b;	toread = CHARS_PER_LINE;	pos = -1;	return;

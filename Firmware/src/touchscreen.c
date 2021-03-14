@@ -118,17 +118,13 @@ void Emulate_Encoder()
 			if (ts_y == cur_line) goto go_to_menu;
 			break;
 		case EDIT_SCREEN:
-			if (ts_y <= MIDDLE_Y)
-				goto go_to_menu;
-			else
-			{
-				if 		(ts_y == (MIDDLE_Y + 2))	ed = 20;
-				else if (ts_y == (MIDDLE_Y + 4))	ed = 2;
-				else	break;
-				if (!ts_x)	ed = -ed;
-				encdiff = ed;
-				if (delay_cnt == 10)	delay_cnt = 8;	//autorepeat time ~ 0.2s
-			}
+			if (ts_y <= MIDDLE_Y)	goto go_to_menu;
+			if 		(ts_y == (MIDDLE_Y + 2))	ed = 20;
+			else if (ts_y == (MIDDLE_Y + 4))	ed = 2;
+			else	break;
+			if (!ts_x)	ed = -ed;
+			encdiff = ed;
+			if (delay_cnt == 10)	delay_cnt = 8;	//autorepeat time ~ 0.2s
 			break;
 		case SELECT_SCREEN:
 			if (cur_x != ts_x)
@@ -213,6 +209,7 @@ void Read_Touch()
 				Timer_Del->CR1 &= ~TIM_CR1_CEN;	//autorepeat delay off
 				delay_cnt = 0;
 				ts_pressed = 0;
+				buttons = 0;
 				if		(adc_y_calibrate == 1)	adc_y_calibrate = 2;
 				else if (adc_y_calibrate == 3)	adc_y_calibrate = 4;
 				else if (adc_y_calibrate == 5)	adc_y_calibrate = 6;

@@ -1,3 +1,8 @@
+03/14/20221
+
+1. Fix touchscreen for Smoothieware.
+2. Fix FAN text output in main screen for Smoothieware.
+
 03/06/2021
 
 1. Cnange algorithm for Clear_Screen.
