@@ -17,11 +17,10 @@ volatile uint16_t TBack, TColor;
 uint16_t Back = BackColor;
 
 uint16_t Xcour;
-//extern uint8_t	protocol;
 
+
+// For read LCD ID in Debug mode
 /*
-// For read LCD ID
-
 uint16_t LCD_reg_data[8] = {0};
 char LCD_REG_HEX[8][4];
 char LCD_REG[2];
@@ -131,7 +130,7 @@ static void LCD_Write_Com(uint8_t RegisterIndex)
 	RS_LCD_set;
 }
 #endif
-#ifdef R61509V
+#if defined(R61509V)
 /******************************************************************************
  Description    : Write data to LCD reg
  Input          : RegisterIndex, data
@@ -204,7 +203,7 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA(X1 >> 8);
 	LCD_DATA(X1);
 #endif
-#ifdef R61509V
+#if defined(R61509V)
    	LCD_Set_Reg(0x0212, X0);
    	LCD_Set_Reg(0x0213, X1);
    	LCD_Set_Reg(0x0210, Y0);
@@ -229,7 +228,7 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA(0x2C);
 #endif
 
-#ifdef R61509V
+#if defined(R61509V)
 #ifndef HW_VER_2
 	LCD_DATA(0x02);	WR_Puls;	//send 0x0202
 #else
@@ -375,29 +374,6 @@ void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos)
 	Xcour = Xpos;
 }
 /******************************************************************************
- Description    : Convert Russian char from HD44780 encoding to ASCII
- Input          : HD44780 char c
- Output         : ASCII char c
-******************************************************************************/
-/*
-uint8_t HD44780_to_ASCII(char c)
-{
-	const uint8_t transcode[] =
-	{	//symbols for cyrillic
-		129, 131, 240, 134, 135, 136, 137, 139, 143, 147, 148, 151, 152, 154, 155, 157,
-		158, 159, 161, 162, 163, 241, 166, 167, 168, 169, 170, 171, 172, 173, 175, 226,
-		231, 232, 234, 235, 236, 237, 238, 239,
-		132, 150, 153, 164, 228, 230, 233
-	};
-	if ((c >= 0xa0) && (c <= 0xc7))
-		return transcode[c - 0xa0];
-	else if ((c >= 0xe0) && (c <= 0xe6))
-		return transcode[c - 0xb8];
-	else
-		return c;
-}
-*/
-/******************************************************************************
  Description    : Draw char to current position
  Input          : char c
 ******************************************************************************/
@@ -407,8 +383,6 @@ void LCD_DrawChar(char c)
 	const char *ptr; // pointer to char data
 	uint8_t mask;
 
-	//	if ((protocol == MarlinI2C) || (protocol == MarlinSPI))
-	//		c = HD44780_to_ASCII(c);
 	ptr = &FONT[(uint8_t)c][0];
 	for (i = 0; i < CHAR_BYTES; i++)
 	{
@@ -502,11 +476,11 @@ void LCD_Draw_StartScreen()
 	LCD_PutStrig_XY(0, 0, "    3-D Printer     ");
 	LCD_PutStrig_XY(0, 1, " 320x240 TFT Panel  ");
 #if	defined(HW_VER_1)
-	LCD_PutStrig_XY(0, 2, "      Ver.1.1       ");
+	LCD_PutStrig_XY(0, 2, "    Version 1.1     ");
 #elif	defined(HW_VER_2)
-	LCD_PutStrig_XY(0, 2, "      Ver.2.0       ");
+	LCD_PutStrig_XY(0, 2, "    Version 2.0     ");
 #elif	defined(HW_VER_3)
-	LCD_PutStrig_XY(0, 2, "      Ver.3.0       ");
+	LCD_PutStrig_XY(0, 2, "    Version 3.0     ");
 #endif
 	LCD_Set_TextColor(White, BackColor);
 	LCD_PutStrig_XY(0, 4, "Waiting for printer ");
@@ -518,11 +492,11 @@ void LCD_Draw_StartScreen()
 	LCD_PutStrig_XY(0, 0, "      3-D Printer       ");
 	LCD_PutStrig_XY(0, 1, "   400x240 TFT Panel    ");
 #if	defined(HW_VER_1)
-	LCD_PutStrig_XY(0, 2, "        Ver.1.1         ");
+	LCD_PutStrig_XY(0, 2, "      Version 1.1       ");
 #elif	defined(HW_VER_2)
-	LCD_PutStrig_XY(0, 2, "        Ver.2.0         ");
+	LCD_PutStrig_XY(0, 2, "      Version 2.0       ");
 #elif	defined(HW_VER_3)
-	LCD_PutStrig_XY(0, 2, "        Ver.3.0         ");
+	LCD_PutStrig_XY(0, 2, "      Version 3.0       ");
 #endif
 	LCD_Set_TextColor(White, BackColor);
 	LCD_PutStrig_XY(0, 4, "   Waiting for printer  ");
@@ -815,7 +789,6 @@ void LCD_Init(void)
    	LCD_Set_Reg(0, 0);LCD_Set_Reg(0, 0);
    	delay_ms(10);
 
-   	LCD_Set_Reg(0x0400, 0x6200);	//GS=0
    	LCD_Set_Reg(0x0008, 0x0808);
    	LCD_Set_Reg(0x0300, 0x0109);
    	LCD_Set_Reg(0x0301, 0x7E0A);
@@ -840,9 +813,18 @@ void LCD_Init(void)
    	LCD_Set_Reg(0x0280, 0xBC00);
    	LCD_Set_Reg(0x0102, 0xD1B0);	//power on
    	delay_ms(10);
-   	LCD_Set_Reg(0x0001, 0x0100);	//Driver Output Control  SM, SS=0
+	if (orientation)
+	{
+   		LCD_Set_Reg(0x0001, 0x0100);	//Driver Output Control  SS=1
+   		LCD_Set_Reg(0x0400, 0xe200);	//GS=1
+	}
+	else
+	{
+   		LCD_Set_Reg(0x0001, 0x0000);	//Driver Output Control  SS=0
+   		LCD_Set_Reg(0x0400, 0x6200);	//GS=0
+	}
    	LCD_Set_Reg(0x0002, 0x0100);	//LCD Drive Wave Control  BC=1
-   	LCD_Set_Reg(0x0003, 0x5032);	//entry mode : 16bpp 2 transfers, BGR
+   	LCD_Set_Reg(0x0003, 0x50a0);	//entry mode : 16bpp 2 transfers, BGR,OGR,ID1=1, ID0,AM=0
 
    	LCD_Set_Reg(0x0009, 0x0001);
    	LCD_Set_Reg(0x000B, 0x0000);

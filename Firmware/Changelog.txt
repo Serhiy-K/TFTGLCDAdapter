@@ -1,3 +1,8 @@
+04/01/2021
+
+1. Add rotation for R61509V displays.
+2. Remove unneeded code in LCD.c.
+
 03/14/20221
 
 1. Fix touchscreen for Smoothieware.
