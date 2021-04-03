@@ -19,7 +19,7 @@
 </editorArea>
 <editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="protocol.c" partName="protocol.c" path="D:/Devel/Projects/TFTGLCDAdapter/Firmware/src/protocol.c" title="protocol.c" tooltip="D:/Devel/Projects/TFTGLCDAdapter/Firmware/src/protocol.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/3D-GLCD/src/protocol.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="10200" selectionTopPixel="1755"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="418" selectionTopPixel="1230"/>
 </editor>
 </editors>
 <views>
@@ -27,9 +27,10 @@
 <viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="0">
 <expanded>
 <element path="/3D-GLCD"/>
+<element path="/3D-GLCD/src"/>
 </expanded>
 <selection>
-<element path="/3D-GLCD"/>
+<element path="/3D-GLCD/src/touchscreen.c"/>
 </selection>
 </viewState>
 </view>
@@ -102,7 +103,7 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.6723953" ratioLeft="626" ratioRight="305" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@d1d527" ratio="0.81954885" ratioLeft="763" ratioRight="168" relationship="4" relative="org.eclipse.ui.internal.ViewStack@7d3503">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
@@ -112,7 +113,7 @@
 </presentation>
 </folder>
 </info>
-<info part="org.coocox.builder.ui.exampleView" ratio="0.16886327" ratioLeft="205" ratioRight="1009" relationship="2" relative="org.eclipse.ui.internal.ViewStack@7d3503"/>
+<info part="org.coocox.builder.ui.exampleView" ratio="0.19109948" ratioLeft="292" ratioRight="1236" relationship="2" relative="org.eclipse.ui.internal.ViewStack@7d3503"/>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@1a9363d" ratio="0.7197171" ratioLeft="814" ratioRight="317" relationship="2" relative="org.coocox.builder.ui.exampleView">
 <folder appearance="2" expanded="2">
 <page content="org.coocox.component.ui.Help" label="LabelNotFound"/>
@@ -252,13 +253,8 @@
 <editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor">
 <org.coocox.builder.ui.editors.ConfigEditor/>
 </editor>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/3D-GLCD/src/touchscreen.c"/>
 </editors>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="17555" y="0"/>
-</item>
-<item historyLabel="protocol.c" index="0">
-<position info="not_deleted" x="17575" y="0"/>
-</item>
 <item historyLabel="protocol.c" index="0">
 <position info="not_deleted" x="5093" y="0"/>
 </item>
@@ -398,8 +394,14 @@
 <position info="not_deleted" x="10200" y="0"/>
 </item>
 <item historyLabel="Configuration" index="14"/>
-<item active="true" historyLabel="protocol.c" index="13">
+<item historyLabel="protocol.c" index="13">
 <position info="not_deleted" x="10200" y="0"/>
+</item>
+<item historyLabel="touchscreen.c" index="15">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item active="true" historyLabel="protocol.c" index="13">
+<position info="not_deleted" x="418" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -408,6 +410,15 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="touchscreen.c" tooltip="3D-GLCD/src/touchscreen.c">
+<persistable path="/3D-GLCD/src/touchscreen.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="core_cm3.h" tooltip="NeilScope3/cmsis/core_cm3.h">
+<persistable path="/NeilScope3/cmsis/core_cm3.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="lpc17xx_it.c" tooltip="NeilScope3/lpc17xx_it.c">
+<persistable path="/NeilScope3/lpc17xx_it.c"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
 <persistable path="/3D-GLCD/main.c"/>
 </file>
@@ -443,15 +454,6 @@
 </file>
 <file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="systick.h" tooltip="D:\Devel\Projects\COIDE\Soldering_iron\src\systick.h">
 <persistable path="D:\Devel\Projects\COIDE\Soldering_iron\src\systick.h" project="Soldering_iron"/>
-</file>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="math.h" tooltip="D:\Devel\ARM\gcc-5\arm-none-eabi\include\math.h">
-<persistable path="D:\Devel\ARM\gcc-5\arm-none-eabi\include\math.h" project="Soldering_iron"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
-<persistable path="/3D-GLCD/main.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="3D-GLCD/main.c">
-<persistable path="/3D-GLCD/main.c"/>
 </file>
 </mruList>
 </workbench>
