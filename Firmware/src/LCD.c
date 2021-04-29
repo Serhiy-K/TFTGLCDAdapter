@@ -948,9 +948,9 @@ void LCD_Init(void)
     // output orientation + BGR
 	// bits = MY MX MV ML BGR x x x
 	if (orientation)
-    	LCD_Set_Reg(0xC8, 0x68);
+    	LCD_Set_Reg(0x16, 0xC8);
 	else
-    	LCD_Set_Reg(0x08, 0x68);
+    	LCD_Set_Reg(0x16, 0x08);
 
    	CS_LCD_set;
 
