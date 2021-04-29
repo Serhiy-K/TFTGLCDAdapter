@@ -10,12 +10,12 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //                                Main parameters
 //============================================================================================
 //For LCD and controller with 8 bit data bus and encoder
-//#define HW_VER_1
+#define HW_VER_1
 //For LCD and controller with 16 bit data bus and encoder
 //#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
-#define HW_VER_3
-#define CALIBR_DEBUG_INFO   //outputs old and new ADC values
+//#define HW_VER_3
+//#define CALIBR_DEBUG_INFO   //outputs old and new ADC values
 
 //#define HW_VER_2_SWD_DEBUG
 
@@ -25,15 +25,16 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //To hardware select proper display orientations (side of the LCD connecting cable) you need
 //pull LCD_ORIENT_PIN by resistor with about 10k to GND for right side or to +3.3V for left
 //or use one of SET_ORIENT_ parameter for software select orientation.
-//#define SET_ORIENT_RIGHT
-#define SET_ORIENT_LEFT
+#define SET_ORIENT_RIGHT
+//#define SET_ORIENT_LEFT
 
 //select only one LCD type
-#define ILI9325   //ILI9325==ILI9328
+//#define ILI9325   //ILI9325==ILI9328
 //#define ILI9341
 //#define ST7789
 //#define ILI9327
 //#define R61509V
+#define HX8347
 
 #define LCD_BRIGHTNES   250
 
@@ -56,7 +57,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 
 //============================================================================================
 
-#if defined(ILI9325) || defined(ILI9341) || defined(ST7789)
+#if defined(ILI9325) || defined(ILI9341) || defined(ST7789) || defined(HX8347)
 #define LCDMIN          240
 #define LCDMAX          320
 #define LCD320x240
@@ -86,11 +87,18 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCD_ORIENT_PORT GPIOB
 #define LCD_ORIENT_PIN  GPIO_Pin_5
 #define LCD_CTRL_PORT   GPIOB
+/*
 #define LCD_RD          GPIO_Pin_5
 #define LCD_RST         GPIO_Pin_6
 #define LCD_WR          GPIO_Pin_7
 #define LCD_RS          GPIO_Pin_8
 #define LCD_CS          GPIO_Pin_9
+*/
+#define LCD_CS          GPIO_Pin_5
+#define LCD_WR          GPIO_Pin_6
+#define LCD_RS          GPIO_Pin_7
+#define LCD_RD          GPIO_Pin_8
+#define LCD_RST         GPIO_Pin_9
 //SPI
 #define SPI             SPI2
 #define SPI_PORT        GPIOB
