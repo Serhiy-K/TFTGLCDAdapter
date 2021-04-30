@@ -93,12 +93,11 @@ void LCD_Read_Regs()
 	}
 }
 */
-#if defined(ILI9325) || defined(HX8347)
+#if defined(ILI9325)
 /******************************************************************************
  Description    : Write data to LCD reg
  Input          : RegisterIndex, data
- For HX8347 and 8-bit bus used parallel type 1 mode - D7-D0 lines
-******************************************************************************/
+ *****************************************************************************/
 static void LCD_Set_Reg(uint8_t RegisterIndex, uint16_t Data)
 {
 	RS_LCD_clr;
@@ -111,16 +110,26 @@ static void LCD_Set_Reg(uint8_t RegisterIndex, uint16_t Data)
 	RS_LCD_set;
 
 #ifndef HW_VER_2
-#ifdef HX8347
-	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	 WR_Puls;
-	LCD_DATA(Data);
-#else
 	LCD_DATA(Data >> 8);
 	LCD_DATA(Data & 0x00ff);
-#endif
 #else
 	LCD_DATA(Data);
 #endif
+}
+#endif
+
+#if defined(HX8347)
+/******************************************************************************
+ Description    : Write data to LCD reg
+ Input          : RegisterIndex, data
+******************************************************************************/
+static void LCD_Set_Reg(uint8_t RegisterIndex, uint16_t Data)
+{
+	RS_LCD_clr;
+	LCD_DATA(RegisterIndex);
+	RS_LCD_set;
+
+	LCD_DATA(Data);
 }
 #endif
 
@@ -229,10 +238,9 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_Set_Reg(0x09, X1);
 #endif
 
-
 	RS_LCD_clr;
 	//lcd_Draw_Start
-#if defined(ILI9325) || defined(HX8347)
+#if defined(ILI9325)
 #ifndef HW_VER_2
 	LCD_DATA_PORT->BRR = LCD_DATA_MASK;	WR_Puls;
 	LCD_DATA_PORT->BSRR = 0x22; WR_Puls;
@@ -240,6 +248,10 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_DATA(0x22);
 #endif
 #endif	//ILI9325
+
+#if defined(HX8347)
+	LCD_DATA(0x22);
+#endif
 
 #if defined(ILI9327) || defined(ILI9341) || defined(ST7789)
 	LCD_DATA(0x2C);
@@ -873,6 +885,24 @@ void LCD_Init(void)
 {
 	LCD_Reset();
 
+	//
+	// Display ON flow
+	//
+	LCD_Set_Reg(0x19, 0x01);	//OSC enable
+	delay_ms(80);
+	LCD_Set_Reg(0x1C, 0x03);
+	LCD_Set_Reg(0x1F, 0x00);
+	LCD_Set_Reg(0x1F, 0x10);
+	LCD_Set_Reg(0x1F, 0x50);
+	delay_ms(5);
+	//
+	// Power ON flow
+	//
+	LCD_Set_Reg(0x28, 0x38);
+	delay_ms(50);
+	LCD_Set_Reg(0x28, 0x3C);
+	LCD_Set_Reg(0x01, 0x00);
+    LCD_Set_Reg(0x17, 0x05);	//16 Bit/Pixel 
     //
     // Gamma settings.
     //
@@ -889,18 +919,16 @@ void LCD_Init(void)
 	LCD_Set_Reg(0x50, 0x46);
 	LCD_Set_Reg(0x51, 0x82);
 
-	LCD_Set_Reg(0x01, 0x06);
-    LCD_Set_Reg(0x17, 0x05);	//16 Bit/Pixel 
-
+	//VCOM
 	LCD_Set_Reg(0x23, 0x95);
 	LCD_Set_Reg(0x24, 0x95);
 	LCD_Set_Reg(0x25, 0xFF);
+
 	LCD_Set_Reg(0x27, 0x02);
-	LCD_Set_Reg(0x28, 0x02);
+	//Frame control
 	LCD_Set_Reg(0x29, 0x02);
-	LCD_Set_Reg(0x2A, 0x02);
+	LCD_Set_Reg(0x2A, 0x00);
 	LCD_Set_Reg(0x2C, 0x02);
-	LCD_Set_Reg(0x2D, 0x02);
 
 	LCD_Set_Reg(0x3A, 0x01);
 	LCD_Set_Reg(0x3B, 0x01);
@@ -913,22 +941,16 @@ void LCD_Init(void)
 	LCD_Set_Reg(0x40, 0x0F);
 	LCD_Set_Reg(0x41, 0xF0);
 
-	LCD_Set_Reg(0x19, 0x2D);
 	LCD_Set_Reg(0x93, 0x06);
 	delay_ms(80);
 	LCD_Set_Reg(0x20, 0x40);
 	LCD_Set_Reg(0x1D, 0x07);
 	LCD_Set_Reg(0x1E, 0x00);
-	LCD_Set_Reg(0x1F, 0x04);
 
 	LCD_Set_Reg(0x44, 0x3C);
 	LCD_Set_Reg(0x45, 0x12);
 	delay_ms(80);
-	LCD_Set_Reg(0x1C, 0x04);
-	delay_ms(80);
 	LCD_Set_Reg(0x43, 0x80);
-	delay_ms(80);
-	LCD_Set_Reg(0x1B, 0x08);
 	delay_ms(80);
 	LCD_Set_Reg(0x1B, 0x10);
 	delay_ms(80);
