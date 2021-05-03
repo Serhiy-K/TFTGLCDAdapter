@@ -883,99 +883,76 @@ void LCD_Init(void)
 ******************************************************************************/
 void LCD_Init(void)
 {
+char HEX[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	LCD_Reset();
 
-	//
-	// Display ON flow
-	//
-	LCD_Set_Reg(0x19, 0x01);	//OSC enable
-	delay_ms(80);
+	LCD_Set_Reg(0xEA, 0x00); // PTBA[15:0]
+	LCD_Set_Reg(0XEB, 0x20);
+	LCD_Set_Reg(0xEC, 0x0C); // STBA[15:0]
+	LCD_Set_Reg(0XED, 0xC4);
+	LCD_Set_Reg(0xE8, 0x38); // OPON[7:0]
+	LCD_Set_Reg(0xE9, 0x10); // OPON1[7:0]
+	LCD_Set_Reg(0xF1, 0x01); // OTPS1B
+	LCD_Set_Reg(0xF2, 0x10); // GEN
+	// Gamma settings.
+	LCD_Set_Reg(0x40, 0x01);	LCD_Set_Reg(0x41, 0x00);	LCD_Set_Reg(0x42, 0x00);	LCD_Set_Reg(0x43, 0x10);
+	LCD_Set_Reg(0x44, 0x0E);	LCD_Set_Reg(0x45, 0x24);	LCD_Set_Reg(0x46, 0x04);	LCD_Set_Reg(0x47, 0x50);
+	LCD_Set_Reg(0x48, 0x02);	LCD_Set_Reg(0x49, 0x13);	LCD_Set_Reg(0x4A, 0x19);	LCD_Set_Reg(0x4B, 0x19);
+	LCD_Set_Reg(0x4C, 0x16);	LCD_Set_Reg(0x50, 0x1B);	LCD_Set_Reg(0x51, 0x31);	LCD_Set_Reg(0x52, 0x2F);
+	LCD_Set_Reg(0x53, 0x3F);	LCD_Set_Reg(0x54, 0x3F);	LCD_Set_Reg(0x55, 0x3F);	LCD_Set_Reg(0x56, 0x2F);
+	LCD_Set_Reg(0x57, 0x7B);	LCD_Set_Reg(0x58, 0x09);	LCD_Set_Reg(0x59, 0x06);	LCD_Set_Reg(0x5A, 0x06);
+	LCD_Set_Reg(0x5B, 0x0C);	LCD_Set_Reg(0x5C, 0x1D);	LCD_Set_Reg(0x5D, 0xCC);
+    //Power Voltage Setting
+	LCD_Set_Reg(0x1B, 0x1B); // VRH=4.65V
+	LCD_Set_Reg(0x1A, 0x01); // BT (VGH~15V,VGL~-10V,DDVDH~5V)
+	LCD_Set_Reg(0x24, 0x2F); // VMH(VCOM High voltage ~3.2V)
+	LCD_Set_Reg(0x25, 0x57); // VML(VCOM Low voltage -1.2V)
+    //VCOM offset
+	LCD_Set_Reg(0x23, 0x88); // for Flicker adjust //can reload from OTP
+    //Power on Setting
+	LCD_Set_Reg(0x18, 0x34); // I/P_RADJ,N/P_RADJ, Normal mode 60Hz
+	LCD_Set_Reg(0x19, 0x01); // OSC_EN='1', start Osc
+	LCD_Set_Reg(0x01, 0x00); // DP_STB='0', out deep sleep
 	LCD_Set_Reg(0x1C, 0x03);
-	LCD_Set_Reg(0x1F, 0x00);
-	LCD_Set_Reg(0x1F, 0x10);
-	LCD_Set_Reg(0x1F, 0x50);
-	delay_ms(5);
-	//
-	// Power ON flow
-	//
-	LCD_Set_Reg(0x28, 0x38);
-	delay_ms(50);
-	LCD_Set_Reg(0x28, 0x3C);
-	LCD_Set_Reg(0x01, 0x00);
-    LCD_Set_Reg(0x17, 0x05);	//16 Bit/Pixel 
-    //
-    // Gamma settings.
-    //
-	LCD_Set_Reg(0x46, 0x94);
-	LCD_Set_Reg(0x47, 0x41);
-	LCD_Set_Reg(0x48, 0x00);
-	LCD_Set_Reg(0x49, 0x33);
-	LCD_Set_Reg(0x4A, 0x23);
-	LCD_Set_Reg(0x4B, 0x45);
-	LCD_Set_Reg(0x4C, 0x44);
-	LCD_Set_Reg(0x4D, 0x77);
-	LCD_Set_Reg(0x4E, 0x12);
-	LCD_Set_Reg(0x4F, 0xCC);
-	LCD_Set_Reg(0x50, 0x46);
-	LCD_Set_Reg(0x51, 0x82);
+	LCD_Set_Reg(0x1F, 0x88); // GAS=1, VOMG=00, PON=0, DK=1, XDK=0, DVDH_TRI=0, STB=0
+	delay_ms(40);
+	LCD_Set_Reg(0x1F, 0x80); // GAS=1, VOMG=00, PON=0, DK=0, XDK=0, DVDH_TRI=0, STB=0
+	delay_ms(24);
+	LCD_Set_Reg(0x1F, 0x90); // GAS=1, VOMG=00, PON=1, DK=0, XDK=0, DVDH_TRI=0, STB=0
+	delay_ms(40);
+	LCD_Set_Reg(0x1F, 0xD0); // GAS=1, VOMG=10, PON=1, DK=0, XDK=0, DDVDH_TRI=0, STB=0
+	delay_ms(40);
+	//color selection
+	LCD_Set_Reg(0x17, 0x05); // 65k color
+	//Display ON Setting
+	LCD_Set_Reg(0x28, 0x38); // GON=1, DTE=1, D=1000
+	delay_ms(320);
+	LCD_Set_Reg(0x28, 0x3F); // GON=1, DTE=1, D=1100
 
-	//VCOM
-	LCD_Set_Reg(0x23, 0x95);
-	LCD_Set_Reg(0x24, 0x95);
-	LCD_Set_Reg(0x25, 0xFF);
-
-	LCD_Set_Reg(0x27, 0x02);
-	//Frame control
-	LCD_Set_Reg(0x29, 0x02);
-	LCD_Set_Reg(0x2A, 0x00);
-	LCD_Set_Reg(0x2C, 0x02);
-
-	LCD_Set_Reg(0x3A, 0x01);
-	LCD_Set_Reg(0x3B, 0x01);
-	LCD_Set_Reg(0x3C, 0xF0);
-	LCD_Set_Reg(0x3D, 0x00);
-	delay_ms(80);
-	LCD_Set_Reg(0x35, 0x38);
-	LCD_Set_Reg(0x36, 0x78);
-	LCD_Set_Reg(0x3E, 0x38);
-	LCD_Set_Reg(0x40, 0x0F);
-	LCD_Set_Reg(0x41, 0xF0);
-
-	LCD_Set_Reg(0x93, 0x06);
-	delay_ms(80);
-	LCD_Set_Reg(0x20, 0x40);
-	LCD_Set_Reg(0x1D, 0x07);
-	LCD_Set_Reg(0x1E, 0x00);
-
-	LCD_Set_Reg(0x44, 0x3C);
-	LCD_Set_Reg(0x45, 0x12);
-	delay_ms(80);
-	LCD_Set_Reg(0x43, 0x80);
-	delay_ms(80);
-	LCD_Set_Reg(0x1B, 0x10);
-	delay_ms(80);
-	LCD_Set_Reg(0x90, 0x7F);
-	LCD_Set_Reg(0x26, 0x04);
-	delay_ms(80);
-	LCD_Set_Reg(0x26, 0x24);
-	LCD_Set_Reg(0x26, 0x2C);
-	delay_ms(80);
-	LCD_Set_Reg(0x26, 0x3C);
-	LCD_Set_Reg(0x57, 0x02);
-	LCD_Set_Reg(0x55, 0x00);
-	LCD_Set_Reg(0x57, 0x00);
-
-    //
+	//Panel characteristic control register
+	// bits = x x x x SS_PANEL GS_PANEL REV_PANEL BGR_PANEL
+	LCD_Set_Reg(0x36, 0x08);	// output lirection: S1->S720, G1->G320
     // Memory Access Control.
     // output orientation + BGR
 	// bits = MY MX MV ML BGR x x x
-	if (orientation)
-    	LCD_Set_Reg(0x16, 0xC8);
-	else
-    	LCD_Set_Reg(0x16, 0x08);
+   	LCD_Set_Reg(0x16, 0x08);
 
    	CS_LCD_set;
 
-	LCD_Draw_StartScreen();
+//	LCD_Draw_StartScreen();
+
+	//only for tests !!!!
+	LCD_ClearScreen();
+	LCD_Set_TextColor(Yellow, Blue);
+test1:
+	LCD_PutStrig_XY(0, 0, " REG 0x16=0x");
+	for (uint8_t i = 0; i < 0x10; i++)
+	{
+		LCD_Set_Reg(0x16, 0x08 + (i << 4));
+		LCD_DrawChar(HEX[i]);
+		LCD_DrawChar('8');
+	}
+	delay_ms(1000);
+	goto test1;
 }
 #endif
