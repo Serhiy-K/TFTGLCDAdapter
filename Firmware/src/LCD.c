@@ -945,14 +945,14 @@ char HEX[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', '
 	LCD_ClearScreen();
 	LCD_Set_TextColor(Yellow, Blue);
 test1:
-	LCD_PutStrig_XY(0, 0, " REG 0x16=0x");
 	for (uint8_t i = 0; i < 0x10; i++)
 	{
+		LCD_PutStrig_XY(0, 0, " REG 0x16=0x");
 		LCD_Set_Reg(0x16, 0x08 + (i << 4));
 		LCD_DrawChar(HEX[i]);
 		LCD_DrawChar('8');
+		delay_ms(1000);
 	}
-	delay_ms(1000);
 	goto test1;
 }
 #endif
