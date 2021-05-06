@@ -228,10 +228,10 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_Set_Reg(0x0200, Y0);
 #endif
 #if defined(HX8347)
-	LCD_Set_Reg(0x02, Y0 >> 8);
-	LCD_Set_Reg(0x03, Y0);
-	LCD_Set_Reg(0x04, Y1 >> 8);
-	LCD_Set_Reg(0x05, Y1);
+	LCD_Set_Reg(0x02, ((LCDYMAX - 1) - Y0) >> 8);
+	LCD_Set_Reg(0x03, (LCDYMAX - 1) - Y0);
+	LCD_Set_Reg(0x04, ((LCDYMAX - 1) - Y1) >> 8);
+	LCD_Set_Reg(0x05, (LCDYMAX - 1) - Y1);
 	LCD_Set_Reg(0x06, X0 >> 8);
 	LCD_Set_Reg(0x07, X0);
 	LCD_Set_Reg(0x08, X1 >> 8);
@@ -883,7 +883,6 @@ void LCD_Init(void)
 ******************************************************************************/
 void LCD_Init(void)
 {
-char HEX[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	LCD_Reset();
 
 	LCD_Set_Reg(0xEA, 0x00); // PTBA[15:0]
@@ -945,14 +944,10 @@ char HEX[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', '
 	LCD_ClearScreen();
 	LCD_Set_TextColor(Yellow, Blue);
 test1:
-	for (uint8_t i = 0; i < 0x10; i++)
-	{
-		LCD_PutStrig_XY(0, 0, " REG 0x16=0x");
-		LCD_Set_Reg(0x16, 0x08 + (i << 4));
-		LCD_DrawChar(HEX[i]);
-		LCD_DrawChar('8');
-		delay_ms(1000);
-	}
+	CS_LCD_clr;	LCD_Set_Reg(0x16, 0b01001000);
+	LCD_PutStrig_XY(0, 0, "RIGHT");
+	CS_LCD_clr;	LCD_Set_Reg(0x16, 0b10001000);
+	LCD_PutStrig_XY(0, 0, "LEFT");
 	goto test1;
 }
 #endif
