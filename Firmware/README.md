@@ -11,7 +11,7 @@ Read and change **inc/defines.h** to set proper parameters.
 * `CALIBR_DEBUG_INFO`            - outputs old and new ADC values during touchscreen calibration
 * `INVERT_ENCODER_DIR`           - change direction for encoder
 * `SET_ORIENT_RIGHT (LEFT)`      - set LCD orientation by software
-* `ILIxxxx`, `ST7789`, `R61509V` - LCD chip. Select only one of them
+* `ILIxxxx`, `ST7789`, `HX8347`, `R61509V` - LCD chip. Select only one of them
 * `LCD_BRIGHTNES`                - initial brightnes for LCD
 * `WITHOUT_HEAT_ICO`             - if you want see "FAN %" text insted heat icon on 320x240 screen
 * `FONT`                         - font for text. Courier_New_Bold or LiberationMono

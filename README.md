@@ -3,7 +3,7 @@ TFT GLCD Panel was developed as low cost replacement for monochrome LCDs with lo
 
 <img src="./Hardware/Photos/Smoothie-progressbar.jpg"  width="265" height="200">
 
-**TFT GLCD Panel "Version 1.0"** based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325, ILI9341 and ST7789 chips with 320x240 resolution or ILI9327 and R61509V chips with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
+**TFT GLCD Panel "Version 1.0"** based on STM32F103C8T6 "Blue Pill" board and color TFT GLCD on ILI9325, ILI9341, HX8347 and ST7789 chips with 320x240 resolution or ILI9327 and R61509V chips with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
 
 **TFT GLCD Panel "Version 2.0"** based on the same STM32F103C8T6 controller, but has own PCB. It desighned to connect LCD and controller by 16-bit data bus. Also this panel has standart EXP2 connector for connect to printer's main board and integrated Micro-SD connector.
 

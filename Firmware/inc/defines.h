@@ -29,12 +29,12 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //#define SET_ORIENT_LEFT
 
 //select only one LCD type
-//#define ILI9325   //ILI9325==ILI9328
+#define ILI9325   //ILI9325==ILI9328
 //#define ILI9341
 //#define ST7789
 //#define ILI9327
 //#define R61509V
-#define HX8347
+//#define HX8347
 
 #define LCD_BRIGHTNES   250
 
@@ -87,18 +87,11 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCD_ORIENT_PORT GPIOB
 #define LCD_ORIENT_PIN  GPIO_Pin_5
 #define LCD_CTRL_PORT   GPIOB
-/*
 #define LCD_RD          GPIO_Pin_5
 #define LCD_RST         GPIO_Pin_6
 #define LCD_WR          GPIO_Pin_7
 #define LCD_RS          GPIO_Pin_8
 #define LCD_CS          GPIO_Pin_9
-*/
-#define LCD_CS          GPIO_Pin_5
-#define LCD_WR          GPIO_Pin_6
-#define LCD_RS          GPIO_Pin_7
-#define LCD_RD          GPIO_Pin_8
-#define LCD_RST         GPIO_Pin_9
 //SPI
 #define SPI             SPI2
 #define SPI_PORT        GPIOB

@@ -228,10 +228,10 @@ void LCD_SetArea(uint16_t X0, uint16_t Y0, uint16_t X1, uint16_t Y1)
 	LCD_Set_Reg(0x0200, Y0);
 #endif
 #if defined(HX8347)
-	LCD_Set_Reg(0x02, ((LCDYMAX - 1) - Y0) >> 8);
-	LCD_Set_Reg(0x03, (LCDYMAX - 1) - Y0);
-	LCD_Set_Reg(0x04, ((LCDYMAX - 1) - Y1) >> 8);
-	LCD_Set_Reg(0x05, (LCDYMAX - 1) - Y1);
+	LCD_Set_Reg(0x02, ((LCDYMAX - 1) - Y1) >> 8);
+	LCD_Set_Reg(0x03, (LCDYMAX - 1) - Y1);
+	LCD_Set_Reg(0x04, ((LCDYMAX - 1) - Y0) >> 8);
+	LCD_Set_Reg(0x05, (LCDYMAX - 1) - Y0);
 	LCD_Set_Reg(0x06, X0 >> 8);
 	LCD_Set_Reg(0x07, X0);
 	LCD_Set_Reg(0x08, X1 >> 8);
@@ -934,20 +934,13 @@ void LCD_Init(void)
     // Memory Access Control.
     // output orientation + BGR
 	// bits = MY MX MV ML BGR x x x
-   	LCD_Set_Reg(0x16, 0x08);
+	if (orientation)
+   		LCD_Set_Reg(0x16, 0b10001000);
+	else
+		LCD_Set_Reg(0x16, 0b01001000);
 
    	CS_LCD_set;
 
-//	LCD_Draw_StartScreen();
-
-	//only for tests !!!!
-	LCD_ClearScreen();
-	LCD_Set_TextColor(Yellow, Blue);
-test1:
-	CS_LCD_clr;	LCD_Set_Reg(0x16, 0b01001000);
-	LCD_PutStrig_XY(0, 0, "RIGHT");
-	CS_LCD_clr;	LCD_Set_Reg(0x16, 0b10001000);
-	LCD_PutStrig_XY(0, 0, "LEFT");
-	goto test1;
+	LCD_Draw_StartScreen();
 }
 #endif

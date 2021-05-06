@@ -1,3 +1,7 @@
+05/06/2021
+
+1. Add support for HX8347 LCD chip.
+
 04/01/2021
 
 1. Add rotation for R61509V displays.
