@@ -32,7 +32,7 @@ For use this panel with Marlin you need:
 * Check and edit section with text `TFTGLCD_PANEL` in **Conditionals_LCD.h** and recompile Marlin firmware.
 
 ## Connect to 5V boards
-TFT GLCD Panel "Version 1.0" developed to connect with main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) you need add level converter for SPI input signals. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. For use I2C bus you need remove pull-up resistors betwin I2C lines and +5V on main board if they present. TFT GLCD Panel "Version 2.0" already has level converter for SPI input signals.
+TFT GLCD Panel "Version 1.0" developed to connect with main board by 3.3V SPI signals. If you want connect it to main board with 5V TTL-level signals (Arduino) **you need add level converter** for SPI **input** signals. A level converter is not needed for the MISO signal. This converter may be built on different schematic - with diodes and resistors or with microchips. On picture below you may see both variants. For use I2C bus **you need remove pull-up resistors betwin I2C lines and +5V on main board** if they present. TFT GLCD Panel "Version 2.0" already has level converter for SPI input signals.
 
 ## Add SD support to TFT GLCD Panel "Version 1.0" and "Version 3.0"
 If you want add SD-card support you need add multiplexer for MISO signal between panel's and SD-card's MISO signals. This need because panel and SD-card share the same SPI bus. Two posible variants you may see on picture below and in TFT GLCD Panel "Version 2.0" project. Also you may change panel connector for "Version 1.0" to standart EXP2 pinout.

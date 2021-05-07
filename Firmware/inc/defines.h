@@ -53,7 +53,8 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define CHAR_WIDTH      16  //depend on FONT resolution
 #define CHAR_HEIGTH     24
 
-#define I2C_Addr        0x33 << 1   //must be 0x33 for STM32 main boards
+#define I2C_Panel_Addr  0x33    //must be 0x33 for STM32 main boards and must be equal to LCD_I2C_ADDRESS parameter in Conditionals_LCD.h
+#define I2C_Addr        I2C_Panel_Addr << 1
 
 //============================================================================================
 

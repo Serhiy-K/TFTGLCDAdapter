@@ -17,4 +17,4 @@ Read and change **inc/defines.h** to set proper parameters.
 * `FONT`                         - font for text. Courier_New_Bold or LiberationMono
 * `BUZ_FREQ_MP`                  - buzzer input frequency multiplier. Change to get more suitable tones
 * `LOGO_FREQx`                   - buzzer frequency for start logo
-* `I2C_Addr`                     - I2C addres, is used only for Marlin and must be equal to parameter in Conditionals_LCD.h
+* `I2C_Panel_Addr`               - I2C addres, is used only for Marlin and **must be equal to LCD_I2C_ADDRESS parameter in Conditionals_LCD.h**
