@@ -10,16 +10,16 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //                                Main parameters
 //============================================================================================
 //For LCD and controller with 8 bit data bus and encoder
-#define HW_VER_1
+//#define HW_VER_1
 //For LCD and controller with 16 bit data bus and encoder
-//#define HW_VER_2
+#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
 //#define HW_VER_3
 //#define CALIBR_DEBUG_INFO   //outputs old and new ADC values
 
 //#define HW_VER_2_SWD_DEBUG
 
-//#define INVERT_ENCODER_DIR
+#define INVERT_ENCODER_DIR
 
 // WARNING !!!!!
 //To hardware select proper display orientations (side of the LCD connecting cable) you need
@@ -39,6 +39,10 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCD_BRIGHTNES   250
 
 #define WITHOUT_HEAT_ICO    //if you want see "FAN %" text insted heat icon on 320x240 screen
+
+//you may select only one variant or both for universality
+#define USE_3DPRINTER       //for Smoothieware and Marlin
+#define USE_LASER           //only for Marlin
 
 //prefered monospace font
 //#define FONT          Courier_New_Bold_16x24

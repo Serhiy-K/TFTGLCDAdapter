@@ -16,6 +16,10 @@
 
 <img src="./Marlin-2HE.jpg">
 
+**Status screen for lazer, Marlin**
+
+<img src="./Marlin-Lazer.jpg">
+
 **Status screen with progressbar, Smoothieware**
 
 <img src="./Smoothie-progressbar.jpg">

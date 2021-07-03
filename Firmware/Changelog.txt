@@ -1,3 +1,7 @@
+07/03/2021
+
+1. Add support for laser in Marlin-2.
+
 05/06/2021
 
 1. Add support for HX8347 LCD chip.

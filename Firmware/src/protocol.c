@@ -37,6 +37,10 @@
 #define	pic3_Xmin	CHAR_WIDTH * HE3O	//HE3
 #define	pic4_Xmin	CHAR_WIDTH * B3O	//BED
 #define	pic5_Xmin	CHAR_WIDTH * F3O	//FAN
+//for laser
+#define pic_COOL	CHAR_WIDTH * 3
+#define pic_FLOW	CHAR_WIDTH * 9
+#define pic_ILAZ	CHAR_WIDTH * 15
 
 #ifdef	LCD320x240
 #define pic6_Xmin	pic5_Xmin	//HEAT
@@ -74,6 +78,7 @@ int16_t pos = -1;
 uint8_t toread = 0;
 uint8_t new_command = 0;
 uint8_t temps = 0;
+uint8_t laser = 0;
 uint16_t row_offset[2] = {0};
 uint8_t progress_cleared = 0;
 uint8_t protocol = Smoothie;
@@ -260,6 +265,7 @@ void Set_Leds()
 	leds = data[in_buf][FB_SIZE - 1];
 	leds &= LED_MASK;
 
+#ifdef USE_3DPRINTER
 	if (leds & LED_HOT)
 	{
 		if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
@@ -274,6 +280,7 @@ void Set_Leds()
 		else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
 #endif
 	}
+#endif
 }
 //----------------------------------------------------------------------------
 // For Marlin
@@ -519,10 +526,22 @@ void Print_Temps()
 		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 5 + x]);
 		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 6 + x]);
 		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 7 + x]);
-		if (data[out_buf][CHARS_PER_LINE * 5 + 2] == '1')
-			temps = 3;
-		else
-			temps = 1;
+
+		if ((!laser) && (!temps))
+		{
+			if ((data[out_buf][CHARS_PER_LINE * 5 + 2] == 'C') ||
+				(data[out_buf][CHARS_PER_LINE * 5 + 8] == 'F') ||
+				(data[out_buf][CHARS_PER_LINE * 5 + 14] == 'I'))
+			{
+				if (data[out_buf][CHARS_PER_LINE * 5 + 2] == 'C')	laser |= 1;
+				if (data[out_buf][CHARS_PER_LINE * 5 + 8] == 'F')	laser |= 2;
+				if (data[out_buf][CHARS_PER_LINE * 5 + 14] == 'I')	laser |= 4;
+			}
+			else if (data[out_buf][CHARS_PER_LINE * 5 + 2] == '1')
+				temps = 3;
+			else
+				temps = 1;
+		}
 	}
 	CS_LCD_set;
 }
@@ -582,8 +601,29 @@ void Draw_Icons()
 		return;
 	}
 
-	if (!temps)	return;
+	if ((!temps) && (!laser))	return;
 
+#ifdef USE_LASER
+	if (laser)
+	{
+		if (laser & 1)
+		{
+			if (pics & PIC_HE1) LCD_Draw_Picture (pic_COOL, pic_Ymin, &cool_48x48[0]);
+			else				LCD_Draw_Picture (pic_COOL, pic_Ymin, &cool_off_48x48[0]);
+		}
+		if (laser & 2)
+		{
+			if (pics & PIC_FAN)	LCD_Draw_Picture (pic_FLOW, pic_Ymin, &flow_48x48[0]);
+			else				LCD_Draw_Picture (pic_FLOW, pic_Ymin, &flow_off_48x48[0]);
+		}
+		if (laser & 4)
+		{
+			if (pics & PIC_BED)	LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &amp_48x48[0]);
+			else				LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &amp_off_48x48[0]);
+		}
+	}
+#endif
+#ifdef USE_3DPRINTER
 	if (temps == 1)
 	{
 		if (pics & PIC_HE1) LCD_Draw_Picture (pic1_Xmin1, pic_Ymin, &extrude_48x48[0]);
@@ -615,7 +655,7 @@ void Draw_Icons()
 			else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
 		}
 	}
-	else
+	else if (temps == 3)
 	{
 		if (pics & PIC_HE1)	LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude_48x48[0]);
 		else				LCD_Draw_Picture (pic1_Xmin, pic_Ymin, &extrude_off_48x48[0]);
@@ -661,6 +701,7 @@ void Draw_Icons()
 		}
 #endif
 	}
+#endif
 }
 //----------------------------------------------------------------------------
 void Draw_Progress_Bar(uint8_t y, uint8_t percent)
@@ -911,6 +952,7 @@ void Init()
 	in_buf = 1;
 	out_buf = 0;
 	temps = 0;
+	laser = 0;
 	buzcntcur = buzcnt = 0;
 	init = 1;
 	data[out_buf][FB_SIZE - 1] = data[out_buf][FB_SIZE - 2] = 0;
