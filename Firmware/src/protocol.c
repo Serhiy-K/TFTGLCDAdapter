@@ -37,10 +37,11 @@
 #define	pic3_Xmin	CHAR_WIDTH * HE3O	//HE3
 #define	pic4_Xmin	CHAR_WIDTH * B3O	//BED
 #define	pic5_Xmin	CHAR_WIDTH * F3O	//FAN
-//for laser
-#define pic_COOL	CHAR_WIDTH * 3
-#define pic_FLOW	CHAR_WIDTH * 9
-#define pic_ILAZ	CHAR_WIDTH * 15
+//for laser/spindle
+#define pic_COOL	CHAR_WIDTH * 1
+#define pic_FLOW	CHAR_WIDTH * 6
+#define pic_ILAZ	CHAR_WIDTH * 11
+#define pic_CUTT	CHAR_WIDTH * 16
 
 #ifdef	LCD320x240
 #define pic6_Xmin	pic5_Xmin	//HEAT
@@ -625,8 +626,8 @@ void Draw_Icons()
 		}
 		if (laser & 8)
 		{
-			if (pics & PIC_HOT)	LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &cutt_48x48[0]);
-			else				LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &cutt_off_48x48[0]);
+			if (pics & PIC_HOT)	LCD_Draw_Picture (pic_CUTT, pic_Ymin, &cutt_48x48[0]);
+			else				LCD_Draw_Picture (pic_CUTT, pic_Ymin, &cutt_off_48x48[0]);
 		}
 	}
 #endif
