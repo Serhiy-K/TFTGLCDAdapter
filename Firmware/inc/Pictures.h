@@ -24,5 +24,7 @@ extern const char flow_48x48[2304];
 extern const char flow_off_48x48[2304];
 extern const char amp_48x48[2304];
 extern const char amp_off_48x48[2304];
+extern const char cutt_48x48[2304];
+extern const char cutt_off_48x48[2304];
 
 #endif

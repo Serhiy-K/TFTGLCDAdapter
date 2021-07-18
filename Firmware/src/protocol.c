@@ -529,13 +529,15 @@ void Print_Temps()
 
 		if ((!laser) && (!temps))
 		{
-			if ((data[out_buf][CHARS_PER_LINE * 5 + 2] == 'C') ||
-				(data[out_buf][CHARS_PER_LINE * 5 + 8] == 'F') ||
-				(data[out_buf][CHARS_PER_LINE * 5 + 14] == 'I'))
+			if ((data[out_buf][CHARS_PER_LINE * 5] == 'C') ||		//COOL
+				(data[out_buf][CHARS_PER_LINE * 5 + 5] == 'F') ||	//FLOW
+				(data[out_buf][CHARS_PER_LINE * 5 + 10] == 'I') ||	//ILAZ
+				(data[out_buf][CHARS_PER_LINE * 5 + 15] == 'C'))	//CUTT
 			{
-				if (data[out_buf][CHARS_PER_LINE * 5 + 2] == 'C')	laser |= 1;
-				if (data[out_buf][CHARS_PER_LINE * 5 + 8] == 'F')	laser |= 2;
-				if (data[out_buf][CHARS_PER_LINE * 5 + 14] == 'I')	laser |= 4;
+				if (data[out_buf][CHARS_PER_LINE * 5] == 'C')		laser |= 1;
+				if (data[out_buf][CHARS_PER_LINE * 5 + 5] == 'F')	laser |= 2;
+				if (data[out_buf][CHARS_PER_LINE * 5 + 10] == 'I')	laser |= 4;
+				if (data[out_buf][CHARS_PER_LINE * 5 + 15] == 'C')	laser |= 8;
 			}
 			else if (data[out_buf][CHARS_PER_LINE * 5 + 2] == '1')
 				temps = 3;
@@ -620,6 +622,11 @@ void Draw_Icons()
 		{
 			if (pics & PIC_BED)	LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &amp_48x48[0]);
 			else				LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &amp_off_48x48[0]);
+		}
+		if (laser & 8)
+		{
+			if (pics & PIC_HOT)	LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &cutt_48x48[0]);
+			else				LCD_Draw_Picture (pic_ILAZ, pic_Ymin, &cutt_off_48x48[0]);
 		}
 	}
 #endif

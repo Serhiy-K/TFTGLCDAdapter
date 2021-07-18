@@ -1,3 +1,7 @@
+07/18/2021
+
+1. Add cutter status for laser/spindle.
+
 07/03/2021
 
 1. Add support for laser in Marlin-2.
