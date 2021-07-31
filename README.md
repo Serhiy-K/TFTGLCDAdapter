@@ -9,7 +9,7 @@ TFT GLCD Panel was developed as low cost replacement for monochrome LCDs with lo
 
 **TFT GLCD Panel "Version 3.0"** was designed to add resistive touchscreen support. Touchscreen is connected to controller's pinns directly. Controller connected to LCD by 8-bit data bus. This is wery simple realisation without SD support but SD support may be added as for "Version 2.0".
 
-Firmware for TFT GLCD Panel created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE.
+Firmware for TFT GLCD Panel created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE. GCC for ARM is used as a compiler. 
 
 Hardware directory include pcb-projects for this panel created in Altium Designer, gerber files and real photos.
 
