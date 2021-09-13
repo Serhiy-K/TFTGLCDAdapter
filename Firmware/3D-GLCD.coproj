@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Project version="2G - 1.7.8" name="3D-GLCD">
   <Target name="3D-GLCD" isCurrent="1">
-    <Device manufacturerId="9" manufacturerName="ST" chipId="305" chipName="STM32F103C8" boardId="" boardName=""/>
+    <Device manufacturerId="9" manufacturerName="ST" chipId="306" chipName="STM32F103CB" boardId="" boardName=""/>
     <BuildOption>
       <Compile>
         <Option name="OptimizationLevel" value="4"/>
@@ -13,10 +13,10 @@
           <Includepath path="inc"/>
         </Includepaths>
         <DefinedSymbols>
-          <Define name="STM32F103C8"/>
-          <Define name="STM32F10X_MD"/>
           <Define name="USE_STDPERIPH_DRIVER"/>
           <Define name="__ASSEMBLY__"/>
+          <Define name="STM32F103CB"/>
+          <Define name="STM32F10X_MD"/>
         </DefinedSymbols>
       </Compile>
       <Link useDefault="0">
@@ -29,12 +29,12 @@
         <Option name="Library" value="Not use C Library"/>
         <LinkedLibraries/>
         <MemoryAreas debugInFlashNotRAM="1">
-          <Memory name="IROM1" type="ReadOnly" size="0x00010000" startValue="0x08000000"/>
+          <Memory name="IROM1" type="ReadOnly" size="0x00020000" startValue="0x08000000"/>
           <Memory name="IRAM1" type="ReadWrite" size="0x00005000" startValue="0x20000000"/>
           <Memory name="IROM2" type="ReadOnly" size="" startValue=""/>
           <Memory name="IRAM2" type="ReadWrite" size="" startValue=""/>
         </MemoryAreas>
-        <LocateLinkFile path="../../../arm/coide/configuration/programdata/3d-glcd/arm-gcc-link.ld" type="0"/>
+        <LocateLinkFile path="../../../../arm/coide/configuration/programdata/3d-glcd/arm-gcc-link.ld" type="0"/>
       </Link>
       <Output>
         <Option name="OutputFileType" value="0"/>
@@ -65,7 +65,7 @@
       <Option name="org.coocox.codebugger.gdbjtag.core.autoDownload" value="1"/>
       <Option name="org.coocox.codebugger.gdbjtag.core.verify" value="0"/>
       <Option name="org.coocox.codebugger.gdbjtag.core.downloadFuction" value="Erase Full Chip"/>
-      <Option name="org.coocox.codebugger.gdbjtag.core.defaultAlgorithm" value="STM32F10x_MD_64.elf"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.defaultAlgorithm" value="STM32F10x_MD_128.elf"/>
     </DebugOption>
     <ExcludeFile/>
   </Target>
@@ -84,14 +84,14 @@
     <File name="stm_lib/src/stm32f10x_systick.c" path="stm_lib/src/stm32f10x_systick.c" type="1"/>
     <File name="cmsis_boot/system_stm32f10x.c" path="cmsis_boot/system_stm32f10x.c" type="1"/>
     <File name="stm_lib/inc/misc.h" path="stm_lib/inc/misc.h" type="1"/>
-    <File name="src/LCD.c" path="src/LCD.c" type="1"/>
     <File name="cmsis/core_cmInstr.h" path="cmsis/core_cmInstr.h" type="1"/>
+    <File name="src/LCD.c" path="src/LCD.c" type="1"/>
     <File name="cmsis/core_cm3.h" path="cmsis/core_cm3.h" type="1"/>
     <File name="stm_lib/inc/stm32f10x_tim.h" path="stm_lib/inc/stm32f10x_tim.h" type="1"/>
     <File name="cmsis_boot" path="" type="2"/>
+    <File name="src/Courier_New_Bold_16x24.c" path="src/Courier_New_Bold_16x24.c" type="1"/>
     <File name="stm_lib/src/stm32f10x_exti.c" path="stm_lib/src/stm32f10x_exti.c" type="1"/>
     <File name="src/Pictures.c" path="src/Pictures.c" type="1"/>
-    <File name="src/Courier_New_Bold_16x24.c" path="src/Courier_New_Bold_16x24.c" type="1"/>
     <File name="stm_lib/src/stm32f10x_rcc.c" path="stm_lib/src/stm32f10x_rcc.c" type="1"/>
     <File name="src" path="" type="2"/>
     <File name="stm_lib/src/stm32f10x_tim.c" path="stm_lib/src/stm32f10x_tim.c" type="1"/>
