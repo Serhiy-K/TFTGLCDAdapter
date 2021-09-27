@@ -40,7 +40,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 
 #define WITHOUT_HEAT_ICO    //if you want see "FAN %" text insted heat icon on 320x240 screen
 
-//you may select only one variant or both for universality
+//you may select only one variant for MCU with 64k ROM or both for universality for MCU with 128k ROM
 #define USE_3DPRINTER       //for Smoothieware and Marlin
 #define USE_LASER           //only for Marlin
 

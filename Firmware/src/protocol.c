@@ -25,6 +25,8 @@
 #define	B3O		13
 #define F3O		17
 
+#define T_L_LINE	CHARS_PER_LINE * 5
+
 #define pic_Ymin	LCDYMAX - 48
 //for one extruder config
 #define	pic1_Xmin1	CHAR_WIDTH * HEO	//HE
@@ -524,23 +526,23 @@ void Print_Temps()
 	}
 	else
 	{
-		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 5 + x]);
+		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][T_L_LINE + x]);
 		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 6 + x]);
 		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 7 + x]);
 
 		if ((!laser) && (!temps))
 		{
-			if ((data[out_buf][CHARS_PER_LINE * 5] == 'C') ||		//COOL
-				(data[out_buf][CHARS_PER_LINE * 5 + 5] == 'F') ||	//FLOW
-				(data[out_buf][CHARS_PER_LINE * 5 + 10] == 'I') ||	//ILAZ
-				(data[out_buf][CHARS_PER_LINE * 5 + 15] == 'C'))	//CUTT
+			if ((data[out_buf][T_L_LINE] == 'C') ||			//COOL
+				(data[out_buf][T_L_LINE + 5] == 'F') ||		//FLOW
+				(data[out_buf][T_L_LINE + 10] == 'I') ||	//ILAZ
+				(data[out_buf][T_L_LINE + 15] == 'C'))		//CUTT
 			{
-				if (data[out_buf][CHARS_PER_LINE * 5] == 'C')		laser |= 1;
-				if (data[out_buf][CHARS_PER_LINE * 5 + 5] == 'F')	laser |= 2;
-				if (data[out_buf][CHARS_PER_LINE * 5 + 10] == 'I')	laser |= 4;
-				if (data[out_buf][CHARS_PER_LINE * 5 + 15] == 'C')	laser |= 8;
+				if (data[out_buf][T_L_LINE] == 'C')		laser |= 1;
+				if (data[out_buf][T_L_LINE + 5] == 'F')	laser |= 2;
+				if (data[out_buf][T_L_LINE + 10] == 'I')	laser |= 4;
+				if (data[out_buf][T_L_LINE + 15] == 'C')	laser |= 8;
 			}
-			else if (data[out_buf][CHARS_PER_LINE * 5 + 2] == '1')
+			else if (data[out_buf][T_L_LINE + 2] == '1')
 				temps = 3;
 			else
 				temps = 1;
@@ -572,10 +574,10 @@ void Draw_Icons()
 		LCD_Set_TextColor(Yellow, Blue);
 		if (protocol == Smoothie)
 		{
-			LCD_DrawChar_XY(LOGO_OFFSET, 4, TLC);	LCD_PutStrig(&border[0]);	LCD_DrawChar(TRC);	CS_LCD_set;
-			LCD_DrawChar_XY(LOGO_OFFSET, 5, VL);	LCD_PutStrig("   Open   ");	LCD_DrawChar(VL);	CS_LCD_set;
-			LCD_DrawChar_XY(LOGO_OFFSET, 6, VL);	LCD_PutStrig(" Hardware ");	LCD_DrawChar(VL);	CS_LCD_set;
-			LCD_DrawChar_XY(LOGO_OFFSET, 7, BLC);	LCD_PutStrig(&border[0]);	LCD_DrawChar(BRC);	CS_LCD_set;
+			LCD_DrawChar_XY(LOGO_OFFSET, 4, TLC);	LCD_PutStrig(&border[0]);	LCD_DrawChar(TRC);
+			LCD_DrawChar_XY(LOGO_OFFSET, 5, VL);	LCD_PutStrig("   Open   ");	LCD_DrawChar(VL);
+			LCD_DrawChar_XY(LOGO_OFFSET, 6, VL);	LCD_PutStrig(" Hardware ");	LCD_DrawChar(VL);
+			LCD_DrawChar_XY(LOGO_OFFSET, 7, BLC);	LCD_PutStrig(&border[0]);	LCD_DrawChar(BRC);
 		}
 		else
 		{
@@ -590,8 +592,8 @@ void Draw_Icons()
 					i++;
 				}
 			}
-			CS_LCD_set;
 		}
+		CS_LCD_set;
 		LCD_Set_TextColor(White, BackColor);
 		if (init)
 		{
@@ -641,7 +643,7 @@ void Draw_Icons()
 		else
 		{
 			if (((protocol == Smoothie) && (datat[TTO + B1O] == 'B')) ||
-				((protocol != Smoothie) && (data[out_buf][CHARS_PER_LINE * 5 + B1O] == 'B')))	//bed present in off state
+				((protocol != Smoothie) && (data[out_buf][T_L_LINE + B1O] == 'B')))	//bed present in off state
 				LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
@@ -675,7 +677,7 @@ void Draw_Icons()
 		else
 		{
 			if (((protocol == Smoothie) && (datat[TTO + HE3O] == 'H')) ||
-				((protocol != Smoothie) && (data[out_buf][CHARS_PER_LINE * 5 + HE3O] == 'H')))
+				((protocol != Smoothie) && (data[out_buf][T_L_LINE + HE3O] == 'H')))
 				LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
@@ -685,7 +687,7 @@ void Draw_Icons()
 		else
 		{
 			if (((protocol == Smoothie) && (datat[TTO + B3O] == 'B')) ||
-				((protocol != Smoothie) && (data[out_buf][CHARS_PER_LINE * 5 + B3O] == 'B')))
+				((protocol != Smoothie) && (data[out_buf][T_L_LINE + B3O] == 'B')))
 				LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
@@ -1139,7 +1141,7 @@ void I2C2_EV_IRQHandler(void)
 	{
 		// Slave RECEIVER mode
 	    case I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED:	//EV1
-	    	break;
+	    	return;
 	    case I2C_EVENT_SLAVE_BYTE_RECEIVED:	//EV2
 	    	b = I2C->DR;
 	    	if (!toread)
@@ -1174,7 +1176,7 @@ void I2C2_EV_IRQHandler(void)
 	    		else
 	    			data[in_buf][++pos] = b;	// read data for commands
 			}
-	    	break;
+	    	return;
 	    case I2C_EVENT_SLAVE_STOP_DETECTED:	//EV4 for write and read
 	    	while ((I2C->SR1 & I2C_SR1_ADDR) == I2C_SR1_ADDR) { I2C->SR1; I2C->SR2; }	// ADDR-Flag clear
 	    	while ((I2C->SR1 & I2C_SR1_STOPF) == I2C_SR1_STOPF) { I2C->SR1; I2C->CR1 |= 0x1; }	// STOPF Flag clear
@@ -1188,7 +1190,6 @@ void I2C2_EV_IRQHandler(void)
 								new_buf = 1;
 				case LCD_PUT:	new_command = cmd;	return;
 			}
-	    	break;
 	    // Slave TRANSMITTER mode
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
@@ -1201,12 +1202,10 @@ void I2C2_EV_IRQHandler(void)
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	return;
 	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	return;
 	    	}
-	    	break;
-	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTING:	//EV3
-	    	break;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:	//EV3 - next data
 	    	I2C->DR = next_tx;
-	    	break;
+	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTING:	//EV3
+	    	return;
 	}
 }
 //----------------------------------------------------------------------------
