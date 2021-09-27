@@ -537,8 +537,8 @@ void Print_Temps()
 				(data[out_buf][T_L_LINE + 10] == 'I') ||	//ILAZ
 				(data[out_buf][T_L_LINE + 15] == 'C'))		//CUTT
 			{
-				if (data[out_buf][T_L_LINE] == 'C')		laser |= 1;
-				if (data[out_buf][T_L_LINE + 5] == 'F')	laser |= 2;
+				if (data[out_buf][T_L_LINE] == 'C')			laser |= 1;
+				if (data[out_buf][T_L_LINE + 5] == 'F')		laser |= 2;
 				if (data[out_buf][T_L_LINE + 10] == 'I')	laser |= 4;
 				if (data[out_buf][T_L_LINE + 15] == 'C')	laser |= 8;
 			}
@@ -1121,7 +1121,7 @@ void Del_IRQHandler(void)
 #else
 		if (ENC_PORT->IDR & ENC_B)	encdiff -= 2;
 		else						encdiff += 2;
-#endif
+#endif	// INVERT_ENCODER_DIR
 	}
 	EXTI->IMR |= ENC_A;	//enable EXTI IRQ for next front
 #else
@@ -1147,8 +1147,7 @@ void I2C2_EV_IRQHandler(void)
 	    	if (!toread)
 	    	{// command
 	    		cmd = b;	pos = -1;
-				if (b == CLR_SCREEN)	{new_command = b;	return;}
-		    	else if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
+		    	if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
 			}
 	    	else
 	    	{
@@ -1183,24 +1182,23 @@ void I2C2_EV_IRQHandler(void)
 			toread = 0;
 			switch (cmd)
 			{
-				case INIT:		SPI_Cmd(SPI, DISABLE);	new_command = cmd;	return;
 				case BUZZER:	set_new_buz();	if(buzcnt == 1) Buzzer();	return;
 				case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 				case LCD_WRITE:	if (pos < FB_SIZE) {toread = 1;	return;}
 								new_buf = 1;
+				case INIT:
+				case CLR_SCREEN:
 				case LCD_PUT:	new_command = cmd;	return;
 			}
 	    // Slave TRANSMITTER mode
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_BUTTONS:	I2C->DR = buttons;	buttons = 0;	next_tx = encdiff;	encdiff = 0;	return;
 	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;
 									if (!buttons)	next_tx = Read_Buttons();
 									else			{next_tx = buttons;	buttons = 0;}
 									return;
-	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	return;
-	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	return;
+	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	return;
 	    	}
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:	//EV3 - next data
 	    	I2C->DR = next_tx;
@@ -1256,10 +1254,10 @@ void SPI_IRQHandler(void)
 			if (!toread)
 				switch (cmd)
 				{
-					case INIT:		I2C_Cmd(I2C, DISABLE);	new_command = cmd;		return;
 					case BUZZER:	set_new_buz();	if (buzcnt == 1)	Buzzer();	return;
 					case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 					case LCD_WRITE:	new_buf = 1;	//update all screen
+					case INIT:
 					case LCD_PUT:	new_command = cmd;
 				}
 		}
