@@ -223,6 +223,7 @@ static void Timer_PWM_init(void)
 }
 /***********************************************************
 ***********************************************************/
+#ifdef USE_SPI
 static void SPI_init()
 {
 	SPI_InitTypeDef		SPI_InitStructure;
@@ -248,8 +249,10 @@ static void SPI_init()
 	NVIC_SetPriority(SPI_IRQ, 0);
 	NVIC_EnableIRQ(SPI_IRQ);
 }
+#endif
 /***********************************************************
 ***********************************************************/
+#ifdef USE_I2C
 static void I2C_init()
 {
 	I2C_InitTypeDef		I2C_InitStructure;
@@ -276,6 +279,7 @@ static void I2C_init()
 	NVIC_SetPriority (I2C_ERR_IRQ, 0);
 	NVIC_EnableIRQ   (I2C_ERR_IRQ);
 }
+#endif
 /***********************************************************
 ***********************************************************/
 #ifdef HW_VER_3
@@ -311,8 +315,12 @@ void Global_Init(void)
 	Timer_Delay_init();
 	Timer_Duration_init();
 	Timer_PWM_init();
+#ifdef USE_SPI
 	SPI_init();
+#endif
+#ifdef USE_I2C
 	I2C_init();
+#endif
 #ifdef HW_VER_3
 	ADC_init();
 	restoreSettings();

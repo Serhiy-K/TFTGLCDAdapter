@@ -14,7 +14,9 @@ Read and change **inc/defines.h** to set proper parameters.
 * `ILIxxxx`, `ST7789`, `HX8347`, `R61509V` - LCD chip. Select only one of them
 * `LCD_BRIGHTNES`                - initial brightnes for LCD
 * `WITHOUT_HEAT_ICO`             - if you want see "FAN %" text insted heat icon on 320x240 screen
-* `USE_3DPRINTER`, `USE_LASER`   - you may select one of this variants to save ROM or both for universality
+* `USE_3DPRINTER`, `USE_LASER`   - you may select only one of this variants to reduce ROM size or both for universality
+* `ONLY_MARLIN`                  - support only Marlin to reduce ROM size
+* `USE_SPI`, `USE_I2C`           - you may select only one of this variants to reduce ROM size or both for universality
 * `FONT`                         - font for text. Courier_New_Bold or LiberationMono
 * `BUZ_FREQ_MP`                  - buzzer input frequency multiplier. Change to get more suitable tones
 * `LOGO_FREQx`                   - buzzer frequency for start logo
