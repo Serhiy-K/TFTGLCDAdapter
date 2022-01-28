@@ -2,7 +2,9 @@
 
 Firmware for TFT GLCD Adapter was created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE.
 
-Read and change **inc/defines.h** to set proper parameters.
+If you want use SD-Bootloader for upgrading firmware, uncoment "USE_SD_BOOTLOADER" line in **Makefile**.
+
+Read and change **inc/defines.h** to set proper parameters. If you use STM32F103C8T6 controller with 64k ROM, you need uncomment some option below to reduce firmware size especially when using SD-bootloader.
 
 ## Main parameters
 * `HW_VER_1`                     - panel uses "BluePill" board, encoder and LCD with 8 bit data bus
@@ -13,7 +15,7 @@ Read and change **inc/defines.h** to set proper parameters.
 * `SET_ORIENT_RIGHT (LEFT)`      - set LCD orientation by software
 * `ILIxxxx`, `ST7789`, `HX8347`, `R61509V` - LCD chip. Select only one of them
 * `LCD_BRIGHTNES`                - initial brightnes for LCD
-* `WITHOUT_HEAT_ICO`             - if you want see "FAN %" text insted heat icon on 320x240 screen
+* `WITHOUT_HEAT_ICO`             - if you want see "FAN %" text insted heat icon on 320x240 screen, also for reducing ROM size
 * `USE_3DPRINTER`, `USE_LASER`   - you may select only one of this variants to reduce ROM size or both for universality
 * `ONLY_MARLIN`                  - support only Marlin to reduce ROM size
 * `USE_SPI`, `USE_I2C`           - you may select only one of this variants to reduce ROM size or both for universality

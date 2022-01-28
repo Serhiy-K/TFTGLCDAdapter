@@ -5,12 +5,7 @@
 ######################################
 # target
 ######################################
-TARGET = 3D-GLCD
-
-#######################################
-# use SD-Bootloader
-#######################################
-USE_SD_BOOTLOADER = 1
+TARGET = SDLoader
 
 #######################################
 # paths
@@ -23,10 +18,13 @@ OUT_DIR = $(TARGET)/Debug/bin
 ######################################
 # C sources
 C_SOURCES =  \
-	$(wildcard src/*.c) \
-	$(wildcard cmsis_boot/*.c) \
-	$(wildcard cmsis_boot/startup/*.c) \
-	$(wildcard stm_lib/src/*.c)
+	$(wildcard app/*.c) \
+	$(wildcard core/*.c) \
+	$(wildcard fatfs/*.c) \
+	$(wildcard sdcard/*.c) \
+	$(wildcard stm_lib/src/*.c) \
+	$(wildcard system/*.c) \
+	$(wildcard user/*.c)
 
 # ASM sources
 #ASM_SOURCES =
@@ -72,19 +70,11 @@ AS_DEFS =
 # C defines
 C_DEFS = -DUSE_STDPERIPH_DRIVER -DSTM32F103xB -DSTM32F10X_MD
 
-ifdef USE_SD_BOOTLOADER
-C_DEFS += -DBOOTLOADER
-endif
-
 # AS includes
 AS_INCLUDES = 
 
 # C includes
-C_INCLUDES = \
-	-Iinc \
-	-Icmsis \
-	-Icmsis_boot \
-	-Istm_lib/inc
+C_INCLUDES = -Iapp -Icore -Ifatfs -Isdcard -Istm_lib/inc -Isystem -Iuser
 
 # CPP includes
 #CPP_INCLUDES =
@@ -106,11 +96,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-ifdef USE_SD_BOOTLOADER
-LDSCRIPT = STM32F103CBTx_BL_FLASH.ld
-else
 LDSCRIPT = STM32F103CBTx_FLASH.ld
-endif
 
 # libraries
 LIBS = -lstdc++ -lm -lc -lgcc -lnosys

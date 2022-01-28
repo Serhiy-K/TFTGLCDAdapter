@@ -481,8 +481,7 @@ uint8_t Read_Buttons()
 		{
 			case (BUTTONS2_MSK & ~BUTTON_PIN1):	return BUTTON_RIGHT;
 			case (BUTTONS2_MSK & ~BUTTON_PIN2):	return BUTTON_LEFT;
-			case (BUTTONS2_MSK & ~BUTTON_PIN3):	return BUTTON_UP;
-			case (BUTTONS2_MSK & ~BUTTON_PIN4):	return BUTTON_DOWN;
+			case (BUTTONS2_MSK & ~(BUTTON_PIN1 | BUTTON_PIN2)):	return BUTTON_UP;
 		}
 	}
 	else

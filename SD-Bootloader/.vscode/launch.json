@@ -1,0 +1,35 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "BMP Debug",
+			"cwd": "${workspaceRoot}",
+			"executable": "SDloader/Debug/bin/SDloader.elf",
+			"svdFile": "${workspaceRoot}/.vscode/STM32F103xx.svd",
+			"request": "launch",
+			"type": "cortex-debug",
+			"servertype": "bmp",
+			"device": "STM32F103CB",
+			"BMPGDBSerialPort": "COM2",
+			"targetId": 1,
+			"runToMain": true,
+			"interface": "swd"
+		},
+		{
+			"name": "OpenOCD ST-Link Debug",
+			"cwd": "${workspaceRoot}",
+			"executable": "SDloader/Debug/bin/SDloader.elf",
+			"svdFile": "${workspaceRoot}/.vscode/STM32F103.svd",
+			"configFiles": [
+				"${workspaceRoot}/OpenOCD/stm32f1x.cfg"
+			],
+			"request": "launch",
+			"type": "cortex-debug",
+			"servertype": "openocd",
+			"runToMain": true,
+			"showDevDebugOutput": true,
+			"device": "STM32F103CB",
+			"interface": "swd"
+		}
+	]
+}

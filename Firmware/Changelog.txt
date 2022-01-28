@@ -1,3 +1,10 @@
+01/28/2022
+
+1. Add SD-Botloader support. Need new or changed hardware. See the differences between Version 2.0 and Version 2.1
+   hardware for SD-card/SPI bus.
+2. Now code support only Version 2.1 hardware for "HW_VER_2". Hardware Version 2.0 will work with this code too.
+3. Update README files.
+
 09/13/2021
 
 1. Add "ONLY_MARLIN", "USE_SPI", "USE_I2C" options to reduce ROM size.

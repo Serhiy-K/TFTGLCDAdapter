@@ -9,12 +9,15 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //============================================================================================
 //                                Main parameters
 //============================================================================================
+// If you want use SD-Bootloader for upgrading firmware, uncoment "USE_SD_BOOTLOADER" line in Makefile.
+// Botloader uses 14K of ROM, so firmware size must be less 50k for MCU with 64K(STM32F103C8).
+
 //For LCD and controller with 8 bit data bus and encoder
 //#define HW_VER_1
 //For LCD and controller with 16 bit data bus and encoder
-//#define HW_VER_2
+#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
-#define HW_VER_3
+//#define HW_VER_3
 //#define CALIBR_DEBUG_INFO   //outputs old and new ADC values
 
 //#define HW_VER_2_SWD_DEBUG
@@ -90,22 +93,10 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define TEXT_LINES      LCDYMAX / CHAR_HEIGTH
 #define MIDDLE_Y        (TEXT_LINES - 1) / 2
 
-#if defined(HW_VER_1)
+//============================================================================================
+// Hardware
+//============================================================================================
 
-#define TEST_PORT       GPIOC
-#define TEST_PIN        GPIO_Pin_13
-
-//LCD interface
-#define LCD_DATA_PORT   GPIOA
-#define LCD_DATA_MASK   0x00ff
-#define LCD_ORIENT_PORT GPIOB
-#define LCD_ORIENT_PIN  GPIO_Pin_5
-#define LCD_CTRL_PORT   GPIOB
-#define LCD_RD          GPIO_Pin_5
-#define LCD_RST         GPIO_Pin_6
-#define LCD_WR          GPIO_Pin_7
-#define LCD_RS          GPIO_Pin_8
-#define LCD_CS          GPIO_Pin_9
 //SPI
 #define SPI             SPI2
 #define SPI_PORT        GPIOB
@@ -125,6 +116,32 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define I2C_RCC         RCC_APB1Periph_I2C2
 #define I2C_IRQ         I2C2_EV_IRQn
 #define I2C_ERR_IRQ     I2C2_ER_IRQn
+
+#define BOOT_PORT       GPIOC
+#define BOOT_PIN        GPIO_Pin_15
+#define BOOT_GPIO_RCC   RCC_APB2Periph_GPIOC
+
+#define Timer_Btn       TIM1
+#define Btn_RCC_ENR     RCC_APB2ENR_TIM1EN
+#define Btn_IRQ         TIM1_UP_IRQn
+#define Btn_IRQHandler  TIM1_UP_IRQHandler
+
+#if defined(HW_VER_1)
+
+#define TEST_PORT       GPIOC
+#define TEST_PIN        GPIO_Pin_13
+
+//LCD interface
+#define LCD_DATA_PORT   GPIOA
+#define LCD_DATA_MASK   0x00ff
+#define LCD_ORIENT_PORT GPIOB
+#define LCD_ORIENT_PIN  GPIO_Pin_5
+#define LCD_CTRL_PORT   GPIOB
+#define LCD_RD          GPIO_Pin_5
+#define LCD_RST         GPIO_Pin_6
+#define LCD_WR          GPIO_Pin_7
+#define LCD_RS          GPIO_Pin_8
+#define LCD_CS          GPIO_Pin_9
 //encoder
 #define ENC_PORT        GPIOA
 #define ENC_A           GPIO_Pin_9
@@ -141,6 +158,7 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define BUTTON_PIN4     GPIO_Pin_3
 #define BUTTON_PIN5     GPIO_Pin_4
 #define BUTTONS_A_MSK   (BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1 | ENC_BUT)
+#define BUTTONS2_MSK    (BUTTON_PIN5 | BUTTON_PIN4)
 //PWM outputs
 #define PWM_PORT        GPIOB
 #define BRIGHTNES_PIN   GPIO_Pin_0
@@ -177,25 +195,6 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCD_WR          GPIO_Pin_5
 #define LCD_RS          GPIO_Pin_6
 #define LCD_CS          GPIO_Pin_7
-//SPI
-#define SPI             SPI2
-#define SPI_PORT        GPIOB
-#define SPI_CS          GPIO_Pin_12
-#define SPI_SCK         GPIO_Pin_13
-#define SPI_MISO        GPIO_Pin_14
-#define SPI_MOSI        GPIO_Pin_15
-#define SPI_RCC         RCC_APB2Periph_SPI2
-#define SPI_GPIO_RCC    RCC_APB2Periph_GPIOB
-#define SPI_IRQ         SPI2_IRQn
-#define SPI_IRQHandler  SPI2_IRQHandler
-//I2C
-#define I2C             I2C2
-#define I2C_PORT        GPIOB
-#define I2C_SCL         GPIO_Pin_10
-#define I2C_SDA         GPIO_Pin_11
-#define I2C_RCC         RCC_APB1Periph_I2C2
-#define I2C_IRQ         I2C2_EV_IRQn
-#define I2C_ERR_IRQ     I2C2_ER_IRQn
 //encoder
 #define ENC_PORT        GPIOB
 #define ENC_A           GPIO_Pin_0
@@ -205,13 +204,12 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //buttons
 #define BTN_PORTA       GPIOB
 #define ENC_BUT         GPIO_Pin_2
+#define BUTTONS_A_MSK   ENC_BUT
 #define BTN_PORT2       GPIOC
 #define BUTTON_PIN1     GPIO_Pin_13
 #define BUTTON_PIN2     GPIO_Pin_14
-#define BUTTON_PIN3     GPIO_Pin_15
-#define BUTTON_PIN4     (GPIO_Pin_13 | GPIO_Pin_14)
-#define BUTTON_PIN5     (GPIO_Pin_14 | GPIO_Pin_15)
-#define BUTTONS2_MSK    (GPIO_Pin_15 | GPIO_Pin_14 | GPIO_Pin_13)
+#define BUTTON_PIN3     (BUTTON_PIN2 | BUTTON_PIN1)
+#define BUTTONS2_MSK    (BUTTON_PIN3)
 //PWM outputs
 #define PWM_PORT        GPIOB
 #define BRIGHTNES_PIN   GPIO_Pin_8
@@ -247,25 +245,6 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define LCD_RS          GPIO_Pin_10
 #define LCD_CS          GPIO_Pin_11
 #define LCD_RST         GPIO_Pin_12
-//SPI
-#define SPI             SPI2
-#define SPI_PORT        GPIOB
-#define SPI_CS          GPIO_Pin_12
-#define SPI_SCK         GPIO_Pin_13
-#define SPI_MISO        GPIO_Pin_14
-#define SPI_MOSI        GPIO_Pin_15
-#define SPI_RCC         RCC_APB1Periph_SPI2
-#define SPI_GPIO_RCC    RCC_APB2Periph_GPIOB
-#define SPI_IRQ         SPI2_IRQn
-#define SPI_IRQHandler  SPI2_IRQHandler
-//I2C
-#define I2C             I2C2
-#define I2C_PORT        GPIOB
-#define I2C_SCL         GPIO_Pin_10
-#define I2C_SDA         GPIO_Pin_11
-#define I2C_RCC         RCC_APB1Periph_I2C2
-#define I2C_IRQ         I2C2_EV_IRQn
-#define I2C_ERR_IRQ     I2C2_ER_IRQn
 //touchscreen
 #define TS_PORT         GPIOA
 #define TS_XR           GPIO_Pin_0  //4 pins for LEFT ORIENTATION screen !!!
@@ -299,11 +278,6 @@ enum protocols {Smoothie = 0, Marlin = 1};
 #define Del_IRQHandler  TIM4_IRQHandler
 
 #endif
-
-#define Timer_Btn       TIM1
-#define Btn_RCC_ENR     RCC_APB2ENR_TIM1EN
-#define Btn_IRQ         TIM1_UP_IRQn
-#define Btn_IRQHandler  TIM1_UP_IRQHandler
 
 //button bits for Smoothie
 #define BUTTON_SELECT   0x01    //encoder button

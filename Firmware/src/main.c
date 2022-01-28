@@ -1,8 +1,14 @@
 ﻿#include "init.h"
+#ifdef BOOTLOADER
+  #include "misc.h"
+#endif
 #include "protocol.h"
 
 int main(void)
 {
+#ifdef BOOTLOADER
+	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x08003800);	//14kb offset for SD-bootloader
+#endif
 	__disable_irq();
 	Global_Init();
 	__enable_irq();

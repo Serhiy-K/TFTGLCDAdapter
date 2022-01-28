@@ -84,20 +84,12 @@ GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 	NVIC_EnableIRQ(ENC_IRQn);
 #endif
 	// Init Button
-	GPIO_InitStructure.GPIO_Mode   = GPIO_Mode_IPU;
-#if defined(HW_VER_1)
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Pin	= BUTTONS_A_MSK;
 	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin	= BUTTON_PIN5 | BUTTON_PIN4;
+#ifndef HW_VER_3
+	GPIO_InitStructure.GPIO_Pin	= BUTTONS2_MSK;
 	GPIO_Init(BTN_PORT2, &GPIO_InitStructure);
-#elif defined(HW_VER_2)
-	GPIO_InitStructure.GPIO_Pin	= ENC_BUT;
-	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin	= BUTTON_PIN3 | BUTTON_PIN2 | BUTTON_PIN1;
-	GPIO_Init(BTN_PORT2, &GPIO_InitStructure);
-#elif defined(HW_VER_3)
-	GPIO_InitStructure.GPIO_Pin	= BUTTONS_A_MSK;
-	GPIO_Init(BTN_PORTA, &GPIO_InitStructure);
 #endif
 
 	// PWM signals init
@@ -113,6 +105,11 @@ GPIO_Init(LCD_DATA_PORT, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin		= I2C_SCL | I2C_SDA;
 	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_AF_OD;
 	GPIO_Init(I2C_PORT, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = BOOT_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(BOOT_PORT, &GPIO_InitStructure);
+	BOOT_PORT->BRR = BOOT_PIN;
 
 #ifndef HW_VER_2
 	//for test output
