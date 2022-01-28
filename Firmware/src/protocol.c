@@ -103,10 +103,11 @@ uint8_t buttons = 0;
 void Print_Line(uint8_t row);
 
 //----------------------------------------------------------------------------
-uint8_t New_cmd(){return new_command;}
+uint8_t New_cmd() {return new_command;}
 //----------------------------------------------------------------------------
 //For Smoothieware
 //----------------------------------------------------------------------------
+#ifndef ONLY_MARLIN
 void Move_Text()
 {
 	uint8_t i, to;
@@ -269,22 +270,21 @@ void Set_Leds()
 	leds &= LED_MASK;
 
 #ifdef USE_3DPRINTER
+#ifndef WITHOUT_HEAT_ICO
 	if (leds & LED_HOT)
 	{
 		if (temps == 1)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
-#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
 		else			LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
-#endif
 	}
 	else
 	{
 		if (temps == 1)	LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
-#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
 		else			LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
-#endif
 	}
 #endif
+#endif
 }
+#endif
 //----------------------------------------------------------------------------
 // For Marlin
 //----------------------------------------------------------------------------
@@ -294,11 +294,11 @@ void Clear_Screen()
 	new_command = 0;
 	for (i = 0; i < (FB_SIZE - 2); i++)	data[out_buf][i] = ' ';
 	for (i = 0; i < TEXT_LINES; i++)	lines[i] = 0;
-	for (i = 0; i < TEXT_LINES; i++)	clr_lines[i] = 1;
-	progress_cleared = 0;
 #ifdef HW_VER_3
+	for (i = 0; i < TEXT_LINES; i++)	clr_lines[i] = 1;
 	screen_mode = MAIN_SCREEN;
 #endif
+	progress_cleared = 0;
 	UBL_first_time = 1;
 	LCD_Set_TextColor(White, Black);
 }
@@ -421,11 +421,13 @@ void Draw_UBL_Screen()
 void Print_Lines()
 {
 	uint8_t i;
+new_line:
 	new_command = 0;
 	for (i = 0; i < TEXT_LINES; i++)
 	{
 		if (lines[i])	{Print_Line(i);	lines[i] = clr_lines[i] = 0;}
 	}
+#ifdef HW_VER_3
 	if (!USE_UBL)
 	{
 		for (i = 0; i < TEXT_LINES; i++)
@@ -433,6 +435,9 @@ void Print_Lines()
 			if (clr_lines[i])	{Print_Line(i);	clr_lines[i] = 0;}
 		}
 	}
+#endif
+	if (new_command == LCD_PUT)
+		goto new_line;	//new line was received during output
 }
 //----------------------------------------------------------------------------
 // Common
@@ -443,6 +448,7 @@ uint8_t Read_Buttons()
 
 #if defined(HW_VER_1)
 	b = BTN_PORTA->IDR & BUTTONS_A_MSK;
+#ifndef ONLY_MARLIN
 	if (protocol == Smoothie)
 	{
 		switch (b)
@@ -456,6 +462,7 @@ uint8_t Read_Buttons()
 		if (!(b & BUTTON_PIN4))	return BUTTON_DOWN;
 	}
 	else
+#endif
 	{
 		switch (b)
 		{
@@ -465,6 +472,7 @@ uint8_t Read_Buttons()
 		}
 	}
 #elif defined(HW_VER_2)
+#ifndef ONLY_MARLIN
 	if (protocol == Smoothie)
 	{
 		if(!(BTN_PORTA->IDR & ENC_BUT))	return BUTTON_SELECT;
@@ -478,6 +486,7 @@ uint8_t Read_Buttons()
 		}
 	}
 	else
+#endif
 	{
 		if (!(BTN_PORTA->IDR & ENC_BUT))	return EN_C;
 		b = BTN_PORT2->IDR & BUTTONS2_MSK;
@@ -486,6 +495,7 @@ uint8_t Read_Buttons()
 	}
 #elif defined(HW_VER_3)
 	b = BTN_PORTA->IDR & BUTTONS_A_MSK;
+#ifndef ONLY_MARLIN
 	if (protocol == Smoothie)
 	{
 		switch (b)
@@ -497,6 +507,7 @@ uint8_t Read_Buttons()
 		}
 	}
 	else
+#endif
 	{
 		switch (b)
 		{
@@ -518,6 +529,7 @@ void Print_Temps()
 	#endif
 	uint8_t x;
 	//main screen
+#ifndef ONLY_MARLIN
 	if (protocol == Smoothie)
 	{
 		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(datat[TTO + x]);
@@ -525,6 +537,7 @@ void Print_Temps()
 		LCD_SetCursor(0, 7);	for (x = 0; x < 20; x++)	LCD_DrawChar(datat[TSO + x]);
 	}
 	else
+#endif
 	{
 		LCD_SetCursor(0, 5);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][T_L_LINE + x]);
 		LCD_SetCursor(0, 6);	for (x = 0; x < MX; x++)	LCD_DrawChar(data[out_buf][CHARS_PER_LINE * 6 + x]);
@@ -537,8 +550,8 @@ void Print_Temps()
 				(data[out_buf][T_L_LINE + 10] == 'I') ||	//ILAZ
 				(data[out_buf][T_L_LINE + 15] == 'C'))		//CUTT
 			{
-				if (data[out_buf][T_L_LINE] == 'C')		laser |= 1;
-				if (data[out_buf][T_L_LINE + 5] == 'F')	laser |= 2;
+				if (data[out_buf][T_L_LINE] == 'C')			laser |= 1;
+				if (data[out_buf][T_L_LINE + 5] == 'F')		laser |= 2;
 				if (data[out_buf][T_L_LINE + 10] == 'I')	laser |= 4;
 				if (data[out_buf][T_L_LINE + 15] == 'C')	laser |= 8;
 			}
@@ -564,7 +577,9 @@ void Draw_Icons()
 {
 #define	LOGO_OFFSET		((CHARS_PER_LINE - 12) / 2)
 
+#ifndef ONLY_MARLIN
 	char border[] = {196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 0};
+#endif
 
 	pics = data[out_buf][FB_SIZE - 2];
 	pics &= PIC_MASK;
@@ -572,6 +587,7 @@ void Draw_Icons()
 	if (pics & PIC_LOGO)
 	{	//Text Logo
 		LCD_Set_TextColor(Yellow, Blue);
+#ifndef ONLY_MARLIN
 		if (protocol == Smoothie)
 		{
 			LCD_DrawChar_XY(LOGO_OFFSET, 4, TLC);	LCD_PutStrig(&border[0]);	LCD_DrawChar(TRC);
@@ -580,6 +596,7 @@ void Draw_Icons()
 			LCD_DrawChar_XY(LOGO_OFFSET, 7, BLC);	LCD_PutStrig(&border[0]);	LCD_DrawChar(BRC);
 		}
 		else
+#endif
 		{
 			uint16_t i = 0;
 			for (uint8_t y = 0; y < 5; y++)
@@ -642,8 +659,12 @@ void Draw_Icons()
 		if (pics & PIC_BED)	LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_48x48[0]);
 		else
 		{
+#ifdef ONLY_MARLIN
+			if (data[out_buf][T_L_LINE + B1O] == 'B')	//bed present in off state
+#else
 			if (((protocol == Smoothie) && (datat[TTO + B1O] == 'B')) ||
 				((protocol != Smoothie) && (data[out_buf][T_L_LINE + B1O] == 'B')))	//bed present in off state
+#endif
 				LCD_Draw_Picture (pic2_Xmin1, pic_Ymin, &bed_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic2_Xmin1, pic_Ymin);
@@ -652,18 +673,26 @@ void Draw_Icons()
 		if (pics & PIC_FAN)	LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_48x48[0]);
 		else
 		{
+#ifdef ONLY_MARLIN
+			if (data[out_buf][CHARS_PER_LINE * 7 + F1O + 2] >= '0')	//fan present in off state
+#else
 			if (((protocol == Smoothie) && ((datat[TSO + F1O + 1] >= '0') || (datat[TSO + F1O + 2] >= '0'))) ||
-				((protocol != Smoothie) && (data[out_buf][CHARS_PER_LINE * 7 + F1O + 2] >= '0')))	//fan present in off state
+				((protocol != Smoothie) && (data[out_buf][CHARS_PER_LINE * 7 + F1O + 2] >= '0')))
+#endif
 				LCD_Draw_Picture (pic3_Xmin1, pic_Ymin, &fan_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic3_Xmin1, pic_Ymin);
 		}
 
+#ifndef WITHOUT_HEAT_ICO
+#ifndef ONLY_MARLIN
 		if (protocol != Smoothie)
+#endif
 		{
 			if (pics & PIC_HOT)	LCD_Draw_Picture (pic4_Xmin1, pic_Ymin, &heat_48x48[0]);
 			else				LCD_Clear_Picture(pic4_Xmin1, pic_Ymin);
 		}
+#endif
 	}
 	else if (temps == 3)
 	{
@@ -676,8 +705,12 @@ void Draw_Icons()
 		if (pics & PIC_HE3)	LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude_48x48[0]);
 		else
 		{
+#ifdef ONLY_MARLIN
+			if (data[out_buf][T_L_LINE + HE3O] == 'H')
+#else
 			if (((protocol == Smoothie) && (datat[TTO + HE3O] == 'H')) ||
 				((protocol != Smoothie) && (data[out_buf][T_L_LINE + HE3O] == 'H')))
+#endif
 				LCD_Draw_Picture (pic3_Xmin, pic_Ymin, &extrude_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic3_Xmin, pic_Ymin);
@@ -686,8 +719,12 @@ void Draw_Icons()
 		if (pics & PIC_BED)	LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_48x48[0]);
 		else
 		{
+#ifdef ONLY_MARLIN
+			if (data[out_buf][T_L_LINE + B3O] == 'B')
+#else
 			if (((protocol == Smoothie) && (datat[TTO + B3O] == 'B')) ||
 				((protocol != Smoothie) && (data[out_buf][T_L_LINE + B3O] == 'B')))
+#endif
 				LCD_Draw_Picture (pic4_Xmin, pic_Ymin, &bed_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic4_Xmin, pic_Ymin);
@@ -696,15 +733,21 @@ void Draw_Icons()
 		if (pics & PIC_FAN)	LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_48x48[0]);
 		else
 		{
+#ifdef ONLY_MARLIN
+			if (data[out_buf][CHARS_PER_LINE * 7 + F3O + 2] >= '0')
+#else
 			if (((protocol == Smoothie) && ((datat[TSO + F3O + 1] >= '0') || (datat[TSO + F3O + 2] >= '0'))) ||
 				((protocol != Smoothie) && (data[out_buf][CHARS_PER_LINE * 7 + F3O + 2] >= '0')))
+#endif
 				LCD_Draw_Picture (pic5_Xmin, pic_Ymin, &fan_off_48x48[0]);
 			else
 				LCD_Clear_Picture(pic5_Xmin, pic_Ymin);
 		}
 
-#if defined(LCD400x240) || !defined(WITHOUT_HEAT_ICO)
+#ifndef WITHOUT_HEAT_ICO
+#ifndef ONLY_MARLIN
 		if (protocol != Smoothie)
+#endif
 		{
 			if (pics & PIC_HOT)	LCD_Draw_Picture (pic6_Xmin, pic6_Ymin, &heat_48x48[0]);
 			else				LCD_Clear_Picture(pic6_Xmin, pic6_Ymin);
@@ -862,6 +905,7 @@ void Print_Line(uint8_t row)
 
 	LCD_SetCursor(0, row);
 
+#ifndef ONLY_MARLIN
 #ifdef LCD400x240
 	if (protocol == Smoothie)
 	{//shift text right for centering
@@ -874,6 +918,7 @@ void Print_Line(uint8_t row)
 			x = 2;
 	}
 	else
+#endif
 #endif
 	{
 		if (marker)
@@ -913,6 +958,7 @@ void Center_Status_Line()
 {
 	int8_t i, newpos;
 
+#ifndef ONLY_MARLIN
 	if (protocol == Smoothie)
 	{
 		i = 0;
@@ -927,6 +973,7 @@ void Center_Status_Line()
 		}
 	}
 	else
+#endif
 	{
 		i = CHARS_PER_LINE - 1;
 		while ((i > 0) && (data[out_buf][CHARS_PER_LINE * 3 + i] == ' '))	i--;
@@ -987,10 +1034,12 @@ void Out_Buffer()
 		new_buf = 0;
 		out_buf ^= 1;
 		in_buf ^= 1;
+#ifndef ONLY_MARLIN
 		if (protocol == Smoothie)
 		{//for main screen
 			if ((data[out_buf][CHARS_PER_LINE] == 'X') && (data[out_buf][CHARS_PER_LINE + 6] == 'Y'))	Move_Text();
 		}
+#endif
 		if (data[out_buf][0] == 'X')
 		{	//Main screen
 #ifdef HW_VER_3
@@ -1000,6 +1049,7 @@ void Out_Buffer()
 		}
 	}
 
+#ifndef ONLY_MARLIN
 	if (protocol == Smoothie)
 	{
 		if ((data[out_buf][0] == 'X') && (data[out_buf][6] == 'Y'))
@@ -1029,6 +1079,7 @@ void Out_Buffer()
 		}
 	}
 	else
+#endif
 	{	//Marlin
 		if (data[out_buf][FB_SIZE - 2] & PIC_LOGO)
 			Draw_Icons();
@@ -1121,13 +1172,14 @@ void Del_IRQHandler(void)
 #else
 		if (ENC_PORT->IDR & ENC_B)	encdiff -= 2;
 		else						encdiff += 2;
-#endif
+#endif	// INVERT_ENCODER_DIR
 	}
 	EXTI->IMR |= ENC_A;	//enable EXTI IRQ for next front
 #else
 	if (++delay_cnt > 10)	delay_cnt = 10;
 #endif
 }
+#ifdef USE_I2C
 //----------------------------------------------------------------------------
 // Only for Marlin
 void I2C2_EV_IRQHandler(void)
@@ -1147,8 +1199,7 @@ void I2C2_EV_IRQHandler(void)
 	    	if (!toread)
 	    	{// command
 	    		cmd = b;	pos = -1;
-				if (b == CLR_SCREEN)	{new_command = b;	return;}
-		    	else if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
+		    	if ((b == INIT) || (b == BRIGHTNES) || (b == BUZZER) || (b == LCD_WRITE) || (b ==  LCD_PUT)) toread = 1; //read data for command
 			}
 	    	else
 	    	{
@@ -1156,16 +1207,8 @@ void I2C2_EV_IRQHandler(void)
 	    		{
 	    			if (pos == -1)
 	    			{ //write to text buffer by one line
-						if (cmd == LCD_WRITE)
-						{
-	    					pos = 0;
-							data[in_buf][pos++] = b;
-						}
-						else
-						{
-							pos = b * CHARS_PER_LINE;
-							lines[b] = 1;
-						}
+						if (cmd == LCD_WRITE)	{pos = 0;	data[in_buf][pos++] = b;}
+						else					{pos = b * CHARS_PER_LINE;	lines[b] = 1;}
 	    			}
 	    			else
 					{
@@ -1183,24 +1226,23 @@ void I2C2_EV_IRQHandler(void)
 			toread = 0;
 			switch (cmd)
 			{
-				case INIT:		SPI_Cmd(SPI, DISABLE);	new_command = cmd;	return;
 				case BUZZER:	set_new_buz();	if(buzcnt == 1) Buzzer();	return;
 				case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 				case LCD_WRITE:	if (pos < FB_SIZE) {toread = 1;	return;}
 								new_buf = 1;
+				case INIT:
+				case CLR_SCREEN:
 				case LCD_PUT:	new_command = cmd;	return;
 			}
 	    // Slave TRANSMITTER mode
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_BUTTONS:	I2C->DR = buttons;	buttons = 0;	next_tx = encdiff;	encdiff = 0;	return;
 	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;
 									if (!buttons)	next_tx = Read_Buttons();
 									else			{next_tx = buttons;	buttons = 0;}
 									return;
-	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	next_tx = CHARS_PER_LINE;	return;
-	    		case GET_LCD_COL:	I2C->DR = CHARS_PER_LINE;	next_tx = TEXT_LINES;	return;
+	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	return;
 	    	}
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:	//EV3 - next data
 	    	I2C->DR = next_tx;
@@ -1213,6 +1255,8 @@ void I2C2_ER_IRQHandler(void)
 {	//EV3_2
 	I2C->SR1 &= 0x00FF;
 }
+#endif
+#ifdef USE_SPI
 //----------------------------------------------------------------------------
 void SPI_IRQHandler(void)
 {
@@ -1256,12 +1300,13 @@ void SPI_IRQHandler(void)
 			if (!toread)
 				switch (cmd)
 				{
-					case INIT:		I2C_Cmd(I2C, DISABLE);	new_command = cmd;		return;
 					case BUZZER:	set_new_buz();	if (buzcnt == 1)	Buzzer();	return;
 					case BRIGHTNES:	Timer_P->BRIGHTNES_CCR = (uint16_t)data[in_buf][0];	return;
 					case LCD_WRITE:	new_buf = 1;	//update all screen
+					case INIT:
 					case LCD_PUT:	new_command = cmd;
 				}
 		}
 	}
 }
+#endif

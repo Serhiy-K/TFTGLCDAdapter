@@ -336,6 +336,7 @@ const char fan_48x48[2304] =
     'R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','D','A','A','A','A','D','F','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R',
     'R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R'
 };
+#ifndef WITHOUT_HEAT_ICO
 // icon used instead of LED for indication temperature above 55 degree
 const char heat_48x48[2304] =
 {
@@ -388,6 +389,7 @@ const char heat_48x48[2304] =
      'I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I',
      'I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I','I'
 };
+#endif
 const char extrude_off_48x48[2304] =
 {
      'F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F','F',

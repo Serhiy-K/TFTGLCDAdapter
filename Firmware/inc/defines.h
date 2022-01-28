@@ -12,9 +12,9 @@ enum protocols {Smoothie = 0, Marlin = 1};
 //For LCD and controller with 8 bit data bus and encoder
 //#define HW_VER_1
 //For LCD and controller with 16 bit data bus and encoder
-#define HW_VER_2
+//#define HW_VER_2
 //For LCD and controller with 8 bit data bus and touchscreen
-//#define HW_VER_3
+#define HW_VER_3
 //#define CALIBR_DEBUG_INFO   //outputs old and new ADC values
 
 //#define HW_VER_2_SWD_DEBUG
@@ -38,11 +38,20 @@ enum protocols {Smoothie = 0, Marlin = 1};
 
 #define LCD_BRIGHTNES   250
 
-#define WITHOUT_HEAT_ICO    //if you want see "FAN %" text insted heat icon on 320x240 screen
+//*********************************************
+// Options for reduce ROM size for MCU with 64k ROM
+//*********************************************
+#define WITHOUT_HEAT_ICO    //also if you want see "FAN %" text insted heat icon on 320x240 screen
 
-//you may select only one variant for MCU with 64k ROM or both for universality for MCU with 128k ROM
+//you may select only one variant to reduce ROM size or both for universality
 #define USE_3DPRINTER       //for Smoothieware and Marlin
-#define USE_LASER           //only for Marlin
+//#define USE_LASER           //only for Marlin
+
+//#define ONLY_MARLIN         //support only Marlin to reduce ROM size
+//you may select only one variant to reduce ROM size or both for universality
+#define USE_SPI
+#define USE_I2C
+//*********************************************
 
 //prefered monospace font
 //#define FONT          Courier_New_Bold_16x24

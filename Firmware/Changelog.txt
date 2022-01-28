@@ -1,3 +1,7 @@
+09/13/2021
+
+1. Add "ONLY_MARLIN", "USE_SPI", "USE_I2C" options to reduce ROM size.
+
 07/18/2021
 
 1. Add cutter status for laser/spindle.
