@@ -3,6 +3,8 @@
 
 #include "defines.h"
 
+#define	MAX_FREQS	5
+
 enum Commands {
 	GET_SPI_DATA = 0,	// is a read results of previous command
 	READ_BUTTONS,
@@ -18,10 +20,14 @@ enum Commands {
 	INIT = 0xFE			// Initialize
 };
 
+extern uint8_t buzcnt;
+extern uint16_t freq[MAX_FREQS], duration[MAX_FREQS];
+
 uint8_t New_cmd();
 void Clear_Screen();
 void Init();
 void Out_Buffer();
 void Print_Lines();
+void Buzzer();
 
 #endif

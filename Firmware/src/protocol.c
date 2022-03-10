@@ -1,6 +1,7 @@
 #include "stm32f10x_i2c.h"
 #include "stm32f10x_spi.h"
 #include "stm32f10x_tim.h"
+#include "debug_functions.h"
 #include "LCD.h"
 #include "Pictures.h"
 #include "protocol.h"
@@ -64,8 +65,6 @@
 
 #define FB_SIZE	(CHARS_PER_LINE * TEXT_LINES + 2)	//text area + leds + pics
 
-#define	MAX_FREQS	5
-
 // data[FB_SIZE - 1] - leds
 // data[FB_SIZE - 2] - pics
 uint8_t data[2][FB_SIZE];
@@ -93,7 +92,6 @@ uint8_t grid_size_x, grid_size_y;
 uint16_t grid_x[20], grid_y[20];
 uint16_t dot_pos_x, dot_pos_y;
 uint8_t UBL_first_time = 1;
-uint8_t next_tx = 0;
 int8_t  encdiff = 0;
 uint8_t new_buf = 0;
 uint8_t USE_UBL = 0;
@@ -1115,7 +1113,7 @@ void Out_Buffer()
 //#################################################################################
 void Btn_IRQHandler(void)
 {
-	Timer_Btn->SR = 0;				//clear IRQ flag
+	Timer_Btn->SR = 0;	//clear IRQ flag
 	if (!new_command)
 	{
 #ifdef HW_VER_3
@@ -1237,16 +1235,13 @@ void I2C2_EV_IRQHandler(void)
 	    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:	//EV1
 	    	switch (cmd)
 	    	{
-	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;
-									if (!buttons)	next_tx = Read_Buttons();
-									else			{next_tx = buttons;	buttons = 0;}
-									return;
+	    		case READ_ENCODER:	I2C->DR = encdiff;	encdiff = 0;	return;
 	    		case GET_LCD_ROW:	I2C->DR = TEXT_LINES;	return;
 	    	}
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:	//EV3 - next data
-	    	I2C->DR = next_tx;
+	    	I2C->DR = buttons;	buttons = 0;
 	    case I2C_EVENT_SLAVE_BYTE_TRANSMITTING:	//EV3
-	    	return;
+			return;
 	}
 }
 //----------------------------------------------------------------------------
@@ -1266,11 +1261,7 @@ void SPI_IRQHandler(void)
 		switch(b)
 		{
 			case GET_SPI_DATA:	return;	//for reading data
-			case READ_BUTTONS:	SPI->DR = buttons;
-#ifndef HW_VER_3
-			buttons = 0;
-#endif
-			return;
+			case READ_BUTTONS:	SPI->DR = buttons;	buttons = 0;	return;
 			case READ_ENCODER:	SPI->DR = encdiff;	encdiff = 0;	return;
 			case LCD_WRITE:		cmd = b;	toread = FB_SIZE;	pos = 0;	return;
 			case LCD_PUT:		cmd = b;	toread = CHARS_PER_LINE;	pos = -1;	return;

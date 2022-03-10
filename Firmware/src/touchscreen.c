@@ -2,6 +2,7 @@
 
 #ifdef HW_VER_3
 
+#include "debug_functions.h"
 #include "settings.h"
 #include "stm32f10x_adc.h"
 #include "touchscreen.h"
@@ -30,17 +31,6 @@ extern int8_t  encdiff;
 extern uint8_t buttons;
 extern uint8_t protocol;
 
-#ifdef CALIBR_DEBUG_INFO
-void print_dec(uint16_t dec)
-{
-	uint16_t t;
-	if (dec > 10000) {t = dec / 10000;	LCD_DrawChar('0' + t);	dec -= t * 10000;}
-	if (dec > 1000)	{t = dec / 1000;	LCD_DrawChar('0' + t);	dec -= t * 1000;}
-	if (dec > 100)	{t = dec / 100;		LCD_DrawChar('0' + t);	dec -= t * 100;}
-	if (dec > 10)	{t = dec / 10;		LCD_DrawChar('0' + t);	dec -= t * 10;}
-	LCD_DrawChar('0' + dec);
-}
-#endif
 //----------------------------------------------------------------------------
 void Calibrate_touch()
 {
@@ -63,8 +53,8 @@ void Calibrate_touch()
 	else if (adc_y_calibrate == 2)
 	{
 #ifdef CALIBR_DEBUG_INFO
-		LCD_PutStrig_XY(1, 3, "New Ymin = ");	LCD_SetCursor(12, 3);	print_dec(Settings.adc_Ymin);
-		LCD_PutStrig_XY(1, 4, "Old Ymax = ");	LCD_SetCursor(12, 4);	print_dec(Settings.adc_Ymax);
+		LCD_PutStrig_XY(1, 3, "New Ymin =");	LCD_SetCursor(12, 3);	print_dec(Settings.adc_Ymin);
+		LCD_PutStrig_XY(1, 4, "Old Ymax =");	LCD_SetCursor(12, 4);	print_dec(Settings.adc_Ymax);
 		LCD_Set_TextColor(CURSOR_TEXT_COLOR, CURSOR_BACK_COLOR);
 #endif
 		LCD_FillRect(0, 0, LCDXMAX / 2 + CHAR_HEIGTH, CHAR_HEIGTH * 2, BackColor);
@@ -79,7 +69,7 @@ void Calibrate_touch()
 		LCD_FillRect(0, LCDYMAX - 1 - CHAR_HEIGTH * 2, LCDXMAX / 2 + CHAR_HEIGTH, LCDYMAX - 1, BackColor);
 		Settings.adc_1_line = (Settings.adc_Ymax - Settings.adc_Ymin) / (TEXT_LINES - 2);
 #ifdef CALIBR_DEBUG_INFO
-		LCD_PutStrig_XY(1, 5, "New Ymax = ");	LCD_SetCursor(12, 5);	print_dec(Settings.adc_Ymax);
+		LCD_PutStrig_XY(1, 5, "New Ymax =");	LCD_SetCursor(12, 5);	print_dec(Settings.adc_Ymax);
 		LCD_PutStrig_XY((CHARS_PER_LINE - 13) / 2, 7, "Press to test");
 		LCD_PutStrig_XY((CHARS_PER_LINE - 17) / 2, 8, "Then reboot panel");
 #else
@@ -115,10 +105,10 @@ void Emulate_Encoder()
 	{
 		case MENU_SCREEN:
 			encdiff = (ts_y - cur_line) * 2;
-			if (ts_y == cur_line) goto go_to_menu;
+			if (encdiff == 0)	goto press_enc;
 			break;
 		case EDIT_SCREEN:
-			if (ts_y <= MIDDLE_Y)	goto go_to_menu;
+			if 		(ts_y <= MIDDLE_Y)	goto press_enc;
 			if 		(ts_y == (MIDDLE_Y + 2))	ed = 20;
 			else if (ts_y == (MIDDLE_Y + 4))	ed = 2;
 			else	break;
@@ -137,9 +127,13 @@ void Emulate_Encoder()
 			{
 				cur_x = 0;
 		case MAIN_SCREEN:
-go_to_menu:
-				if (protocol == Smoothie)	buttons = BUTTON_SELECT;
-				else						buttons = EN_C;
+press_enc:
+#ifndef ONLY_MARLIN
+				if (protocol == Smoothie)
+					buttons = BUTTON_SELECT;
+				else
+#endif
+					buttons = EN_C;
 			}
 			break;
 		case MAIN_UBL:
@@ -161,7 +155,6 @@ go_to_menu:
 			break;
 		case START_SCREEN:
 			Calibrate_touch();
-			break;
 	}
 }
 //----------------------------------------------------------------------------
@@ -256,7 +249,7 @@ no_tsx:
 			GPIO_InitStructure.GPIO_Pin	= TS_XL | TS_XR;
 			GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 			GPIO_Init(TS_PORT, &GPIO_InitStructure);
-			if ((ts_pressed == 1) || (delay_cnt == 10))	Emulate_Encoder();
+			if ((screen_mode == MENU_SCREEN) || (ts_pressed == 1) || (delay_cnt == 10))	Emulate_Encoder();
 	}
 }
 #endif
