@@ -3,13 +3,13 @@ TFT GLCD Panel was developed as low cost replacement for monochrome LCDs with lo
 
 <img src="./Hardware/Photos/Smoothie-progressbar.jpg"  width="265" height="200">
 
-**TFT GLCD Panel "Version 1.0"** based on STM32F103CBT6 "Blue Pill" board and color TFT GLCD on ILI9325, ILI9341, HX8347 and ST7789 chips with 320x240 resolution or ILI9327 and R61509V chips with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
+**TFT GLCD Panel "Version 1.0"** based on STM32F103CBT6 "Blue Pill" board and color TFT GLCD on ILI9325, ILI9341, HX8347 and ST7789 chips with 320x240 resolution or ILI9327 and R61509V chips with 400x240 resolution. Also it has 1 encoder and 1 button, but you may set up to 6 "programmed" buttons for Smoothieware and up to 3 buttons for Marlin, include encoder button. Controller connected to LCD by 8-bit data bus.
 
 **TFT GLCD Panel "Version 2.0"** based on the same STM32F103CBT6 controller, but has own PCB. It desighned to connect LCD and controller by 16-bit data bus. Also this panel has standart EXP2 connector for connect to printer's main board and integrated Micro-SD connector.
 
-**TFT GLCD Panel "Version 2.1"** equal to "Version 2.0", but may use SD-Bootloader for firmware upgrading by SD-card. First you must write SD-Bootloader to the MCU and firmware file "3D-GLCD.bin" will be uploaded to MCU from SD-card. To enter in boot mode you need insert SD-card with "3D-GLCD.bin" file before turning on power. After uploading firmware "3D-GLCD.bin" file will be deleted.
+**TFT GLCD Panel "Version 2.1"** equal to "Version 2.0", but may use SD-Bootloader for firmware upgrading by SD-card. First you must write SD-Bootloader to the MCU and firmware file "3D-GLCD.bin" will be uploaded to MCU from SD-card. To enter in boot mode you need insert SD-card with "3D-GLCD.bin" file before turning on power. After uploading firmware "3D-GLCD.bin" file will be deleted. You may use up to 3 "programmed" buttons and 2 standart buttons "Kill" and "Reset" directly wired to EXP2 connector.
 
-**TFT GLCD Panel "Version 3.0"** was designed to add resistive touchscreen support. Touchscreen is connected to controller's pinns directly. Controller connected to LCD by 8-bit data bus. This is wery simple realisation without SD support but SD support may be added as for "Version 2.0".
+**TFT GLCD Panel "Version 3.0"** was designed to add resistive touchscreen support. Touchscreen is connected to controller's pinns directly. Controller connected to LCD by 8-bit data bus. This is wery simple realisation without SD support but SD support may be added as for "Version 2.1".
 
 Firmware for TFT GLCD Panel created with CoIDE but may be built wiht simple Makefile. Also you may use VSCode as IDE. GCC for ARM is used as a compiler.
 
